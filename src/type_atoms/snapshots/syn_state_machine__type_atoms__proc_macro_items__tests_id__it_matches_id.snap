@@ -1,0 +1,14 @@
+---
+source: src/type_atoms/proc_macro_items.rs
+expression: "(insta_match_test!(+ + Ident : id), insta_match_test!(* * Ident : id))"
+---
+(
+    Ok(
+        Ident(
+            id,
+        ),
+    ),
+    Some(
+        1,
+    ),
+)

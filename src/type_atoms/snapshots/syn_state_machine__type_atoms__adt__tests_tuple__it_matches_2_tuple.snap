@@ -1,0 +1,19 @@
+---
+source: src/type_atoms/adt.rs
+expression: "(insta_match_test!(+ parse (Ident, FIdent<\"world\">) : hello world),\n    insta_match_test!(* peek (Ident, FIdent<\"world\">) : hello world))"
+---
+(
+    Ok(
+        (
+            Ident(
+                hello,
+            ),
+            FIdent(
+                Span,
+            ),
+        ),
+    ),
+    Some(
+        2,
+    ),
+)

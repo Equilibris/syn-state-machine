@@ -11,8 +11,9 @@ execution-debug = []
 
 [dependencies]
 proc-macro2 = "1"
-thiserror = "1"
 quote = "1"
+thiserror = "1"
 litrs = "0.4"
-insta = "1.29.0"
+insta = "1"
+paste = "1"
 

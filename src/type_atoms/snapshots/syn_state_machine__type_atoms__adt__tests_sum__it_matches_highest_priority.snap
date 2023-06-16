@@ -1,0 +1,31 @@
+---
+source: src/type_atoms/adt.rs
+expression: "(insta_match_test!(+ parse\n        Sum5<(P, P, P, P, P), (P, P, P, P), (P, P, P), (P, P), (P,)> : ....),\n    insta_match_test!(* peek\n        Sum5<(P, P, P, P, P), (P, P, P, P), (P, P, P), (P, P), (P,)> : ....))"
+---
+(
+    Ok(
+        V1(
+            (
+                Punct {
+                    char: '.',
+                    spacing: Joint,
+                },
+                Punct {
+                    char: '.',
+                    spacing: Joint,
+                },
+                Punct {
+                    char: '.',
+                    spacing: Alone,
+                },
+                Punct {
+                    char: '.',
+                    spacing: Alone,
+                },
+            ),
+        ),
+    ),
+    Some(
+        4,
+    ),
+)

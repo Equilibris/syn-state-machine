@@ -1,0 +1,16 @@
+---
+source: src/type_atoms/adt.rs
+expression: "(insta_match_test!(+ parse Sum2<Ident, Punct> : hello),\n    insta_match_test!(* peek Sum2<Ident, Punct> : hello))"
+---
+(
+    Ok(
+        V0(
+            Ident(
+                hello,
+            ),
+        ),
+    ),
+    Some(
+        1,
+    ),
+)

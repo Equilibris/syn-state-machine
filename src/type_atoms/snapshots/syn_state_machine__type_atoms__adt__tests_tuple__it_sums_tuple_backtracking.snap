@@ -1,0 +1,51 @@
+---
+source: src/type_atoms/adt.rs
+expression: "(insta_match_test!(+ parse (Vec<(Punct, Punct, Ident, Ident)>, Punct) : >> h1\n        h2 >> h3 h4!),\n    insta_match_test!(* peek (Vec<(Punct, Punct, Ident, Ident)>, Punct) : >>\n        h1 h2 >> h3 h4!))"
+---
+(
+    Ok(
+        (
+            [
+                (
+                    Punct {
+                        char: '>',
+                        spacing: Joint,
+                    },
+                    Punct {
+                        char: '>',
+                        spacing: Alone,
+                    },
+                    Ident(
+                        h1,
+                    ),
+                    Ident(
+                        h2,
+                    ),
+                ),
+                (
+                    Punct {
+                        char: '>',
+                        spacing: Joint,
+                    },
+                    Punct {
+                        char: '>',
+                        spacing: Alone,
+                    },
+                    Ident(
+                        h3,
+                    ),
+                    Ident(
+                        h4,
+                    ),
+                ),
+            ],
+            Punct {
+                char: '!',
+                spacing: Alone,
+            },
+        ),
+    ),
+    Some(
+        9,
+    ),
+)

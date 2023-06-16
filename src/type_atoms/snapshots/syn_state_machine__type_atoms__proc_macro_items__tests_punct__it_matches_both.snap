@@ -1,0 +1,19 @@
+---
+source: src/type_atoms/proc_macro_items.rs
+expression: "(insta_match_test!(+ + (FJointPunct<'<'>, FAlonePunct<'='>) : <=),\n    insta_match_test!(* * (FJointPunct<'<'>, FAlonePunct<'='>) : <=))"
+---
+(
+    Ok(
+        (
+            FJointPunct(
+                Span,
+            ),
+            FAlonePunct(
+                Span,
+            ),
+        ),
+    ),
+    Some(
+        2,
+    ),
+)
