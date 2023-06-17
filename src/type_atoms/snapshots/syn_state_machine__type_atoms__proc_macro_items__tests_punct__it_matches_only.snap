@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/proc_macro_items.rs
-expression: "(insta_match_test!(+ + Punct : <), insta_match_test!(* * Punct : <))"
+expression: "(insta_match_test!(+ parse Punct : <), insta_match_test!(* peek Punct : <))"
 ---
 (
     Ok(

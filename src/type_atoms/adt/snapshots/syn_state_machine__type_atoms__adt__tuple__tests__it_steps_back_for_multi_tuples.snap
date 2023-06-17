@@ -1,5 +1,5 @@
 ---
-source: src/type_atoms/adt.rs
+source: src/type_atoms/adt/tuple.rs
 expression: "(insta_match_test!(+ parse\n        (Option<Ident>, Option<Punct>, Option<Ident>, Option<Punct>) : hi <\n        >),\n    insta_match_test!(* peek\n        (Option<Ident>, Option<Punct>, Option<Ident>, Option<Punct>) : hi <\n        >))"
 ---
 (

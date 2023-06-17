@@ -1,0 +1,12 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "(insta_match_test!(+ parse Vec<TokenTree> :),\n    insta_match_test!(* peek Vec<TokenTree> :))"
+---
+(
+    Ok(
+        [],
+    ),
+    Some(
+        0,
+    ),
+)

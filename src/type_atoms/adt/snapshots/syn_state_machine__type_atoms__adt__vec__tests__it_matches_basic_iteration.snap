@@ -1,0 +1,22 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "(insta_match_test!(+ parse Vec<Ident> : hello world hi),\n    insta_match_test!(* peek Vec<Ident> : hello world hi))"
+---
+(
+    Ok(
+        [
+            Ident(
+                hello,
+            ),
+            Ident(
+                world,
+            ),
+            Ident(
+                hi,
+            ),
+        ],
+    ),
+    Some(
+        3,
+    ),
+)

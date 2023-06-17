@@ -1,7 +1,7 @@
 use crate::internals::*;
 use proc_macro2::{extra::DelimSpan, Spacing, Span};
 
-pub use proc_macro2::{Ident, Literal, Punct};
+pub use proc_macro2::{Ident, Literal, Punct, TokenTree};
 
 macro_rules! pm2_impl {
     ($st:ident $m:ident) => {
@@ -32,6 +32,7 @@ macro_rules! pm2_impl {
 pm2_impl!(Ident ident);
 pm2_impl!(Punct punct);
 pm2_impl!(Literal literal);
+pm2_impl!(TokenTree token_tree);
 
 #[derive(Clone, Debug)]
 pub struct FIdent<const VAL: &'static str>(pub Span);

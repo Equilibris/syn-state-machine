@@ -1,5 +1,5 @@
 ---
-source: src/type_atoms/adt.rs
+source: src/type_atoms/adt/tuple.rs
 expression: "(insta_match_test!(+ parse (Vec<(Punct, Punct, Ident, Ident)>, Punct) : >> h1\n        h2 >> h3 h4!),\n    insta_match_test!(* peek (Vec<(Punct, Punct, Ident, Ident)>, Punct) : >>\n        h1 h2 >> h3 h4!))"
 ---
 (

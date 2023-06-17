@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/proc_macro_items.rs
-expression: "(insta_match_test!(+ + (FJointPunct<'<'>, FAlonePunct<'='>) : <=),\n    insta_match_test!(* * (FJointPunct<'<'>, FAlonePunct<'='>) : <=))"
+expression: "(insta_match_test!(+ parse (FJointPunct<'<'>, FAlonePunct<'='>) : <=),\n    insta_match_test!(* peek (FJointPunct<'<'>, FAlonePunct<'='>) : <=))"
 ---
 (
     Ok(
