@@ -1,8 +1,10 @@
+mod interlace;
 mod option;
 mod sum;
 mod tuple;
 mod vec;
 
+pub use interlace::*;
 pub use option::*;
 pub use sum::*;
 pub use tuple::*;

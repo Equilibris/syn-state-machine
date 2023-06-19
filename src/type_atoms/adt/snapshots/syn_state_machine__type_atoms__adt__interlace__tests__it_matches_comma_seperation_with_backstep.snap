@@ -1,0 +1,39 @@
+---
+source: src/type_atoms/adt/interlace.rs
+expression: "(insta_match_test!(+ parse Interlace<(Ident, Option<Ident>), FPunct<','>> :\n        hello, world, hi, there),\n    insta_match_test!(* peek Interlace<(Ident, Option<Ident>), FPunct<','>> :\n        hello, world, hi, there))"
+---
+(
+    Ok(
+        Interlace {
+            values: [
+                (
+                    Ident(
+                        hello,
+                    ),
+                    None,
+                ),
+                (
+                    Ident(
+                        world,
+                    ),
+                    None,
+                ),
+                (
+                    Ident(
+                        hi,
+                    ),
+                    None,
+                ),
+                (
+                    Ident(
+                        there,
+                    ),
+                    None,
+                ),
+            ],
+        },
+    ),
+    Some(
+        7,
+    ),
+)

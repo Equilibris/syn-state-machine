@@ -1,0 +1,21 @@
+---
+source: src/type_atoms/adt/interlace.rs
+expression: "(insta_match_test!(+ parse InterlaceTrail<Ident, FPunct<','>> : hi, hello,),\n    insta_match_test!(* peek InterlaceTrail<Ident, FPunct<','>> : hi, hello,))"
+---
+(
+    Ok(
+        Interlace {
+            values: [
+                Ident(
+                    hi,
+                ),
+                Ident(
+                    hello,
+                ),
+            ],
+        },
+    ),
+    Some(
+        4,
+    ),
+)
