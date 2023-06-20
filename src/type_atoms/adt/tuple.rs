@@ -3,36 +3,70 @@ use crate::internals::*;
 macro_rules! tuple_impl {
     () => {
         impl Parse for () {
-            fn parse<'a>(input: &ParseBuffer<'a>) -> Result<(Self, ParseBuffer<'a>)> {
-                Ok(((), input.clone()))
+            fn parse<'a>(_: &mut ParseBuffer<'a>) -> Result<Self> {
+                Ok(())
             }
         }
         impl Peek for () {
-            fn peek<'a>(_: &ParseBuffer<'a>) -> Option<usize> {
+            fn peek<'a>(_: Cursor<'a>) -> Option<usize> {
                 Some(0)
             }
         }
+
+        impl FixedPeek for () {
+            const SKIP: usize = 0;
+        }
+        // Do not implement
+        // impl PeekError for () {
+        //     fn error<'a>(input: &ParseBuffer<'a>) -> Error {
+        //         panic!("Atemted to fail infallable peek")
+        //         // Error::new(input.span(), "Should never be reached")
+        //     }
+        // }
     };
     ($last_gen:ident $($gen:ident)*) => {
         impl<$last_gen: Parse, $($gen: Parse,)*> Parse for ($last_gen, $($gen,)* ) {
-            fn parse<'a>(input: &ParseBuffer<'a>) -> Result<(Self, ParseBuffer<'a>)> {
-                let mut pb = input.clone();
-                Ok(((pb.parse()?, $(pb.parse::<$gen>()?,)*), pb))
+            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+                let mut temp = input.clone();
+
+                let vs = (temp.parse()?, $(temp.parse::<$gen>()?,)*);
+
+                *input = temp;
+
+                Ok(vs)
             }
         }
 
         impl<$last_gen:Peek, $($gen: Peek),*> Peek for ($last_gen, $($gen,)*) {
             #[allow(unused_mut)]
-            fn peek<'a>(input: &ParseBuffer<'a>) -> Option<usize> {
-                let cur = input.cursor();
-
-                let mut v = $last_gen::peek(&ParseBuffer::from(cur))?;
+            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+                let mut v = $last_gen::peek(input)?;
 
                 $({
-                    v += $gen::peek(&ParseBuffer::from(cur.skip(v)))?;
+                    v += $gen::peek(input.skip(v))?;
                 })*
 
                 Some(v)
+            }
+        }
+
+        impl<$last_gen: FixedPeek, $($gen: FixedPeek),*> FixedPeek for ($last_gen, $($gen,)*) {
+            const SKIP: usize = $last_gen::SKIP $(+ $gen::SKIP)*;
+        }
+        // Not perfect. In reality the last generic does not have to impl FixedPeek but this is
+        // close enougth
+        impl<$last_gen: PeekError + FixedPeek, $($gen: PeekError + FixedPeek),*> PeekError for ($last_gen, $($gen,)*) {
+            #[allow(unused_mut, unused)]
+            fn error<'a>(input: Cursor<'a>) -> Error {
+                let mut e = $last_gen::error(input);
+                let mut skip = $last_gen::SKIP;
+
+                $({
+                    e.combine($gen::error(input.skip(skip)));
+                    skip += $gen::SKIP;
+                })*
+
+                e
             }
         }
 

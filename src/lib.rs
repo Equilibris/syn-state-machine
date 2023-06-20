@@ -1,11 +1,13 @@
 #![feature(lint_reasons)]
 #![expect(incomplete_features)]
-#![feature(adt_const_params)]
+#![feature(adt_const_params, fn_traits)]
 
 mod internals;
+mod rust;
 mod type_atoms;
 
 pub use internals::*;
+pub use rust::*;
 pub use type_atoms::*;
 
 use proc_macro2::TokenStream;
@@ -24,9 +26,8 @@ pub fn parse<T: Parse>(ts: TokenStream) -> Result<T> {
 #[cfg(test)]
 pub fn test_peek<T: Peek>(ts: TokenStream) -> Option<usize> {
     let buf = TokenBuffer::from(ts);
-    let pb = ParseBuffer::from(buf.begin());
 
-    T::peek(&pb)
+    T::peek(buf.begin())
 }
 
 #[cfg(test)]

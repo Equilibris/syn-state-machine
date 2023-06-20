@@ -58,39 +58,59 @@ macro_rules! sum_impl {
         }
 
         impl<$gen: Parse, $($gens: Parse,)*> Parse for $ty<$gen, $($gens,)*> {
-            fn parse<'a>(input: &ParseBuffer<'a>) -> Result<(Self, ParseBuffer<'a>)> {
-                let mut buf = input.clone();
+            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+                let mut temp = input.clone();
 
-                let mut e = match buf.parse() {
-                    Ok(a) => return Ok((Self::$gen(a), buf)),
+                let mut e = match temp.parse() {
+                    Ok(a) => {
+                        *input = temp;
+                        return Ok(Self::$gen(a))
+                    },
                     Err(e0) => e0,
                 };
 
-                $(
-                    match buf.parse() {
-                        Ok(a) => return Ok((Self::$gens(a), buf)),
+                $({
+                    let mut temp = input.clone();
+
+                    match temp.parse() {
+                        Ok(a) => {
+                            *input = temp;
+                            return Ok(Self::$gens(a))
+                        },
                         Err(e0) => e.combine(e0),
                     };
-                )*
+                })*
 
                 Err(e)
             }
         }
         impl<$gen: Peek, $($gens: Peek,)*> Peek for $ty<$gen, $($gens,)*> {
-            fn peek<'a>(input: &ParseBuffer<'a>) -> Option<usize> {
-                let buf = input.clone();
-
-                if let Some(v) = $gen::peek(&buf) {
+            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+                if let Some(v) = $gen::peek(input) {
                     return Some(v);
                 }
                 $(
-                    if let Some(v) = $gens::peek(&buf) {
+                    if let Some(v) = $gens::peek(input) {
                         return Some(v);
                     }
                 )*
 
                 None
             }
+        }
+        impl<$gen: PeekError, $($gens: PeekError,)*> PeekError for $ty<$gen, $($gens,)*> {
+            fn error<'a>(input: Cursor<'a>) -> Error {
+                let mut e = $gen::error(input);
+
+                $(e.combine($gens::error(input));)*
+
+                e
+            }
+        }
+        /// Technically incorrect, One has to restrain all of the other generic values to also be
+        /// equal to $gen::SKIP.
+        impl<$gen: FixedPeek, $($gens,)*> FixedPeek for $ty<$gen, $($gens,)*> {
+            const SKIP: usize = $gen::SKIP;
         }
 
         sum_impl!(-rl1 $($tys)* : [] : $gen $prod $($gens $prods)*);

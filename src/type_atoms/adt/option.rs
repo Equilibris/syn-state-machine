@@ -1,20 +1,20 @@
 use crate::internals::*;
 
 impl<T: Parse> Parse for Option<T> {
-    fn parse<'a>(input: &ParseBuffer<'a>) -> Result<(Self, ParseBuffer<'a>)> {
-        let mut input = input.clone();
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        let mut temp = input.clone();
 
-        Ok((
-            match input.parse() {
-                Ok(a) => Some(a),
-                Err(_) => None,
-            },
-            input,
-        ))
+        Ok(match temp.parse() {
+            Ok(a) => {
+                *input = temp;
+                Some(a)
+            }
+            Err(_) => None,
+        })
     }
 }
 impl<T: Peek> Peek for Option<T> {
-    fn peek<'a>(input: &ParseBuffer<'a>) -> Option<usize> {
+    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
         Some(T::peek(input).unwrap_or_default())
     }
 }

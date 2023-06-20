@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{Parse, Peek};
+use crate::{Cursor, Parse, ParseBuffer, Peek, Result};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
@@ -25,16 +25,16 @@ impl<A, B> Interlace<A, B> {
 }
 
 impl<A: Parse, B: Peek> Parse for Interlace<A, B> {
-    fn parse<'a>(input: &crate::ParseBuffer<'a>) -> crate::Result<(Self, crate::ParseBuffer<'a>)> {
-        let mut input = input.clone();
-
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        let mut temp = input.clone();
         let mut values = Vec::new();
 
-        match input.parse() {
+        match temp.parse() {
             Ok(value) => {
+                *input = temp;
                 values.push(value);
             }
-            _ => return Ok((Self::new(values), input)),
+            _ => return Ok(Self::new(values)),
         }
 
         while !input.cursor().eof() {
@@ -43,34 +43,32 @@ impl<A: Parse, B: Peek> Parse for Interlace<A, B> {
             if tmp.peek::<B>() {
                 match tmp.parse() {
                     Ok(value) => {
-                        input = tmp;
+                        *input = tmp;
                         values.push(value);
                     }
-                    _ => return Ok((Self::new(values), input)),
+                    _ => return Ok(Self::new(values)),
                 }
             } else {
-                return Ok((Self::new(values), input));
+                return Ok(Self::new(values));
             }
         }
 
-        Ok((Self::new(values), input))
+        Ok(Self::new(values))
     }
 }
 
 impl<A: Peek, B: Peek> Peek for Interlace<A, B> {
-    fn peek<'a>(input: &crate::ParseBuffer<'a>) -> Option<usize> {
-        let cursor = input.cursor();
-
+    fn peek<'a>(cursor: Cursor<'a>) -> Option<usize> {
         let mut offset = 0;
 
-        match A::peek(input) {
+        match A::peek(cursor) {
             Some(value) => offset += value,
             _ => return Some(offset),
         }
 
         while !cursor.skip(offset).eof() {
-            if let Some(a) = B::peek(&cursor.skip(offset).into()) {
-                if let Some(b) = A::peek(&cursor.skip(offset + a).into()) {
+            if let Some(a) = B::peek(cursor.skip(offset)) {
+                if let Some(b) = A::peek(cursor.skip(offset + a)) {
                     offset += a + b
                 } else {
                     return Some(offset);
@@ -107,16 +105,17 @@ impl<A, B> InterlaceTrail<A, B> {
 }
 
 impl<A: Parse, B: Peek> Parse for InterlaceTrail<A, B> {
-    fn parse<'a>(input: &crate::ParseBuffer<'a>) -> crate::Result<(Self, crate::ParseBuffer<'a>)> {
-        let mut input = input.clone();
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        let mut temp = input.clone();
 
         let mut values = Vec::new();
 
-        match input.parse() {
+        match temp.parse() {
             Ok(value) => {
+                *input = temp;
                 values.push(value);
             }
-            _ => return Ok((Self::new(values), input)),
+            _ => return Ok(Self::new(values)),
         }
 
         while !input.cursor().eof() {
@@ -125,21 +124,19 @@ impl<A: Parse, B: Peek> Parse for InterlaceTrail<A, B> {
                     Ok(value) => {
                         values.push(value);
                     }
-                    _ => return Ok((Self::new(values), input)),
+                    _ => return Ok(Self::new(values)),
                 }
             } else {
-                return Ok((Self::new(values), input));
+                return Ok(Self::new(values));
             }
         }
 
-        Ok((Self::new(values), input))
+        Ok(Self::new(values))
     }
 }
 
 impl<A: Peek, B: Peek> Peek for InterlaceTrail<A, B> {
-    fn peek<'a>(input: &crate::ParseBuffer<'a>) -> Option<usize> {
-        let cursor = input.cursor();
-
+    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
         let mut offset = 0;
 
         match A::peek(input) {
@@ -147,13 +144,13 @@ impl<A: Peek, B: Peek> Peek for InterlaceTrail<A, B> {
             _ => return Some(offset),
         }
 
-        while !cursor.skip(offset).eof() {
-            if let Some(a) = B::peek(&cursor.skip(offset).into()) {
+        while !input.skip(offset).eof() {
+            if let Some(a) = B::peek(input.skip(offset)) {
                 offset += a;
             } else {
                 return Some(offset);
             }
-            if let Some(b) = A::peek(&cursor.skip(offset).into()) {
+            if let Some(b) = A::peek(input.skip(offset)) {
                 offset += b
             } else {
                 return Some(offset);
