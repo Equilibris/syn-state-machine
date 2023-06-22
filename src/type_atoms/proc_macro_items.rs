@@ -177,6 +177,7 @@ impl<const VAL: char> PeekError for FAlonePunct<VAL> {
 
 macro_rules! grouped {
     ($ty:ident $del:ident $emsg:literal) => {
+        #[derive(Debug, Clone)]
         pub struct $ty<T>(pub T, pub DelimSpan);
         impl<T: Parse> Parse for $ty<T> {
             fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {

@@ -3,10 +3,12 @@
 #![feature(adt_const_params, fn_traits)]
 
 mod internals;
+mod materialize;
 mod rust;
 mod type_atoms;
 
 pub use internals::*;
+pub use materialize::*;
 pub use rust::*;
 pub use type_atoms::*;
 

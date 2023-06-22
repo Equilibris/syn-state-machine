@@ -1,0 +1,54 @@
+---
+source: src/rust/names/paths.rs
+expression: "insta_match_test!(+ parse QualifiedPathInType<Ident> : < hello as Default > ::\n    Default)"
+---
+Ok(
+    QualifiedPathInType(
+        QualifiedPathType {
+            ty: Ident(
+                hello,
+            ),
+            as_ty: Some(
+                HigherOrderPath {
+                    leading: false,
+                    segments: MinLength(
+                        Interlace {
+                            values: [
+                                Bare(
+                                    Id(
+                                        Identifier(
+                                            Ident(
+                                                Default,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ],
+                        },
+                    ),
+                },
+            ),
+        },
+        [
+            (
+                (
+                    FJointPunct(
+                        Span,
+                    ),
+                    FPunct(
+                        Span,
+                    ),
+                ),
+                Bare(
+                    Id(
+                        Identifier(
+                            Ident(
+                                Default,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ],
+    ),
+)

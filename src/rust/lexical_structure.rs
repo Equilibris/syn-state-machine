@@ -1,4 +1,7 @@
-use crate::{Cursor, Error, FIdent, FJointPunct, FPunct, Ident, Parse, ParseBuffer, Peek, Result};
+use crate::{
+    Cursor, Error, FIdent, FJointPunct, FPunct, FixedPeek, Ident, Parse, ParseBuffer, Peek,
+    PeekError, Result,
+};
 
 pub type KwAs = FIdent<"as">;
 pub type KwBreak = FIdent<"break">;
@@ -174,3 +177,51 @@ pub type Pound = FPunct<'#'>;
 pub type Dollar = FPunct<'$'>;
 pub type Question = FPunct<'?'>;
 pub type Tilde = FPunct<'~'>;
+
+#[derive(Debug)]
+pub struct LifetimeToken(pub Ident);
+
+impl Parse for LifetimeToken {
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        input.errored_peek::<FJointPunct<'\''>>()?;
+
+        Ok(Self(input.parse()?))
+    }
+}
+
+impl Peek for LifetimeToken {
+    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+        <(FJointPunct<'\''>, Ident)>::peek(input)
+    }
+}
+impl PeekError for LifetimeToken {
+    fn error<'a>(input: Cursor<'a>) -> Error {
+        <(FJointPunct<'\''>, Ident)>::error(input)
+    }
+}
+impl FixedPeek for LifetimeToken {
+    const SKIP: usize = 2;
+}
+
+pub struct LifetimeOrLabel(pub Identifier);
+impl Parse for LifetimeOrLabel {
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        input.errored_peek::<FJointPunct<'\''>>()?;
+
+        Ok(Self(input.parse()?))
+    }
+}
+
+impl Peek for LifetimeOrLabel {
+    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+        <(FJointPunct<'\''>, Ident)>::peek(input)
+    }
+}
+impl PeekError for LifetimeOrLabel {
+    fn error<'a>(input: Cursor<'a>) -> Error {
+        <(FJointPunct<'\''>, Ident)>::error(input)
+    }
+}
+impl FixedPeek for LifetimeOrLabel {
+    const SKIP: usize = 2;
+}

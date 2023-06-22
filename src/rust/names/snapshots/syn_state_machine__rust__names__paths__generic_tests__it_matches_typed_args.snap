@@ -1,0 +1,17 @@
+---
+source: src/rust/names/paths.rs
+expression: "insta_match_test!(+ parse GenericArgs<Ident> : < T >)"
+---
+Ok(
+    GenericArgs(
+        Interlace {
+            values: [
+                Ty(
+                    Ident(
+                        T,
+                    ),
+                ),
+            ],
+        },
+    ),
+)

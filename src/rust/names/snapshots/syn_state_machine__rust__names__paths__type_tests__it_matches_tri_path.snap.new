@@ -1,0 +1,43 @@
+---
+source: src/rust/names/paths.rs
+assertion_line: 223
+expression: "insta_match_test!(+ parse TypePath<Ident> : hello :: world :: hi)"
+---
+Ok(
+    HigherOrderPath {
+        leading: false,
+        segments: MinLength(
+            Interlace {
+                values: [
+                    Bare(
+                        Id(
+                            Identifier(
+                                Ident(
+                                    hello,
+                                ),
+                            ),
+                        ),
+                    ),
+                    Bare(
+                        Id(
+                            Identifier(
+                                Ident(
+                                    world,
+                                ),
+                            ),
+                        ),
+                    ),
+                    Bare(
+                        Id(
+                            Identifier(
+                                Ident(
+                                    hi,
+                                ),
+                            ),
+                        ),
+                    ),
+                ],
+            },
+        ),
+    },
+)
