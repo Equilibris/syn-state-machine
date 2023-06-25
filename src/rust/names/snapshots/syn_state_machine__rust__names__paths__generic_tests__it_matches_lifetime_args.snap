@@ -1,0 +1,19 @@
+---
+source: src/rust/names/paths.rs
+expression: "insta_match_test!(+ parse GenericArgs<Infallible> : < 'a >)"
+---
+Ok(
+    GenericArgs(
+        Interlace {
+            values: [
+                Lt(
+                    LifetimeToken(
+                        Ident(
+                            a,
+                        ),
+                    ),
+                ),
+            ],
+        },
+    ),
+)

@@ -1,6 +1,5 @@
 ---
 source: src/rust/names/paths.rs
-assertion_line: 253
 expression: "insta_match_test!(+ parse GenericArgs<TypePath<Infallible>> : < hello :: world\n    >)"
 ---
 Ok(

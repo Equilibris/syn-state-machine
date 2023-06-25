@@ -221,6 +221,14 @@ grouped!(Brace   Brace       "{ ... }");
 grouped!(Bracket Bracket     "[ ... ]");
 
 #[cfg(test)]
+mod tests_groups {
+    use crate::*;
+
+    insta_match_test!(it_matches_simple_grouped, Paren<()> : ());
+    insta_match_test!(it_matches_contentful_grouped, Paren<Ident> : (hello));
+}
+
+#[cfg(test)]
 mod tests_id {
     use crate::*;
 

@@ -1,7 +1,6 @@
 ---
 source: src/rust/names/paths.rs
-assertion_line: 224
-expression: "insta_match_test!(+ parse TypePath<Ident> : hello :: world)"
+expression: "insta_match_test!(+ parse TypePath<Infallible> : Fn())"
 ---
 Ok(
     HigherOrderPath {
@@ -9,23 +8,23 @@ Ok(
         segments: MinLength(
             Interlace {
                 values: [
-                    Bare(
+                    Fn(
                         Id(
                             Identifier(
                                 Ident(
-                                    hello,
+                                    Fn,
                                 ),
                             ),
                         ),
-                    ),
-                    Bare(
-                        Id(
-                            Identifier(
-                                Ident(
-                                    world,
-                                ),
+                        TypePathFn {
+                            args: Paren(
+                                Interlace {
+                                    values: [],
+                                },
+                                Span,
                             ),
-                        ),
+                            returns: None,
+                        },
                     ),
                 ],
             },

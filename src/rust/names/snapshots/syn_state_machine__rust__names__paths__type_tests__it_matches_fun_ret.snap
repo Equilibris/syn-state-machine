@@ -1,6 +1,5 @@
 ---
 source: src/rust/names/paths.rs
-assertion_line: 228
 expression: "insta_match_test!(+ parse TypePath<Paren<()>> : Fn() -> ())"
 ---
 Ok(
@@ -9,7 +8,7 @@ Ok(
         segments: MinLength(
             Interlace {
                 values: [
-                    Bare(
+                    Fn(
                         Id(
                             Identifier(
                                 Ident(
@@ -17,6 +16,20 @@ Ok(
                                 ),
                             ),
                         ),
+                        TypePathFn {
+                            args: Paren(
+                                Interlace {
+                                    values: [],
+                                },
+                                Span,
+                            ),
+                            returns: Some(
+                                Paren(
+                                    (),
+                                    Span,
+                                ),
+                            ),
+                        },
                     ),
                 ],
             },

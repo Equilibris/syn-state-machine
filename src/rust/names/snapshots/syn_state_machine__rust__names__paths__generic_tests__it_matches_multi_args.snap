@@ -1,0 +1,68 @@
+---
+source: src/rust/names/paths.rs
+expression: "insta_match_test!(+ parse GenericArgs<TypePath<Infallible>> : < 'a, T, hello\n    :: world >)"
+---
+Ok(
+    GenericArgs(
+        Interlace {
+            values: [
+                Lt(
+                    LifetimeToken(
+                        Ident(
+                            a,
+                        ),
+                    ),
+                ),
+                Ty(
+                    HigherOrderPath {
+                        leading: false,
+                        segments: MinLength(
+                            Interlace {
+                                values: [
+                                    Bare(
+                                        Id(
+                                            Identifier(
+                                                Ident(
+                                                    T,
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ],
+                            },
+                        ),
+                    },
+                ),
+                Ty(
+                    HigherOrderPath {
+                        leading: false,
+                        segments: MinLength(
+                            Interlace {
+                                values: [
+                                    Bare(
+                                        Id(
+                                            Identifier(
+                                                Ident(
+                                                    hello,
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    Bare(
+                                        Id(
+                                            Identifier(
+                                                Ident(
+                                                    world,
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ],
+                            },
+                        ),
+                    },
+                ),
+            ],
+        },
+    ),
+)

@@ -227,7 +227,7 @@ impl<'a> Cursor<'a> {
     pub fn punct(mut self) -> Option<(&'a Punct, Cursor<'a>)> {
         self.ignore_none();
         match self.entry() {
-            Entry::Punct(punct) if punct.as_char() != '\'' => Some((punct, self.next())),
+            Entry::Punct(punct) => Some((punct, self.next())),
             _ => None,
         }
     }

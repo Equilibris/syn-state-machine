@@ -33,23 +33,20 @@ mod extern_crate {
 
     use crate::*;
 
-    pub struct ExternCrate(pub CrateRef, pub Option<AsClause>);
-    impl Parse for ExternCrate {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<KwExtern>()?;
-            input.errored_peek::<KwCrate>()?;
-
-            Ok(Self(input.parse()?, input.parse()?))
+    materialize! {
+        #[derive(Debug)]
+        pub struct ExternCrate {
+            <- KwExtern;
+            <- KwCrate;
+            crate_ref <- CrateRef;
+            as_clause <- AsClause;
         }
     }
-
-    #[derive(Debug)]
-    pub struct AsClause(pub IdentifierOrUnder);
-    impl Parse for AsClause {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<KwAs>()?;
-
-            Ok(Self(input.parse()?))
+    materialize! {
+        #[derive(Debug)]
+        pub struct AsClause {
+            <- KwAs;
+            id <- IdentifierOrUnder;
         }
     }
 
@@ -57,8 +54,6 @@ mod extern_crate {
     pub struct CrateRef(pub Ident);
     impl Parse for CrateRef {
         fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<KwAs>()?;
-
             Ok(Self(
                 input
                     .ident_matching(|id| {
@@ -76,20 +71,16 @@ mod extern_crate {
 mod generic_parameters {
     use crate::{rust::attributes::OuterAttribute, *};
 
-    pub struct GenericParams<Attr, Ty>(pub InterlaceTrail<GenericParam<Attr, Ty>, Comma>);
-
-    impl<Attr: Parse, Ty: Parse> Parse for GenericParams<Attr, Ty> {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<Lt>()?;
-
-            let v = input.parse()?;
-
-            input.errored_peek::<Gt>()?;
-
-            Ok(Self(v))
+    materialize! {
+        #[derive(Debug)]
+        pub struct GenericParams<Attr, Ty>{
+            <- Lt;
+            params <- InterlaceTrail<GenericParam<Attr, Ty>, Comma>;
+            <- Gt;
         }
     }
 
+    #[derive(Debug)]
     pub enum GenericParam<Attr, Ty> {
         Lt(Vec<OuterAttribute<Attr>>, LifetimeParam),
         Ty(Vec<OuterAttribute<Attr>>, TypeParam<Attr, Ty>),
@@ -108,39 +99,23 @@ mod generic_parameters {
         }
     }
 
-    pub struct LifetimeParam {
-        pub lt: LifetimeOrLabel,
-        pub bound: Option<LifetimeBounds>,
-    }
-
-    impl Parse for LifetimeParam {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            Ok(Self {
-                lt: input.parse()?,
-                bound: input.parse::<Option<(Colon, _)>>()?.map(|v| v.1),
-            })
+    materialize! {
+        #[derive(Debug)]
+        pub struct LifetimeParam {
+            lt <- LifetimeOrLabel;
+            bound <- Option<LifetimeBounds> : Option<(Colon, _)> {bound.map(|v|v.1)};
         }
     }
 
-    pub struct TypeParam<Attr, Ty> {
-        pub id: Identifier,
-        pub bound: Option<TypeParamBounds<Attr, Ty>>,
-        pub ty: Option<Ty>,
-    }
-    impl<Attr: Parse, Ty: Parse> Parse for TypeParam<Attr, Ty> {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            let id = input.parse()?;
-
-            let bound = input
-                .parse::<Option<(Colon, Option<_>)>>()?
-                .and_then(|v| v.1);
-
-            let ty = input.parse::<Option<(Eq, _)>>()?.map(|v| v.1);
-
-            Ok(Self { id, bound, ty })
+    materialize! {
+        #[derive(Debug)]
+        pub struct TypeParam<Attr, Ty> {
+            id <- Identifier;
+            bound <- Option<TypeParamBounds<Attr, Ty>>: Option<(Colon, Option<_>)> { bound.and_then(|v|v.1) };
+            ty <- Option<Ty> : Option<(Eq, _)> { ty.map(|v|v.1) };
         }
     }
-
+    #[derive(Debug)]
     pub struct ConstParam<Ty> {
         pub id: Identifier,
         pub ty: Ty,

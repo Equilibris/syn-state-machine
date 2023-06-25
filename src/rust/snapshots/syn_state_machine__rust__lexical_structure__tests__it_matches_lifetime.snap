@@ -1,0 +1,16 @@
+---
+source: src/rust/lexical_structure.rs
+expression: "(insta_match_test!(+ parse LifetimeToken : 'hi),\n    insta_match_test!(* peek LifetimeToken : 'hi))"
+---
+(
+    Ok(
+        LifetimeToken(
+            Ident(
+                hi,
+            ),
+        ),
+    ),
+    Some(
+        2,
+    ),
+)

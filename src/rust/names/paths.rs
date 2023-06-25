@@ -1,16 +1,10 @@
 use crate::*;
 
-#[derive(Debug)]
-pub struct HigherOrderPath<Segment> {
-    pub leading: bool,
-    pub segments: MinLength<Interlace<Segment, PathSep>>,
-}
-impl<Segment: Parse> Parse for HigherOrderPath<Segment> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(Self {
-            leading: input.peek::<PathSep>(),
-            segments: input.parse()?,
-        })
+materialize! {
+    #[derive(Debug)]
+    pub struct HigherOrderPath<Segment> {
+        leading peek <- PathSep;
+        segments <- MinLength<Interlace<Segment, PathSep>>;
     }
 }
 
@@ -44,20 +38,11 @@ impl Parse for SimplePathSegment {
 
 pub type PathInExpression<Ty> = HigherOrderPath<PathExprSegment<Ty>>;
 
-#[derive(Debug)]
-pub struct PathExprSegment<Ty> {
-    pub id: PathIdentSegment,
-    pub generic: Option<GenericArgs<Ty>>,
-}
-
-impl<Ty: Parse> Parse for PathExprSegment<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(Self {
-            id: input.parse()?,
-            generic: input
-                .parse::<Option<(PathSep, GenericArgs<Ty>)>>()?
-                .map(|v| v.1),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub struct PathExprSegment<Ty> {
+        id <- PathIdentSegment;
+        generic <- Option<GenericArgs<Ty>> : Option<(PathSep, GenericArgs<Ty>)> {generic.map(|v|v.1)};
     }
 }
 
@@ -91,7 +76,9 @@ impl<Ty: Parse> Parse for GenericArgs<Ty> {
     fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
         input.errored_peek::<Lt>()?;
 
-        let v = input.parse()?;
+        let v: InterlaceTrail<GenericArg<Ty>, FPunct<','>> = input.parse()?;
+
+        println!("{:#?}", v.values.len());
 
         input.errored_peek::<Gt>()?;
 
@@ -191,25 +178,21 @@ impl<Ty: Parse> Parse for TypePathSegment<Ty> {
     fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let i = input.parse()?;
 
-        Ok(match input.parse::<Option<(PathSep, Sum2<_, _>)>>()? {
-            Some((_, Sum2::V0(a))) => Self::Fn(i, a),
-            Some((_, Sum2::V1(a))) => Self::Generic(i, a),
-            None => Self::Bare(i),
-        })
+        Ok(
+            match input.parse::<Option<(Option<PathSep>, Sum2<_, _>)>>()? {
+                Some((_, Sum2::V0(a))) => Self::Fn(i, a),
+                Some((_, Sum2::V1(a))) => Self::Generic(i, a),
+                None => Self::Bare(i),
+            },
+        )
     }
 }
 
-#[derive(Debug)]
-pub struct TypePathFn<Ty> {
-    pub args: Paren<TypePathFnInputs<Ty>>,
-    pub returns: Option<Ty>,
-}
-impl<Ty: Parse> Parse for TypePathFn<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(Self {
-            args: input.parse()?,
-            returns: input.parse::<Option<(RArrow, _)>>()?.map(|v| v.1),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub struct TypePathFn<Ty> {
+        args <- Paren<TypePathFnInputs<Ty>>;
+        returns <- Option<Ty> : Option<(RArrow, _)> { returns.map(|v|v.1) };
     }
 }
 

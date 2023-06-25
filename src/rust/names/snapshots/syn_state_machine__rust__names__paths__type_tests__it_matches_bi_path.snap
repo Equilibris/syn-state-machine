@@ -1,6 +1,6 @@
 ---
 source: src/rust/names/paths.rs
-expression: "insta_match_test!(+ parse TypePath<Ident> : hello < Hi >)"
+expression: "insta_match_test!(+ parse TypePath<Ident> : hello :: world)"
 ---
 Ok(
     HigherOrderPath {
@@ -8,7 +8,7 @@ Ok(
         segments: MinLength(
             Interlace {
                 values: [
-                    Generic(
+                    Bare(
                         Id(
                             Identifier(
                                 Ident(
@@ -16,16 +16,14 @@ Ok(
                                 ),
                             ),
                         ),
-                        GenericArgs(
-                            Interlace {
-                                values: [
-                                    Ty(
-                                        Ident(
-                                            Hi,
-                                        ),
-                                    ),
-                                ],
-                            },
+                    ),
+                    Bare(
+                        Id(
+                            Identifier(
+                                Ident(
+                                    world,
+                                ),
+                            ),
                         ),
                     ),
                 ],

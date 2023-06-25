@@ -1,6 +1,8 @@
+use proc_macro2::TokenTree;
+
 use crate::{
-    Cursor, Error, FIdent, FJointPunct, FPunct, FixedPeek, Ident, Parse, ParseBuffer, Peek,
-    PeekError, Result,
+    materialize, Cursor, Error, FIdent, FJointPunct, FPunct, FixedPeek, Ident, Parse, ParseBuffer,
+    Peek, PeekError, Result,
 };
 
 pub type KwAs = FIdent<"as">;
@@ -180,10 +182,9 @@ pub type Tilde = FPunct<'~'>;
 
 #[derive(Debug)]
 pub struct LifetimeToken(pub Ident);
-
 impl Parse for LifetimeToken {
     fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        input.errored_peek::<FJointPunct<'\''>>()?;
+        input.errored_peek::<FPunct<'\''>>()?;
 
         Ok(Self(input.parse()?))
     }
@@ -191,22 +192,23 @@ impl Parse for LifetimeToken {
 
 impl Peek for LifetimeToken {
     fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
-        <(FJointPunct<'\''>, Ident)>::peek(input)
+        <(FPunct<'\''>, Ident)>::peek(input)
     }
 }
 impl PeekError for LifetimeToken {
     fn error<'a>(input: Cursor<'a>) -> Error {
-        <(FJointPunct<'\''>, Ident)>::error(input)
+        <(FPunct<'\''>, Ident)>::error(input)
     }
 }
 impl FixedPeek for LifetimeToken {
     const SKIP: usize = 2;
 }
 
+#[derive(Debug)]
 pub struct LifetimeOrLabel(pub Identifier);
 impl Parse for LifetimeOrLabel {
     fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        input.errored_peek::<FJointPunct<'\''>>()?;
+        input.errored_peek::<FPunct<'\''>>()?;
 
         Ok(Self(input.parse()?))
     }
@@ -214,14 +216,20 @@ impl Parse for LifetimeOrLabel {
 
 impl Peek for LifetimeOrLabel {
     fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
-        <(FJointPunct<'\''>, Ident)>::peek(input)
+        <(FPunct<'\''>, Ident)>::peek(input)
     }
 }
 impl PeekError for LifetimeOrLabel {
     fn error<'a>(input: Cursor<'a>) -> Error {
-        <(FJointPunct<'\''>, Ident)>::error(input)
+        <(FPunct<'\''>, Ident)>::error(input)
     }
 }
 impl FixedPeek for LifetimeOrLabel {
     const SKIP: usize = 2;
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+    insta_match_test!(it_matches_lifetime, LifetimeToken : 'hi);
 }
