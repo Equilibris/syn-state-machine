@@ -115,41 +115,28 @@ mod generic_parameters {
             ty <- Option<Ty> : Option<(Eq, _)> { ty.map(|v|v.1) };
         }
     }
-    #[derive(Debug)]
-    pub struct ConstParam<Ty> {
-        pub id: Identifier,
-        pub ty: Ty,
-        pub eq: Option<Sum3<Infallible, Identifier, Literal>>,
-    }
-
-    impl<Ty: Parse> Parse for ConstParam<Ty> {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<KwConst>()?;
-
-            let id = input.parse()?;
-
-            input.errored_peek::<Colon>()?;
-
-            let ty = input.parse()?;
-
-            let eq = input.parse::<Option<(Eq, _)>>()?.map(|v| v.1);
-
-            Ok(Self { id, ty, eq })
+    materialize! {
+        #[derive(Debug)]
+        pub struct ConstParam<Ty> {
+            <- KwConst;
+            id <- Identifier;
+            <- Colon;
+            ty <- Ty;
+            eq <- Option<Sum3<Infallible, Identifier, Literal>> : Option<(Eq, _)> {eq.map(|v|v.1)};
         }
     }
 
     // Where Clause
 
-    pub struct WhereClause<Attr, Ty>(pub Interlace<WhereClauseItem<Attr, Ty>, Comma>);
-
-    impl<Attr: Parse, Ty: Parse> Parse for WhereClause<Attr, Ty> {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            input.errored_peek::<KwWhere>()?;
-
-            Ok(Self(input.parse()?))
+    materialize! {
+        #[derive(Debug)]
+        pub struct WhereClause<Attr, Ty>{
+            <- KwWhere;
+            content <- Interlace<WhereClauseItem<Attr, Ty>, Comma>;
         }
     }
 
+    #[derive(Debug)]
     pub enum WhereClauseItem<Attr, Ty> {
         Lt(LifetimeWhereClauseItem),
         Ty(TypeBoundWhereClauseItem<Attr, Ty>),
@@ -164,39 +151,21 @@ mod generic_parameters {
         }
     }
 
-    pub struct LifetimeWhereClauseItem {
-        pub lt: Lifetime,
-        pub bound: LifetimeBounds,
-    }
-
-    impl Parse for LifetimeWhereClauseItem {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            let lt = input.parse()?;
-
-            input.errored_peek::<Colon>()?;
-
-            let bound = input.parse()?;
-
-            Ok(Self { lt, bound })
+    materialize! {
+        #[derive(Debug)]
+        pub struct LifetimeWhereClauseItem {
+            lt <- Lifetime;
+            <- Colon;
+            bound <- LifetimeBounds;
         }
     }
 
-    pub struct TypeBoundWhereClauseItem<Attr, Ty> {
-        pub for_lts: Option<ForLifetimes<Attr, Ty>>,
-        pub ty: Ty,
-        pub bound: Option<TypeParamBounds<Attr, Ty>>,
-    }
-
-    impl<Attr: Parse, Ty: Parse> Parse for TypeBoundWhereClauseItem<Attr, Ty> {
-        fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-            let for_lts = input.parse()?;
-            let ty = input.parse()?;
-
-            input.errored_peek::<Colon>()?;
-
-            let bound = input.parse()?;
-
-            Ok(Self { for_lts, ty, bound })
+    materialize! {
+        #[derive(Debug)]
+        pub struct TypeBoundWhereClauseItem<Attr, Ty> {
+            for_lts <- Option<ForLifetimes<Attr, Ty>>;
+            ty <- Ty;
+            bound <- Option<TypeParamBounds<Attr, Ty>>;
         }
     }
 }

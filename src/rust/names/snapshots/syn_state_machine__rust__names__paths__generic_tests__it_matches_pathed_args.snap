@@ -3,8 +3,8 @@ source: src/rust/names/paths.rs
 expression: "insta_match_test!(+ parse GenericArgs<TypePath<Infallible>> : < hello :: world\n    >)"
 ---
 Ok(
-    GenericArgs(
-        Interlace {
+    GenericArgs {
+        args: Interlace {
             values: [
                 Ty(
                     HigherOrderPath {
@@ -37,5 +37,5 @@ Ok(
                 ),
             ],
         },
-    ),
+    },
 )

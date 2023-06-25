@@ -16,8 +16,8 @@ Ok(
                                 ),
                             ),
                         ),
-                        GenericArgs(
-                            Interlace {
+                        GenericArgs {
+                            args: Interlace {
                                 values: [
                                     Ty(
                                         Ident(
@@ -26,7 +26,7 @@ Ok(
                                     ),
                                 ],
                             },
-                        ),
+                        },
                     ),
                 ],
             },

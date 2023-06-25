@@ -3,9 +3,9 @@ source: src/rust/names/paths.rs
 expression: "insta_match_test!(+ parse GenericArgs<Infallible> : < >)"
 ---
 Ok(
-    GenericArgs(
-        Interlace {
+    GenericArgs {
+        args: Interlace {
             values: [],
         },
-    ),
+    },
 )

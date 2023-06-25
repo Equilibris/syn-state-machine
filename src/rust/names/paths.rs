@@ -69,20 +69,12 @@ impl Parse for PathIdentSegment {
     }
 }
 
-#[derive(Debug)]
-pub struct GenericArgs<Ty>(pub InterlaceTrail<GenericArg<Ty>, Comma>);
-
-impl<Ty: Parse> Parse for GenericArgs<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        input.errored_peek::<Lt>()?;
-
-        let v: InterlaceTrail<GenericArg<Ty>, FPunct<','>> = input.parse()?;
-
-        println!("{:#?}", v.values.len());
-
-        input.errored_peek::<Gt>()?;
-
-        Ok(Self(v))
+materialize! {
+    #[derive(Debug)]
+    pub struct GenericArgs<Ty>{
+        <- Lt;
+        args <- InterlaceTrail<GenericArg<Ty>, Comma>;
+        <- Gt;
     }
 }
 
@@ -107,59 +99,41 @@ impl<Ty: Parse> Parse for GenericArg<Ty> {
 
 pub type GenericArgsConst = Infallible;
 
-#[derive(Debug)]
-pub struct GenericArgsBinding<Ty>(pub Identifier, pub Ty);
-impl<Ty: Parse> Parse for GenericArgsBinding<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let i = input.parse()?;
-        input.errored_peek::<Eq>()?;
-
-        Ok(Self(i, input.parse()?))
+materialize! {
+    #[derive(Debug)]
+    pub struct GenericArgsBinding<Ty>{
+        id <- Identifier;
+        <- Eq;
+        ty <- Ty;
     }
 }
 // </path in expressions>
 
 // <Qualified paths>
 
-#[derive(Debug)]
-pub struct QualifiedPathInExpression<Ty>(
-    pub QualifiedPathType<Ty>,
-    Vec<(PathSep, PathExprSegment<Ty>)>,
-);
-
-impl<Ty: Parse> Parse for QualifiedPathInExpression<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(Self(input.parse()?, input.parse()?))
+materialize! {
+    #[derive(Debug)]
+    pub struct QualifiedPathInExpression<Ty>{
+        qualifier <- QualifiedPathType<Ty>;
+        path <- Vec<(PathSep, PathExprSegment<Ty>)>;
     }
 }
 
-#[derive(Debug)]
-pub struct QualifiedPathType<Ty> {
-    pub ty: Ty,
-    pub as_ty: Option<TypePath<Ty>>,
-}
-
-impl<Ty: Parse> Parse for QualifiedPathType<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        input.errored_peek::<Lt>()?;
-
-        let ty = input.parse()?;
-        let as_ty = input.parse::<Option<(KwAs, _)>>()?.map(|v| v.1);
-        input.errored_peek::<Gt>()?;
-
-        Ok(Self { ty, as_ty })
+materialize! {
+    #[derive(Debug)]
+    pub struct QualifiedPathType<Ty> {
+        <- Lt;
+        ty <- Ty;
+        as_ty <- Option<TypePath<Ty>> : Option<(KwAs, _)> { as_ty.map(|v|v.1) };
+        <- Gt;
     }
 }
 
-#[derive(Debug)]
-pub struct QualifiedPathInType<Ty>(
-    pub QualifiedPathType<Ty>,
-    Vec<(PathSep, TypePathSegment<Ty>)>,
-);
-
-impl<Ty: Parse> Parse for QualifiedPathInType<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(Self(input.parse()?, input.parse()?))
+materialize! {
+    #[derive(Debug)]
+    pub struct QualifiedPathInType<Ty>{
+        qualifier <- QualifiedPathType<Ty>;
+        path <- Vec<(PathSep, TypePathSegment<Ty>)>;
     }
 }
 

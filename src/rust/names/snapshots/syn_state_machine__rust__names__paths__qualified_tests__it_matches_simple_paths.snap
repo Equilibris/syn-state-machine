@@ -3,8 +3,8 @@ source: src/rust/names/paths.rs
 expression: "insta_match_test!(+ parse QualifiedPathInType<Ident> : < hello as Default > ::\n    Default)"
 ---
 Ok(
-    QualifiedPathInType(
-        QualifiedPathType {
+    QualifiedPathInType {
+        qualifier: QualifiedPathType {
             ty: Ident(
                 hello,
             ),
@@ -29,7 +29,7 @@ Ok(
                 },
             ),
         },
-        [
+        path: [
             (
                 (
                     FJointPunct(
@@ -50,5 +50,5 @@ Ok(
                 ),
             ),
         ],
-    ),
+    },
 )
