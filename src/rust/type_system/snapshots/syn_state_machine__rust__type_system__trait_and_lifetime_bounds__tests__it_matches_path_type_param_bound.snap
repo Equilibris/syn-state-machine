@@ -1,0 +1,48 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "insta_match_test!(+ parse TypeParamBound<Infallible, SimplePath> : std :: fmt\n    :: Debug)"
+---
+Ok(
+    Tr(
+        TraitBound {
+            q: false,
+            for_lts: None,
+            path: HigherOrderPath {
+                leading: false,
+                segments: MinLength(
+                    Interlace {
+                        values: [
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            std,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            fmt,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            Debug,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ],
+                    },
+                ),
+            },
+        },
+    ),
+)

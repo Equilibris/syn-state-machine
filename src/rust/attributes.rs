@@ -15,3 +15,9 @@ materialize! {
         content <- T : Bracket<T> {content.0};
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    insta_match_test!(+it_matches_simple_function, OuterAttribute<(Ident, Paren<Ident>)>: #[hello(world)]);
+}

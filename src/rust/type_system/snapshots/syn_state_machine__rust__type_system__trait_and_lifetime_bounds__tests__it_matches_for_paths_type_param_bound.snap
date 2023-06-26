@@ -1,0 +1,70 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "insta_match_test!(+ parse TypeParamBound<Infallible, SimplePath> : for < 'a >\n    std :: fmt :: Debug)"
+---
+Ok(
+    Tr(
+        TraitBound {
+            q: false,
+            for_lts: Some(
+                ForLifetimes {
+                    args: GenericParams {
+                        params: Interlace {
+                            values: [
+                                Lt(
+                                    [],
+                                    LifetimeParam {
+                                        lt: LifetimeOrLabel(
+                                            Identifier(
+                                                Ident(
+                                                    a,
+                                                ),
+                                            ),
+                                        ),
+                                        bound: None,
+                                    },
+                                ),
+                            ],
+                        },
+                    },
+                },
+            ),
+            path: HigherOrderPath {
+                leading: false,
+                segments: MinLength(
+                    Interlace {
+                        values: [
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            std,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            fmt,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            Bare(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            Debug,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ],
+                    },
+                ),
+            },
+        },
+    ),
+)

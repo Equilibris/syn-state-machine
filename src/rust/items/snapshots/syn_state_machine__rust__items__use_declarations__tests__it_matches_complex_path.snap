@@ -1,0 +1,140 @@
+---
+source: src/rust/items/use_declarations.rs
+expression: "insta_match_test!(+ parse UseDeclaration : use\n    { hello :: *, world :: hi as Hi, nested :: { hello :: world, hi }, } ;)"
+---
+Ok(
+    UseDeclaration {
+        tree: Branch(
+            None,
+            Interlace {
+                values: [
+                    Star(
+                        Some(
+                            Some(
+                                HigherOrderPath {
+                                    leading: false,
+                                    segments: MinLength(
+                                        Interlace {
+                                            values: [
+                                                Identifier(
+                                                    Identifier(
+                                                        Ident(
+                                                            hello,
+                                                        ),
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                },
+                            ),
+                        ),
+                    ),
+                    Simple(
+                        HigherOrderPath {
+                            leading: false,
+                            segments: MinLength(
+                                Interlace {
+                                    values: [
+                                        Identifier(
+                                            Identifier(
+                                                Ident(
+                                                    world,
+                                                ),
+                                            ),
+                                        ),
+                                        Identifier(
+                                            Identifier(
+                                                Ident(
+                                                    hi,
+                                                ),
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ),
+                        },
+                        Some(
+                            IdentifierOrUnder(
+                                Ident(
+                                    Hi,
+                                ),
+                            ),
+                        ),
+                    ),
+                    Branch(
+                        Some(
+                            Some(
+                                HigherOrderPath {
+                                    leading: false,
+                                    segments: MinLength(
+                                        Interlace {
+                                            values: [
+                                                Identifier(
+                                                    Identifier(
+                                                        Ident(
+                                                            nested,
+                                                        ),
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                },
+                            ),
+                        ),
+                        Interlace {
+                            values: [
+                                Simple(
+                                    HigherOrderPath {
+                                        leading: false,
+                                        segments: MinLength(
+                                            Interlace {
+                                                values: [
+                                                    Identifier(
+                                                        Identifier(
+                                                            Ident(
+                                                                hello,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                    Identifier(
+                                                        Identifier(
+                                                            Ident(
+                                                                world,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    },
+                                    None,
+                                ),
+                                Simple(
+                                    HigherOrderPath {
+                                        leading: false,
+                                        segments: MinLength(
+                                            Interlace {
+                                                values: [
+                                                    Identifier(
+                                                        Identifier(
+                                                            Ident(
+                                                                hi,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    },
+                                    None,
+                                ),
+                            ],
+                        },
+                    ),
+                ],
+            },
+        ),
+    },
+)

@@ -1,0 +1,64 @@
+---
+source: src/rust/items/generic_parameters.rs
+expression: "insta_match_test!(+ parse TypeParam<Infallible, Infallible> : Hello : std ::\n    fmt :: Debug)"
+---
+Ok(
+    TypeParam {
+        id: Identifier(
+            Ident(
+                Hello,
+            ),
+        ),
+        bound: Some(
+            MinLength(
+                Interlace {
+                    values: [
+                        Tr(
+                            TraitBound {
+                                q: false,
+                                for_lts: None,
+                                path: HigherOrderPath {
+                                    leading: false,
+                                    segments: MinLength(
+                                        Interlace {
+                                            values: [
+                                                Bare(
+                                                    Id(
+                                                        Identifier(
+                                                            Ident(
+                                                                std,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                                Bare(
+                                                    Id(
+                                                        Identifier(
+                                                            Ident(
+                                                                fmt,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                                Bare(
+                                                    Id(
+                                                        Identifier(
+                                                            Ident(
+                                                                Debug,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                },
+                            },
+                        ),
+                    ],
+                },
+            ),
+        ),
+        ty: None,
+    },
+)

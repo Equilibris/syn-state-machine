@@ -1,0 +1,40 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "insta_match_test!(+ parse ForLifetimes<Infallible, Infallible> : for < 'a, 'b\n    >)"
+---
+Ok(
+    ForLifetimes {
+        args: GenericParams {
+            params: Interlace {
+                values: [
+                    Lt(
+                        [],
+                        LifetimeParam {
+                            lt: LifetimeOrLabel(
+                                Identifier(
+                                    Ident(
+                                        a,
+                                    ),
+                                ),
+                            ),
+                            bound: None,
+                        },
+                    ),
+                    Lt(
+                        [],
+                        LifetimeParam {
+                            lt: LifetimeOrLabel(
+                                Identifier(
+                                    Ident(
+                                        b,
+                                    ),
+                                ),
+                            ),
+                            bound: None,
+                        },
+                    ),
+                ],
+            },
+        },
+    },
+)

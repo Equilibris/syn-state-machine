@@ -1,0 +1,30 @@
+---
+source: src/rust/items/use_declarations.rs
+expression: "insta_match_test!(+ parse UseDeclaration : use hello :: * ;)"
+---
+Ok(
+    UseDeclaration {
+        tree: Star(
+            Some(
+                Some(
+                    HigherOrderPath {
+                        leading: false,
+                        segments: MinLength(
+                            Interlace {
+                                values: [
+                                    Identifier(
+                                        Identifier(
+                                            Ident(
+                                                hello,
+                                            ),
+                                        ),
+                                    ),
+                                ],
+                            },
+                        ),
+                    },
+                ),
+            ),
+        ),
+    },
+)

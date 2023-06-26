@@ -224,8 +224,17 @@ grouped!(Bracket Bracket     "[ ... ]");
 mod tests_groups {
     use crate::*;
 
-    insta_match_test!(it_matches_simple_grouped, Paren<()> : ());
-    insta_match_test!(it_matches_contentful_grouped, Paren<Ident> : (hello));
+    insta_match_test!(it_fails_on_empty_paren, Paren<()> : );
+    insta_match_test!(it_matches_simple_grouped_paren, Paren<()> : ());
+    insta_match_test!(it_matches_contentful_grouped_paren, Paren<Ident> : (hello));
+
+    insta_match_test!(it_fails_on_empty_brace, Brace<()> : );
+    insta_match_test!(it_matches_simple_grouped_brace, Brace<()> : {});
+    insta_match_test!(it_matches_contentful_grouped_brace, Brace<Ident> : {hello});
+
+    insta_match_test!(it_fails_on_empty_bracket, Bracket<()> : );
+    insta_match_test!(it_matches_simple_grouped_bracket, Bracket<()> : [  ]);
+    insta_match_test!(it_matches_contentful_grouped_bracket, Bracket<Ident> : [ hello ]);
 }
 
 #[cfg(test)]

@@ -1,0 +1,12 @@
+---
+source: src/type_atoms/proc_macro_items.rs
+expression: "(insta_match_test!(+ parse Bracket<()> :),\n    insta_match_test!(* peek Bracket<()> :))"
+---
+(
+    Err(
+        Error(
+            "Expected '[ ... ]'",
+        ),
+    ),
+    None,
+)

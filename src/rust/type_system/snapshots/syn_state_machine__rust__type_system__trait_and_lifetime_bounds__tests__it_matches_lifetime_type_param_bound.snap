@@ -1,0 +1,13 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "insta_match_test!(+ parse TypeParamBound<Infallible, SimplePath> : 'a)"
+---
+Ok(
+    Lt(
+        LifetimeToken(
+            Ident(
+                a,
+            ),
+        ),
+    ),
+)

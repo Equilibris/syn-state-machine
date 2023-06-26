@@ -1,0 +1,23 @@
+---
+source: src/rust/items/generic_parameters.rs
+expression: "insta_match_test!(+ parse ConstParam<Ident> : const HELLO : i8 = 10)"
+---
+Ok(
+    ConstParam {
+        id: Identifier(
+            Ident(
+                HELLO,
+            ),
+        ),
+        ty: Ident(
+            i8,
+        ),
+        eq: Some(
+            V2(
+                Literal {
+                    lit: 10,
+                },
+            ),
+        ),
+    },
+)

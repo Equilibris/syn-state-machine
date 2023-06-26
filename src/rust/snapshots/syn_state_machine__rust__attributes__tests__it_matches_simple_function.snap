@@ -1,0 +1,19 @@
+---
+source: src/rust/attributes.rs
+expression: "insta_match_test!(+ parse OuterAttribute<(Ident, Paren<Ident>)> :\n    #[hello(world)])"
+---
+Ok(
+    OuterAttribute {
+        content: (
+            Ident(
+                hello,
+            ),
+            Paren(
+                Ident(
+                    world,
+                ),
+                Span,
+            ),
+        ),
+    },
+)

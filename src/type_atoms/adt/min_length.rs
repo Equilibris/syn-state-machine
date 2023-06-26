@@ -1,31 +1,40 @@
-use crate::{Error, Interlace, InterlaceTrail, Parse, ParseBuffer, Peek, Result};
+use crate::{Error, Interlace, InterlaceTrail, Parse, ParseBuffer, Result};
+
+pub trait ParsableLength {
+    fn len(&self) -> usize;
+}
+
+impl<T> ParsableLength for Vec<T> {
+    fn len(&self) -> usize {
+        self.len()
+    }
+}
+impl<A, B> ParsableLength for Interlace<A, B> {
+    fn len(&self) -> usize {
+        self.values.len()
+    }
+}
+impl<A, B> ParsableLength for InterlaceTrail<A, B> {
+    fn len(&self) -> usize {
+        self.values.len()
+    }
+}
+impl<T: ParsableLength> ParsableLength for MinLength<T> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+impl<T: ParsableLength> ParsableLength for Box<T> {
+    fn len(&self) -> usize {
+        self.len()
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct MinLength<T, const LEN: usize = 1>(pub T);
-
-impl<const LEN: usize, A: Parse, B: Peek> Parse for MinLength<Interlace<A, B>, LEN> {
+impl<const LEN: usize, T: Parse + ParsableLength> Parse for MinLength<T, LEN> {
     fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let c: Interlace<A, B> = input.parse()?;
-        if c.values.len() < LEN {
-            Err(Error::new(input.span(), "Expected value"))
-        } else {
-            Ok(Self(c))
-        }
-    }
-}
-impl<const LEN: usize, A: Parse, B: Peek> Parse for MinLength<InterlaceTrail<A, B>, LEN> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let c: InterlaceTrail<A, B> = input.parse()?;
-        if c.values.len() < LEN {
-            Err(Error::new(input.span(), "Expected value"))
-        } else {
-            Ok(Self(c))
-        }
-    }
-}
-impl<const LEN: usize, A: Parse> Parse for MinLength<Vec<A>, LEN> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let c: Vec<A> = input.parse()?;
+        let c: T = input.parse()?;
         if c.len() < LEN {
             Err(Error::new(input.span(), "Expected value"))
         } else {

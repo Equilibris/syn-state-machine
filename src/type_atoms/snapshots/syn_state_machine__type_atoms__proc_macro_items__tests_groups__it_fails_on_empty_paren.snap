@@ -1,0 +1,12 @@
+---
+source: src/type_atoms/proc_macro_items.rs
+expression: "(insta_match_test!(+ parse Paren<()> :),\n    insta_match_test!(* peek Paren<()> :))"
+---
+(
+    Err(
+        Error(
+            "Expected '( ... )'",
+        ),
+    ),
+    None,
+)

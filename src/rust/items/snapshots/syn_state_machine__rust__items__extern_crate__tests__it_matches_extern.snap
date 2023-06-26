@@ -1,0 +1,14 @@
+---
+source: src/rust/items/extern_crate.rs
+expression: "insta_match_test!(+ parse ExternCrate : extern crate hi ;)"
+---
+Ok(
+    ExternCrate {
+        crate_ref: CrateRef(
+            Ident(
+                hi,
+            ),
+        ),
+        as_clause: None,
+    },
+)

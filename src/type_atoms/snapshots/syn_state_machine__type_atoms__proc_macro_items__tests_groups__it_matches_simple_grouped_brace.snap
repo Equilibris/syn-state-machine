@@ -1,0 +1,15 @@
+---
+source: src/type_atoms/proc_macro_items.rs
+expression: "(insta_match_test!(+ parse Brace<()> : {}),\n    insta_match_test!(* peek Brace<()> : {}))"
+---
+(
+    Ok(
+        Brace(
+            (),
+            Span,
+        ),
+    ),
+    Some(
+        2,
+    ),
+)
