@@ -1,0 +1,41 @@
+---
+source: src/rust/items/functions.rs
+expression: "insta_match_test!(+ parse SelfParam<Infallible, TypePath<Ident>> : mut self :\n    Box < Self >)"
+---
+Ok(
+    Typed(
+        [],
+        TypedSelf {
+            mutable: true,
+            ty: HigherOrderPath {
+                leading: false,
+                segments: MinLength(
+                    Interlace {
+                        values: [
+                            Generic(
+                                Id(
+                                    Identifier(
+                                        Ident(
+                                            Box,
+                                        ),
+                                    ),
+                                ),
+                                GenericArgs {
+                                    args: Interlace {
+                                        values: [
+                                            Ty(
+                                                Ident(
+                                                    Self,
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            },
+        },
+    ),
+)

@@ -1,5 +1,7 @@
 use crate::internals::*;
 
+pub type Sum0 = std::convert::Infallible;
+
 macro_rules! sum_impl {
     (-r2 $($tys:ident)* : [] : $($gens:ident $prods:ident)*) => {
         sum_impl!($($tys)*: $($gens $prods)*);

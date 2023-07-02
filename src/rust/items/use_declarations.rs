@@ -9,28 +9,20 @@ materialize! {
     }
 }
 
-#[derive(Debug)]
-pub enum UseTree {
-    Star(Option<Option<SimplePath>>),
-    Branch(Option<Option<SimplePath>>, InterlaceTrail<Box<Self>, Comma>),
-    Simple(SimplePath, Option<IdentifierOrUnder>),
-}
-
-impl Parse for UseTree {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(
-            match input.parse::<Sum3<
-                (
-                    Option<(Option<SimplePath>, PeekAsParse<PathSep>)>,
-                    PeekAsParse<Star>,
-                ),
-                (Option<(Option<SimplePath>, PeekAsParse<PathSep>)>, Brace<_>),
-                (SimplePath, Option<(KwAs, _)>),
-            >>()? {
-                Sum3::V0(a) => Self::Star(a.0.map(|v| v.0)),
-                Sum3::V1(a) => Self::Branch(a.0.map(|v| v.0), a.1 .0),
-                Sum3::V2(a) => Self::Simple(a.0, a.1.map(|v| v.1)),
-            },
+materialize! {
+    #[derive(Debug)]
+    pub enum UseTree {
+        Star(
+            path <- Option<Option<SimplePath>> : Option<(_, PeekAsParse<PathSep>)> { path.map(|v|v.0) };
+            <- Star;
+        )
+        Branch(
+            path <- Option<Option<SimplePath>> : Option<(_, PeekAsParse<PathSep>)> { path.map(|v|v.0) };
+            children <- InterlaceTrail<Box<Self>, Comma> : Brace<_> { children.0 };
+        )
+        Simple(
+            path <- SimplePath;
+            r#as <- Option<IdentifierOrUnder> : Option<(KwAs, _)> {r#as.map(|v|v.1)};
         )
     }
 }

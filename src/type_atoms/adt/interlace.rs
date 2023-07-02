@@ -7,6 +7,15 @@ pub struct Interlace<A, B> {
     phantom: PhantomData<B>,
 }
 
+impl<A, B> Default for Interlace<A, B> {
+    fn default() -> Self {
+        Self {
+            values: Default::default(),
+            phantom: Default::default(),
+        }
+    }
+}
+
 impl<A: std::fmt::Debug, B> std::fmt::Debug for Interlace<A, B> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Interlace")
@@ -85,6 +94,15 @@ impl<A: Peek, B: Peek> Peek for Interlace<A, B> {
 pub struct InterlaceTrail<A, B> {
     pub values: Vec<A>,
     phantom: PhantomData<B>,
+}
+
+impl<A, B> Default for InterlaceTrail<A, B> {
+    fn default() -> Self {
+        Self {
+            values: Default::default(),
+            phantom: Default::default(),
+        }
+    }
 }
 
 impl<A: std::fmt::Debug, B> std::fmt::Debug for InterlaceTrail<A, B> {

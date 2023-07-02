@@ -12,24 +12,14 @@ materialize! {
 
 pub type SimplePath = HigherOrderPath<SimplePathSegment>;
 
-#[derive(Debug)]
-pub enum SimplePathSegment {
-    Identifier(Identifier),
-    Super(KwSuper),
-    SSelf(KwLowerSelf),
-    Crate(KwCrate),
-    MacroCrate((Dollar, KwCrate)),
-}
-
-impl Parse for SimplePathSegment {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(match input.parse::<Sum5<_, _, _, _, _>>()? {
-            Sum5::V0(a) => Self::Identifier(a),
-            Sum5::V1(a) => Self::Super(a),
-            Sum5::V2(a) => Self::SSelf(a),
-            Sum5::V3(a) => Self::Crate(a),
-            Sum5::V4(a) => Self::MacroCrate(a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum SimplePathSegment {
+        Identifier(v <-Identifier)
+        Super(v <- KwSuper)
+        SSelf(v <- KwLowerSelf)
+        Crate(v <- KwCrate)
+        MacroCrate(v <- (Dollar, KwCrate))
     }
 }
 
@@ -46,26 +36,15 @@ materialize! {
     }
 }
 
-#[derive(Debug)]
-pub enum PathIdentSegment {
-    Id(Identifier),
-    Super(KwSuper),
-    LowerSelf(KwLowerSelf),
-    UpperSelf(KwUpperSelf),
-    Crate(KwCrate),
-    MacroCrate((Dollar, KwCrate)),
-}
-
-impl Parse for PathIdentSegment {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(match input.parse::<Sum6<_, _, _, _, _, _>>()? {
-            Sum6::V0(a) => Self::Id(a),
-            Sum6::V1(a) => Self::Super(a),
-            Sum6::V2(a) => Self::LowerSelf(a),
-            Sum6::V3(a) => Self::UpperSelf(a),
-            Sum6::V4(a) => Self::Crate(a),
-            Sum6::V5(a) => Self::MacroCrate(a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum PathIdentSegment {
+        Id(v <- Identifier)
+        Super(v <- KwSuper)
+        LowerSelf(v <- KwLowerSelf)
+        UpperSelf(v <- KwUpperSelf)
+        Crate(v <- KwCrate)
+        MacroCrate(v <- (Dollar, KwCrate))
     }
 }
 
@@ -78,22 +57,13 @@ materialize! {
     }
 }
 
-#[derive(Debug)]
-pub enum GenericArg<Ty> {
-    Lt(Lifetime),
-    Ty(Ty),
-    Const(GenericArgsConst),
-    Binding(GenericArgsBinding<Ty>),
-}
-
-impl<Ty: Parse> Parse for GenericArg<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(match input.parse::<Sum4<_, _, _, _>>()? {
-            Sum4::V0(a) => Self::Lt(a),
-            Sum4::V1(a) => Self::Ty(a),
-            Sum4::V2(a) => Self::Const(a),
-            Sum4::V3(a) => Self::Binding(a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum GenericArg<Ty> {
+        Lt(v <- Lifetime)
+        Ty(v <- Ty)
+        Const(v <- GenericArgsConst)
+        Binding(v <- GenericArgsBinding<Ty>)
     }
 }
 
@@ -141,24 +111,12 @@ materialize! {
 
 pub type TypePath<Ty> = HigherOrderPath<TypePathSegment<Ty>>;
 
-#[derive(Debug)]
-pub enum TypePathSegment<Ty> {
-    Bare(PathIdentSegment),
-    Generic(PathIdentSegment, GenericArgs<Ty>),
-    Fn(PathIdentSegment, TypePathFn<Ty>),
-}
-
-impl<Ty: Parse> Parse for TypePathSegment<Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let i = input.parse()?;
-
-        Ok(
-            match input.parse::<Option<(Option<PathSep>, Sum2<_, _>)>>()? {
-                Some((_, Sum2::V0(a))) => Self::Fn(i, a),
-                Some((_, Sum2::V1(a))) => Self::Generic(i, a),
-                None => Self::Bare(i),
-            },
-        )
+materialize! {
+    #[derive(Debug)]
+    pub enum TypePathSegment<Ty> [path <- PathIdentSegment] {
+        Fn(fun <- TypePathFn<Ty> : (Option<PathSep>, _) { fun.1 })
+        Generic(args <- GenericArgs<Ty> : (Option<PathSep>,_) { args.1 })
+        Bare()
     }
 }
 

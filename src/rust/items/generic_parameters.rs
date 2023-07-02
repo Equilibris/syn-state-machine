@@ -9,22 +9,12 @@ materialize! {
     }
 }
 
-#[derive(Debug)]
-pub enum GenericParam<Attr, Ty> {
-    Lt(Vec<OuterAttribute<Attr>>, LifetimeParam),
-    Ty(Vec<OuterAttribute<Attr>>, TypeParam<Attr, Ty>),
-    Cp(Vec<OuterAttribute<Attr>>, ConstParam<Ty>),
-}
-
-impl<Attr: Parse, Ty: Parse> Parse for GenericParam<Attr, Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        let attrs = input.parse()?;
-
-        Ok(match input.parse::<Sum3<_, _, _>>()? {
-            Sum3::V0(a) => Self::Lt(attrs, a),
-            Sum3::V1(a) => Self::Ty(attrs, a),
-            Sum3::V2(a) => Self::Cp(attrs, a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum GenericParam<Attr, Ty> [attrs <- Vec<OuterAttribute<Attr>>;] {
+        Lt(lt <-LifetimeParam;)
+        Ty(ty <-TypeParam<Attr, Ty>;)
+        Cp(cp <- ConstParam<Ty>;)
     }
 }
 
@@ -65,18 +55,11 @@ materialize! {
     }
 }
 
-#[derive(Debug)]
-pub enum WhereClauseItem<Attr, Ty> {
-    Lt(LifetimeWhereClauseItem),
-    Ty(TypeBoundWhereClauseItem<Attr, Ty>),
-}
-
-impl<Attr: Parse, Ty: Parse> Parse for WhereClauseItem<Attr, Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(match input.parse::<Sum2<_, _>>()? {
-            Sum2::V0(a) => Self::Lt(a),
-            Sum2::V1(a) => Self::Ty(a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum WhereClauseItem<Attr, Ty> {
+        Lt(lt <- LifetimeWhereClauseItem;)
+        Ty(ty <- TypeBoundWhereClauseItem<Attr, Ty>;)
     }
 }
 

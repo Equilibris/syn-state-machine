@@ -1,0 +1,86 @@
+---
+source: src/rust/items/functions.rs
+expression: "insta_match_test!(+ parse Function<Infallible, Ident, Ident> : const async\n    unsafe extern \"C\" fn hello < T > (self, v : i64) -> T ;)"
+---
+Ok(
+    Function {
+        qualifiers: FunctionQualifiers {
+            const: true,
+            async: true,
+            unsafe: true,
+            extern_abi: Some(
+                Some(
+                    StringLit {
+                        raw: "\"C\"",
+                        value: None,
+                        num_hashes: None,
+                        start_suffix: 3,
+                    },
+                ),
+            ),
+        },
+        id: Identifier(
+            Ident(
+                hello,
+            ),
+        ),
+        generic_parameters: Some(
+            GenericParams {
+                params: Interlace {
+                    values: [
+                        Ty(
+                            [],
+                            TypeParam {
+                                id: Identifier(
+                                    Ident(
+                                        T,
+                                    ),
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        params: Paren(
+            FunctionParameters {
+                self_param: None,
+                params: Interlace {
+                    values: [
+                        Ty(
+                            [],
+                            Ident(
+                                self,
+                            ),
+                        ),
+                        FunctionParamPattern(
+                            [],
+                            Ty(
+                                Ident(
+                                    v,
+                                ),
+                                Ident(
+                                    i64,
+                                ),
+                            ),
+                        ),
+                    ],
+                },
+            },
+            Span,
+        ),
+        ret: Some(
+            Ident(
+                T,
+            ),
+        ),
+        where_clause: None,
+        content: V0(
+            FPunct(
+                Span,
+            ),
+        ),
+    },
+)
