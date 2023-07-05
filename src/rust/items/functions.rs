@@ -2,7 +2,7 @@ use crate::*;
 
 materialize! {
     #[derive(Debug)]
-    pub struct Function<Attr, Ty, Pat>{
+    pub struct Function<Attr, Ty, Expr, Pat>{
         qualifiers <- FunctionQualifiers;
         <- KwFn;
         id <- Identifier;
@@ -10,7 +10,7 @@ materialize! {
         params <- Paren<FunctionParameters<Attr, Ty, Pat>>;
         ret <- Option<Ty> : Option<FunctionReturnType<_>> { ret.map(|v|v.ty) };
         where_clause <- Option<WhereClause<Attr,Ty>>;
-        content <- Sum2<Semi, Brace<Vec<TokenTree>>>;
+        content <- Sum2<Semi, Expr>;
     }
 }
 materialize! {
@@ -98,5 +98,5 @@ mod tests {
     insta_match_test!(+it_matches_shorthand_self, SelfParam<Infallible, Infallible>: self);
     insta_match_test!(+it_matches_typed_self, SelfParam<Infallible, TypePath<Ident>>: mut self: Box<Self>);
 
-    insta_match_test!(+it_matches_complex_function, Function<Infallible, Ident, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
+    insta_match_test!(+it_matches_complex_function, Function<Infallible, Ident, Infallible, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
 }

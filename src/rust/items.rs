@@ -1,32 +1,30 @@
+mod associated_items;
+mod constant_items;
+mod enumerations;
+mod extern_blocks;
 mod extern_crate;
 mod functions;
 mod generic_parameters;
+mod implementations;
 mod modules;
+mod static_item;
+mod structs;
+mod traits;
+mod type_aliases;
+mod union;
 mod use_declarations;
-mod alias {
-    use crate::*;
 
-    materialize! {
-        pub struct TypeAlias<Attr, Ty> {
-            id <- Identifier;
-            generic_parameters <- Option<GenericParams<Attr, Ty>>;
-            bounds <- Option<TypeParamBounds<Attr, Ty>> : Option<(Colon, _)> { bounds.map(|v|v.1) };
-            eq <- Option<(Eq, Ty, Option<WhereClause<Attr, Ty>>)>;
-            <- Semi
-        }
-    }
-
-    // #[cfg(test)]
-    // mod tests {
-    //     use super::*;
-    //     use std::convert::Infallible;
-
-    //     // insta_match_test!(*it_matches_simple, TypeAlias<Infallible, Ident>: type Point = (u8, u8););
-    //     // insta_match_test!(*it_matches_complex, TypeAlias<Infallible, Type<Infallible>>: type Point<T> where T: std::ops::Add = (T, T););
-    // }
-}
-
+pub use associated_items::*;
+pub use constant_items::*;
+pub use enumerations::*;
 pub use extern_crate::*;
+pub use functions::*;
 pub use generic_parameters::*;
+pub use implementations::*;
 pub use modules::*;
+pub use static_item::*;
+pub use structs::*;
+pub use traits::*;
+pub use type_aliases::*;
+pub use union::*;
 pub use use_declarations::*;

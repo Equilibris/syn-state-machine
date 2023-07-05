@@ -53,7 +53,7 @@ macro_rules! materialize {
         $variant:ident
 
         [$($prior:tt)*]
-        [$_:ident <- $ty:ty : $from_ty:ty { $($_1:tt)* }$(; $($next_variant_source_code:tt)*)?]
+        [$_:ident <- $ty:ty : $from_ty:ty $({ $($conversion:tt)* })?$(; $($next_variant_source_code:tt)*)?]
     ) => {
         materialize!(
             !!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
@@ -128,7 +128,7 @@ macro_rules! materialize {
         materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)*][$($($src_next)*)?][$($variant_source_code)*]);
     };
     // match shared mapped parse
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$_:ident<- $ty:ty : $from_ty:ty {$($conversion:tt)*}$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
+    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$_:ident<- $ty:ty : $from_ty:ty $({$($conversion:tt)*})?$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
         materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)* $ty,][$($($src_next)*)?][$($variant_source_code)*]);
     };
     // match shared parse
@@ -190,6 +190,36 @@ macro_rules! materialize {
             [$($prev_match_type)* $crate::PeekAsParse<$ty>,]:[$($prev_match_pat)* _,]:[$($prev_output_map)*]
         );
     };
+    // Handle variant peek
+    (++$sum_name:ident $current_variant_name:ident enum
+     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
+     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
+     [$($prev_type:tt)*][$($prev_match:tt)*]
+     $variant:ident [$variant_id:ident peek <- $ty:ty $(; $($variant_source_code:tt)*)?]
+     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
+        materialize!(
+            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
+            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
+            [$($prev_type)*][$($prev_match)*]
+            $variant [$($($variant_source_code)*)?]
+            [$($prev_match_type)* Option<$crate::PeekAsParse<$ty>>,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id.is_some(),]
+        );
+    };
+    // Handle variant mapped parse into
+    (++$sum_name:ident $current_variant_name:ident enum
+     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
+     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
+     [$($prev_type:tt)*][$($prev_match:tt)*]
+     $variant:ident [$variant_id:ident <- $ty:ty : $from_ty:ty $(; $($variant_source_code:tt)*)?]
+     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
+        materialize!(
+            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
+            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
+            [$($prev_type)*][$($prev_match)*]
+            $variant [$($($variant_source_code)*)?]
+            [$($prev_match_type)* $from_ty,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id.into(),]
+        );
+    };
     // Handle variant mapped parse
     (++$sum_name:ident $current_variant_name:ident enum
      $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
@@ -218,20 +248,6 @@ macro_rules! materialize {
             [$($prev_type)*][$($prev_match)*]
             $variant [$($($variant_source_code)*)?]
             [$($prev_match_type)* $ty,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id,]
-        );
-    };
-    // Handle variant peek
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     $variant:ident [$variant_id:ident peek <- $ty:ty$(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* Option<PeekAsParse<$ty>>,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id.is_some(),]
         );
     };
     // Entry for individual variant
@@ -282,6 +298,14 @@ macro_rules! materialize {
         materialize!(
             +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
             $input[$($prev_parse)* $input.errored_peek::<$ty>()?;]:[$($prev_names)*]
+            [$($($src_next)*)?][$($variant_source_code)*]
+        );
+    };
+    // Handle parsing of shared mapped parse into
+    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][$p_name:ident<- $ty:ty : $from_ty:ty $(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
+        materialize!(
+            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
+            $input[$($prev_parse)* let $p_name: $ty = $input.parse::<$from_ty>()?.into();]:[$($prev_names)* $p_name,]
             [$($($src_next)*)?][$($variant_source_code)*]
         );
     };
@@ -343,7 +367,7 @@ macro_rules! materialize {
             [$($($next)*)?]
         );
     };
-    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][$var:ident <- $ty:ty $(: $from_ty:ty {$($convert:tt)*})?$(; $($next:tt)*)?]) => {
+    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][$var:ident <- $ty:ty $(: $from_ty:ty $({$($convert:tt)*})?)?$(; $($next:tt)*)?]) => {
         materialize!(
             !struct $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
             [$($prev)* $vis $var: $ty,]
@@ -369,6 +393,14 @@ macro_rules! materialize {
                 })
             }
         }
+    };
+    // match mapped parse convert
+    (+struct $id:ident $input:ident$(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident <- $ty:ty : $from_ty:ty $(; $($next:tt)*)?]) => {
+        materialize!(
+            +struct $id $input $(<$($gen),*>)?
+            [$($prev_self)* $var,][$($prev_main)* let $var: $ty = $input.parse::<$from_ty>()?.into();]
+            [$($($next)*)?]
+        );
     };
     // match mapped parse
     (+struct $id:ident $input:ident$(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident <- $ty:ty : $from_ty:ty {$($convert:tt)*}$(; $($next:tt)*)?]) => {
@@ -427,7 +459,8 @@ mod tests {
                 hi3 <- Ident;
                 <- Ident;
                 hi4 <- Ident : Ident { hi4 };
-                hi5 <- Ident
+                hi5 <- Ident;
+                hi6 peek <- Ident;
             )
             World()
         }

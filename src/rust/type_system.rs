@@ -1,3 +1,23 @@
+mod array_type;
+mod function_pointer_types;
+mod impl_trait;
+mod inferred_type;
+mod never_type;
+mod pointer_types;
+mod slice_type;
 mod trait_and_lifetime_bounds;
+mod trait_objects;
+mod tuple_types;
+mod types;
 
+pub use array_type::*;
+pub use function_pointer_types::*;
+pub use impl_trait::*;
+pub use inferred_type::*;
+pub use never_type::*;
+pub use pointer_types::*;
+pub use slice_type::*;
 pub use trait_and_lifetime_bounds::*;
+pub use trait_objects::*;
+pub use tuple_types::*;
+pub use types::*;

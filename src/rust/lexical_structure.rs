@@ -223,6 +223,8 @@ impl FixedPeek for LifetimeOrLabel {
     const SKIP: usize = 2;
 }
 
+pub type TupleIndex = IntegerLit;
+
 #[cfg(test)]
 mod tests {
     use crate::*;

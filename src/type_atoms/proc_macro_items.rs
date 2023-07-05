@@ -1,7 +1,17 @@
 use crate::internals::*;
 use proc_macro2::{extra::DelimSpan, Spacing, Span};
 
-pub use proc_macro2::{Ident, Literal, Punct, TokenTree};
+pub use proc_macro2::{Ident, Literal, Punct, TokenStream, TokenTree};
+
+impl Parse for TokenStream {
+    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        let cursor = input.cursor();
+        let stream = cursor.token_stream();
+        *input = cursor.skip_to_end().into();
+
+        Ok(stream)
+    }
+}
 
 macro_rules! pm2_impl {
     ($st:ident $m:ident) => {
@@ -211,6 +221,17 @@ macro_rules! grouped {
                     .and_then(|(inner, _, aft)| T::peek(inner).map(|v| (inner.skip(v).eof(), aft)))
                     .filter(|(a, _)| *a)
                     .map(|(_, b)| b.current - input.current)
+            }
+        }
+        impl<T: FixedPeek> FixedPeek for $ty<T> {
+            const SKIP: usize = T::SKIP + 2;
+        }
+        impl<T: PeekError> PeekError for $ty<T> {
+            fn error<'a>(cursor: Cursor<'a>) -> Error {
+                match cursor.group(proc_macro2::Delimiter::$del) {
+                    Some((inner, span, after)) => T::error(inner),
+                    None => Error::new(cursor.span(), concat!("Expected '", $emsg, "'")),
+                }
             }
         }
     };
