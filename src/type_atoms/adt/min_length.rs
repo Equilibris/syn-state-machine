@@ -32,8 +32,8 @@ impl<T: ParsableLength> ParsableLength for Box<T> {
 
 #[derive(Debug, Clone)]
 pub struct MinLength<T, const LEN: usize = 1>(pub T);
-impl<const LEN: usize, T: Parse + ParsableLength> Parse for MinLength<T, LEN> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, const LEN: usize, T: Parse<'a> + ParsableLength> Parse<'a> for MinLength<T, LEN> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let c: T = input.parse()?;
         if c.len() < LEN {
             Err(Error::new(input.span(), "Expected value"))

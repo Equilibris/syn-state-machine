@@ -38,7 +38,7 @@ impl<'a> ParseBuffer<'a> {
         }
     }
 
-    pub fn peek<T: Peek>(&mut self) -> bool {
+    pub fn peek<T: Peek<'a>>(&mut self) -> bool {
         if let Some(x) = T::peek(self.0) {
             self.0 = self.0.skip(x);
             true
@@ -46,7 +46,7 @@ impl<'a> ParseBuffer<'a> {
             false
         }
     }
-    pub fn errored_peek<T: Peek + PeekError>(&mut self) -> Result<()> {
+    pub fn errored_peek<T: Peek<'a> + PeekError<'a>>(&mut self) -> Result<()> {
         if let Some(x) = T::peek(self.0) {
             self.0 = self.0.skip(x);
             Ok(())
@@ -55,7 +55,7 @@ impl<'a> ParseBuffer<'a> {
         }
     }
 
-    pub fn parse<T: Parse>(&mut self) -> Result<T> {
+    pub fn parse<T: Parse<'a>>(&mut self) -> Result<T> {
         T::parse(self)
     }
     pub fn call<T, E>(&mut self, function: impl Fn(&mut Self) -> Result<T>) -> Result<T> {
@@ -63,15 +63,15 @@ impl<'a> ParseBuffer<'a> {
     }
 }
 
-pub trait Parse: Sized {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self>;
+pub trait Parse<'a>: Sized {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self>;
 }
-pub trait Peek {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize>;
+pub trait Peek<'a> {
+    fn peek(input: Cursor<'a>) -> Option<usize>;
 }
 pub trait FixedPeek {
     const SKIP: usize;
 }
-pub trait PeekError {
-    fn error<'a>(input: Cursor<'a>) -> Error;
+pub trait PeekError<'a> {
+    fn error(input: Cursor<'a>) -> Error;
 }

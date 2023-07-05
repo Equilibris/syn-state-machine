@@ -33,8 +33,8 @@ impl<A, B> Interlace<A, B> {
     }
 }
 
-impl<A: Parse, B: Peek> Parse for Interlace<A, B> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for Interlace<A, B> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let mut temp = input.clone();
         let mut values = Vec::new();
 
@@ -66,8 +66,8 @@ impl<A: Parse, B: Peek> Parse for Interlace<A, B> {
     }
 }
 
-impl<A: Peek, B: Peek> Peek for Interlace<A, B> {
-    fn peek<'a>(cursor: Cursor<'a>) -> Option<usize> {
+impl<'a, A: Peek<'a>, B: Peek<'a>> Peek<'a> for Interlace<A, B> {
+    fn peek(cursor: Cursor<'a>) -> Option<usize> {
         let mut offset = 0;
 
         match A::peek(cursor) {
@@ -122,8 +122,8 @@ impl<A, B> InterlaceTrail<A, B> {
     }
 }
 
-impl<A: Parse, B: Peek> Parse for InterlaceTrail<A, B> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for InterlaceTrail<A, B> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let mut temp = input.clone();
 
         let mut values = Vec::new();
@@ -153,8 +153,8 @@ impl<A: Parse, B: Peek> Parse for InterlaceTrail<A, B> {
     }
 }
 
-impl<A: Peek, B: Peek> Peek for InterlaceTrail<A, B> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, A: Peek<'a>, B: Peek<'a>> Peek<'a> for InterlaceTrail<A, B> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         let mut offset = 0;
 
         match A::peek(input) {

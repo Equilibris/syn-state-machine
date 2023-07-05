@@ -1,7 +1,7 @@
 use crate::*;
 
-impl Parse for bool {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for bool {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         Ok(input.ident_matching(|id| {
             if id == "true" || id == "false" {
                 Ok(())
@@ -11,16 +11,16 @@ impl Parse for bool {
         })? == "true")
     }
 }
-impl Peek for bool {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<'a> for bool {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         todo!()
     }
 }
 
 macro_rules! typed_lit {
     ($err:literal $ty:ty) => {
-        impl Parse for $ty {
-            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<'a> Parse<'a> for $ty {
+            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
                 let cursor = input.cursor();
                 match cursor.literal() {
                     Some((lit, cursor)) => {
@@ -35,8 +35,8 @@ macro_rules! typed_lit {
             }
         }
 
-        impl Peek for $ty {
-            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+        impl<'a> Peek<'a> for $ty {
+            fn peek(input: Cursor<'a>) -> Option<usize> {
                 match input.literal() {
                     Some((lit, _)) => {
                         Self::try_from(lit).ok()?;
@@ -49,8 +49,8 @@ macro_rules! typed_lit {
         impl FixedPeek for $ty {
             const SKIP: usize = 1;
         }
-        impl PeekError for $ty {
-            fn error<'a>(input: Cursor<'a>) -> Error {
+        impl<'a> PeekError<'a> for $ty {
+            fn error(input: Cursor<'a>) -> Error {
                 Error::new(input.span(), $err)
             }
         }

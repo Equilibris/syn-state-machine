@@ -21,8 +21,8 @@ materialize! {
 
 #[derive(Debug)]
 pub struct CrateRef(pub Ident);
-impl Parse for CrateRef {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for CrateRef {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         Ok(Self(
             input
                 .ident_matching(|id| {

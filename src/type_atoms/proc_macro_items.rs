@@ -3,8 +3,8 @@ use proc_macro2::{extra::DelimSpan, Spacing, Span};
 
 pub use proc_macro2::{Ident, Literal, Punct, TokenStream, TokenTree};
 
-impl Parse for TokenStream {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for TokenStream {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let cursor = input.cursor();
         let stream = cursor.token_stream();
         *input = cursor.skip_to_end().into();
@@ -15,8 +15,8 @@ impl Parse for TokenStream {
 
 macro_rules! pm2_impl {
     ($st:ident $m:ident) => {
-        impl Parse for $st {
-            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<'a> Parse<'a> for $st {
+            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
                 let cur = input.cursor();
 
                 match cur.$m() {
@@ -31,8 +31,8 @@ macro_rules! pm2_impl {
                 }
             }
         }
-        impl Peek for $st {
-            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+        impl<'a> Peek<'a> for $st {
+            fn peek(input: Cursor<'a>) -> Option<usize> {
                 match input.$m() {
                     Some(_) => Some(1),
                     None => None,
@@ -43,8 +43,8 @@ macro_rules! pm2_impl {
         impl FixedPeek for $st {
             const SKIP: usize = 1;
         }
-        impl PeekError for $st {
-            fn error<'a>(input: Cursor<'a>) -> Error {
+        impl<'a> PeekError<'a> for $st {
+            fn error(input: Cursor<'a>) -> Error {
                 Error::new(input.span(), concat!("Expected ", stringify!($m)))
             }
         }
@@ -58,8 +58,8 @@ pm2_impl!(TokenTree token_tree);
 
 #[derive(Clone, Debug)]
 pub struct FIdent<const VAL: &'static str>(pub Span);
-impl<const VAL: &'static str> Parse for FIdent<VAL> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, const VAL: &'static str> Parse<'a> for FIdent<VAL> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let cur = input.cursor();
 
         match cur.ident() {
@@ -71,8 +71,8 @@ impl<const VAL: &'static str> Parse for FIdent<VAL> {
         }
     }
 }
-impl<const VAL: &'static str> Peek for FIdent<VAL> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, const VAL: &'static str> Peek<'a> for FIdent<VAL> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         match input.ident() {
             Some((v, _)) if v == VAL => Some(1),
             _ => None,
@@ -83,16 +83,16 @@ impl<const VAL: &'static str> Peek for FIdent<VAL> {
 impl<const VAL: &'static str> FixedPeek for FIdent<VAL> {
     const SKIP: usize = 1;
 }
-impl<const VAL: &'static str> PeekError for FIdent<VAL> {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a, const VAL: &'static str> PeekError<'a> for FIdent<VAL> {
+    fn error(input: Cursor<'a>) -> Error {
         Error::new(input.span(), format!("Expected '{}'", VAL))
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct FPunct<const VAL: char>(pub Span);
-impl<const VAL: char> Parse for FPunct<VAL> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, const VAL: char> Parse<'a> for FPunct<VAL> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let cur = input.cursor();
 
         match cur.punct() {
@@ -104,8 +104,8 @@ impl<const VAL: char> Parse for FPunct<VAL> {
         }
     }
 }
-impl<const VAL: char> Peek for FPunct<VAL> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, const VAL: char> Peek<'a> for FPunct<VAL> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         match input.punct() {
             Some((v, _)) if v.as_char() == VAL => Some(1),
             _ => None,
@@ -115,16 +115,16 @@ impl<const VAL: char> Peek for FPunct<VAL> {
 impl<const VAL: char> FixedPeek for FPunct<VAL> {
     const SKIP: usize = 1;
 }
-impl<const VAL: char> PeekError for FPunct<VAL> {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a, const VAL: char> PeekError<'a> for FPunct<VAL> {
+    fn error(input: Cursor<'a>) -> Error {
         Error::new(input.span(), format!("Expected '{}'", VAL))
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct FJointPunct<const VAL: char>(pub Span);
-impl<const VAL: char> Parse for FJointPunct<VAL> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, const VAL: char> Parse<'a> for FJointPunct<VAL> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let cur = input.cursor();
 
         match cur.punct() {
@@ -136,8 +136,8 @@ impl<const VAL: char> Parse for FJointPunct<VAL> {
         }
     }
 }
-impl<const VAL: char> Peek for FJointPunct<VAL> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, const VAL: char> Peek<'a> for FJointPunct<VAL> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         match input.punct() {
             Some((v, _)) if v.as_char() == VAL && v.spacing() == Spacing::Joint => Some(1),
             _ => None,
@@ -147,16 +147,16 @@ impl<const VAL: char> Peek for FJointPunct<VAL> {
 impl<const VAL: char> FixedPeek for FJointPunct<VAL> {
     const SKIP: usize = 1;
 }
-impl<const VAL: char> PeekError for FJointPunct<VAL> {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a, const VAL: char> PeekError<'a> for FJointPunct<VAL> {
+    fn error(input: Cursor<'a>) -> Error {
         Error::new(input.span(), format!("Expected '{}'", VAL))
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct FAlonePunct<const VAL: char>(pub Span);
-impl<const VAL: char> Parse for FAlonePunct<VAL> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, const VAL: char> Parse<'a> for FAlonePunct<VAL> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let cur = input.cursor();
 
         match cur.punct() {
@@ -168,8 +168,8 @@ impl<const VAL: char> Parse for FAlonePunct<VAL> {
         }
     }
 }
-impl<const VAL: char> Peek for FAlonePunct<VAL> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, const VAL: char> Peek<'a> for FAlonePunct<VAL> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         match input.punct() {
             Some((v, _)) if v.as_char() == VAL && v.spacing() == Spacing::Alone => Some(1),
             _ => None,
@@ -179,8 +179,8 @@ impl<const VAL: char> Peek for FAlonePunct<VAL> {
 impl<const VAL: char> FixedPeek for FAlonePunct<VAL> {
     const SKIP: usize = 1;
 }
-impl<const VAL: char> PeekError for FAlonePunct<VAL> {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a, const VAL: char> PeekError<'a> for FAlonePunct<VAL> {
+    fn error(input: Cursor<'a>) -> Error {
         Error::new(input.span(), format!("Expected '{}'", VAL))
     }
 }
@@ -189,8 +189,8 @@ macro_rules! grouped {
     ($ty:ident $del:ident $emsg:literal) => {
         #[derive(Debug, Clone)]
         pub struct $ty<T>(pub T, pub DelimSpan);
-        impl<T: Parse> Parse for $ty<T> {
-            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<'a, T: Parse<'a>> Parse<'a> for $ty<T> {
+            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
                 let cur = input.cursor();
 
                 match cur.group(proc_macro2::Delimiter::$del) {
@@ -214,8 +214,8 @@ macro_rules! grouped {
                 }
             }
         }
-        impl<T: Peek> Peek for $ty<T> {
-            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+        impl<'a, T: Peek<'a>> Peek<'a> for $ty<T> {
+            fn peek(input: Cursor<'a>) -> Option<usize> {
                 input
                     .group(proc_macro2::Delimiter::$del)
                     .and_then(|(inner, _, aft)| T::peek(inner).map(|v| (inner.skip(v).eof(), aft)))
@@ -226,8 +226,8 @@ macro_rules! grouped {
         impl<T: FixedPeek> FixedPeek for $ty<T> {
             const SKIP: usize = T::SKIP + 2;
         }
-        impl<T: PeekError> PeekError for $ty<T> {
-            fn error<'a>(cursor: Cursor<'a>) -> Error {
+        impl<'a, T: PeekError<'a>> PeekError<'a> for $ty<T> {
+            fn error(cursor: Cursor<'a>) -> Error {
                 match cursor.group(proc_macro2::Delimiter::$del) {
                     Some((inner, span, after)) => T::error(inner),
                     None => Error::new(cursor.span(), concat!("Expected '", $emsg, "'")),

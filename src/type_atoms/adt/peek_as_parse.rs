@@ -3,8 +3,8 @@ use std::marker::PhantomData;
 
 pub struct PeekAsParse<T>(pub usize, PhantomData<T>);
 
-impl<T: Peek + PeekError> Parse for PeekAsParse<T> {
-    fn parse<'a>(input: &mut crate::ParseBuffer<'a>) -> crate::Result<Self> {
+impl<'a, T: Peek<'a> + PeekError<'a>> Parse<'a> for PeekAsParse<T> {
+    fn parse(input: &mut crate::ParseBuffer<'a>) -> crate::Result<Self> {
         match T::peek(input.cursor()) {
             Some(c) => {
                 *input = input.cursor().skip(c).into();
@@ -14,16 +14,16 @@ impl<T: Peek + PeekError> Parse for PeekAsParse<T> {
         }
     }
 }
-impl<T: Peek> Peek for PeekAsParse<T> {
-    fn peek<'a>(input: crate::Cursor<'a>) -> Option<usize> {
+impl<'a, T: Peek<'a>> Peek<'a> for PeekAsParse<T> {
+    fn peek(input: crate::Cursor<'a>) -> Option<usize> {
         T::peek(input)
     }
 }
 impl<T: FixedPeek> FixedPeek for PeekAsParse<T> {
     const SKIP: usize = T::SKIP;
 }
-impl<T: PeekError> PeekError for PeekAsParse<T> {
-    fn error<'a>(input: crate::Cursor<'a>) -> crate::Error {
+impl<'a, T: PeekError<'a>> PeekError<'a> for PeekAsParse<T> {
+    fn error(input: crate::Cursor<'a>) -> crate::Error {
         T::error(input)
     }
 }

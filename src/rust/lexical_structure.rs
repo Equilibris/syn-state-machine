@@ -78,16 +78,16 @@ pub fn get_error_from_ident<'a>(id: &'a Ident) -> Result<()> {
 
 #[derive(Debug)]
 pub struct IdentifierOrUnder(pub Ident);
-impl Parse for IdentifierOrUnder {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for IdentifierOrUnder {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         Ok(Self(
             input.ident_matching(get_error_from_ident_or_under)?.clone(),
         ))
     }
 }
 
-impl Peek for IdentifierOrUnder {
-    fn peek<'a>(id: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<'a> for IdentifierOrUnder {
+    fn peek(id: Cursor<'a>) -> Option<usize> {
         match id.ident() {
             Some((id, _)) => {
                 if id == "r#crate" || id == "r#super" || id == "r#self" || id == "r#Self" {
@@ -103,14 +103,14 @@ impl Peek for IdentifierOrUnder {
 
 #[derive(Debug)]
 pub struct Identifier(pub Ident);
-impl Parse for Identifier {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for Identifier {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         Ok(Self(input.ident_matching(get_error_from_ident)?.clone()))
     }
 }
 
-impl Peek for Identifier {
-    fn peek<'a>(cursor: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<'a> for Identifier {
+    fn peek(cursor: Cursor<'a>) -> Option<usize> {
         match cursor.ident() {
             Some((id, _)) => {
                 if id == "r#crate"
@@ -177,21 +177,21 @@ pub type Tilde = FPunct<'~'>;
 
 #[derive(Debug)]
 pub struct LifetimeToken(pub Ident);
-impl Parse for LifetimeToken {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for LifetimeToken {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         input.errored_peek::<FPunct<'\''>>()?;
 
         Ok(Self(input.parse()?))
     }
 }
 
-impl Peek for LifetimeToken {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<'a> for LifetimeToken {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         <(FPunct<'\''>, Ident)>::peek(input)
     }
 }
-impl PeekError for LifetimeToken {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a> PeekError<'a> for LifetimeToken {
+    fn error(input: Cursor<'a>) -> Error {
         <(FPunct<'\''>, Ident)>::error(input)
     }
 }
@@ -201,21 +201,21 @@ impl FixedPeek for LifetimeToken {
 
 #[derive(Debug)]
 pub struct LifetimeOrLabel(pub Identifier);
-impl Parse for LifetimeOrLabel {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<'a> for LifetimeOrLabel {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         input.errored_peek::<FPunct<'\''>>()?;
 
         Ok(Self(input.parse()?))
     }
 }
 
-impl Peek for LifetimeOrLabel {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<'a> for LifetimeOrLabel {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         <(FPunct<'\''>, Ident)>::peek(input)
     }
 }
-impl PeekError for LifetimeOrLabel {
-    fn error<'a>(input: Cursor<'a>) -> Error {
+impl<'a> PeekError<'a> for LifetimeOrLabel {
+    fn error(input: Cursor<'a>) -> Error {
         <(FPunct<'\''>, Ident)>::error(input)
     }
 }

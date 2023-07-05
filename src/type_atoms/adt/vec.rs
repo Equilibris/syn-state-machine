@@ -1,7 +1,7 @@
 use crate::internals::*;
 
-impl<T: Parse> Parse for Vec<T> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, T: Parse<'a>> Parse<'a> for Vec<T> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let mut temp = input.clone();
         let mut vs = Vec::new();
 
@@ -19,8 +19,8 @@ impl<T: Parse> Parse for Vec<T> {
         Ok(vs)
     }
 }
-impl<T: Peek> Peek for Vec<T> {
-    fn peek<'a>(cursor: Cursor<'a>) -> Option<usize> {
+impl<'a, T: Peek<'a>> Peek<'a> for Vec<T> {
+    fn peek(cursor: Cursor<'a>) -> Option<usize> {
         let mut step = 0;
 
         while !cursor.eof() {

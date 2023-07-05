@@ -12,7 +12,7 @@ materialize! {
 materialize! {
     pub struct FunctionTypeQualifiers {
         r#unsafe peek <- KwUnsafe;
-        r#extern <- Option<Option<Abi>> : Option<(KwExtern, Option<Abi>)> { extern.map(|v| v.1) }
+        r#extern <- Option<Option<Abi>> : Option<(KwExtern, Option<Abi>)> { r#extern.map(|v| v.1) }
     }
 }
 pub type BareFunctionReturnType<TyNB> = FunctionReturnType<TyNB>;

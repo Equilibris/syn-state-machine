@@ -1,7 +1,7 @@
 use crate::internals::*;
 
-impl<T: Parse> Parse for Option<T> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, T: Parse<'a>> Parse<'a> for Option<T> {
+    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         let mut temp = input.clone();
 
         Ok(match temp.parse() {
@@ -13,8 +13,8 @@ impl<T: Parse> Parse for Option<T> {
         })
     }
 }
-impl<T: Peek> Peek for Option<T> {
-    fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+impl<'a, T: Peek<'a>> Peek<'a> for Option<T> {
+    fn peek(input: Cursor<'a>) -> Option<usize> {
         Some(T::peek(input).unwrap_or_default())
     }
 }

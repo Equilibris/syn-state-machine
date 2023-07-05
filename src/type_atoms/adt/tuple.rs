@@ -2,13 +2,13 @@ use crate::internals::*;
 
 macro_rules! tuple_impl {
     () => {
-        impl Parse for () {
-            fn parse<'a>(_: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<'a> Parse<'a> for () {
+            fn parse(_: &mut ParseBuffer<'a>) -> Result<Self> {
                 Ok(())
             }
         }
-        impl Peek for () {
-            fn peek<'a>(_: Cursor<'a>) -> Option<usize> {
+        impl<'a> Peek<'a> for () {
+            fn peek(_: Cursor<'a>) -> Option<usize> {
                 Some(0)
             }
         }
@@ -25,8 +25,8 @@ macro_rules! tuple_impl {
         // }
     };
     ($last_gen:ident $($gen:ident)*) => {
-        impl<$last_gen: Parse, $($gen: Parse,)*> Parse for ($last_gen, $($gen,)* ) {
-            fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<'a, $last_gen: Parse<'a>, $($gen: Parse<'a>,)*> Parse<'a> for ($last_gen, $($gen,)* ) {
+            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
                 let mut temp = input.clone();
 
                 let vs = (temp.parse()?, $(temp.parse::<$gen>()?,)*);
@@ -37,9 +37,9 @@ macro_rules! tuple_impl {
             }
         }
 
-        impl<$last_gen:Peek, $($gen: Peek),*> Peek for ($last_gen, $($gen,)*) {
+        impl<'a, $last_gen: Peek<'a>, $($gen: Peek<'a>),*> Peek<'a> for ($last_gen, $($gen,)*) {
             #[allow(unused_mut)]
-            fn peek<'a>(input: Cursor<'a>) -> Option<usize> {
+            fn peek(input: Cursor<'a>) -> Option<usize> {
                 let mut v = $last_gen::peek(input)?;
 
                 $({
@@ -55,9 +55,9 @@ macro_rules! tuple_impl {
         }
         // Not perfect. In reality the last generic does not have to impl FixedPeek but this is
         // close enougth
-        impl<$last_gen: PeekError + FixedPeek, $($gen: PeekError + FixedPeek),*> PeekError for ($last_gen, $($gen,)*) {
+        impl<'a, $last_gen: PeekError<'a> + FixedPeek, $($gen: PeekError<'a> + FixedPeek),*> PeekError<'a> for ($last_gen, $($gen,)*) {
             #[allow(unused_mut, unused)]
-            fn error<'a>(input: Cursor<'a>) -> Error {
+            fn error(input: Cursor<'a>) -> Error {
                 let mut e = $last_gen::error(input);
                 let mut skip = $last_gen::SKIP;
 

@@ -2,17 +2,11 @@ use crate::*;
 
 pub type TypeParamBounds<Attr, Ty> = MinLength<InterlaceTrail<TypeParamBound<Attr, Ty>, Plus>>;
 
-#[derive(Debug)]
-pub enum TypeParamBound<Attr, Ty> {
-    Lt(Lifetime),
-    Tr(TraitBound<Attr, Ty>),
-}
-impl<Attr: Parse, Ty: Parse> Parse for TypeParamBound<Attr, Ty> {
-    fn parse<'a>(input: &mut ParseBuffer<'a>) -> Result<Self> {
-        Ok(match input.parse::<Sum2<_, _>>()? {
-            Sum2::V0(a) => Self::Lt(a),
-            Sum2::V1(a) => Self::Tr(a),
-        })
+materialize! {
+    #[derive(Debug)]
+    pub enum TypeParamBound<Attr, Ty> {
+        Lt(v <- Lifetime)
+        Tr(v <-TraitBound<Attr, Ty>)
     }
 }
 
