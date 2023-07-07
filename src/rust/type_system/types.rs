@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    #[derive(Debug)]
     pub enum Type <Attr> {
         ImplTrait(v <- ImplTraitType<Attr, Box<Self>>)
         TraitObject(v <- TraitObjectType<Attr, Box<Self>>)
@@ -9,6 +10,7 @@ materialize! {
 }
 // TODO: correct ordering
 materialize! {
+    #[derive(Debug)]
     pub enum TypeNoBounds <Attr, Ty> {
         ParenthesizedType(v <- ParenthesizedType<Ty>)
         ImplTraitTypeOneBound(v <- ImplTraitTypeOneBound<Attr, Ty>)

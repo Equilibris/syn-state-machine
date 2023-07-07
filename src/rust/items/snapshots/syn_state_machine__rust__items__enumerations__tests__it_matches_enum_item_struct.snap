@@ -1,0 +1,31 @@
+---
+source: src/rust/items/enumerations.rs
+expression: "insta_match_test!(+ parse EnumItem<Infallible, Ident, Infallible> : Block\n    { hello : World })"
+---
+Ok(
+    Struct(
+        [],
+        None,
+        Ident(
+            Block,
+        ),
+        Brace(
+            Interlace {
+                values: [
+                    StructField {
+                        attrs: [],
+                        vis: None,
+                        id: Ident(
+                            hello,
+                        ),
+                        ty: Ident(
+                            World,
+                        ),
+                    },
+                ],
+            },
+            Span,
+        ),
+        None,
+    ),
+)

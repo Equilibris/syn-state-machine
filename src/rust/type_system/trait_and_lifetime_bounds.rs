@@ -6,16 +6,16 @@ materialize! {
     #[derive(Debug)]
     pub enum TypeParamBound<Attr, Ty> {
         Lt(v <- Lifetime)
-        Tr(v <-TraitBound<Attr, Ty>)
+        Tr(v <- TraitBound<Attr, Ty>)
     }
 }
 
 materialize! {
     #[derive(Debug)]
     pub struct TraitBound<Attr, Ty> {
-        q peek <- Question;
+        q peek  <- Question;
         for_lts <- Option<ForLifetimes<Attr, Ty>>;
-        path <- TypePath<Ty>;
+        path    <- TypePath<Ty>;
     }
 }
 

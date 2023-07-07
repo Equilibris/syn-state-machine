@@ -15,7 +15,7 @@ materialize! {
     #[derive(Debug)]
     pub struct AsClause {
         <- KwAs;
-        id <- IdentifierOrUnder;
+        id <- Ident : IdentifierOrUnder;
     }
 }
 

@@ -4,10 +4,8 @@ expression: "insta_match_test!(+ parse ConstParam<Ident> : const HELLO : i8 = 10
 ---
 Ok(
     ConstParam {
-        id: Identifier(
-            Ident(
-                HELLO,
-            ),
+        id: Ident(
+            HELLO,
         ),
         ty: Ident(
             i8,

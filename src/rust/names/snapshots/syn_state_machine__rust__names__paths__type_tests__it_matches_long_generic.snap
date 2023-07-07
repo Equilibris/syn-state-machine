@@ -5,31 +5,27 @@ expression: "insta_match_test!(+ parse TypePath<Ident> : hello :: < Hi >)"
 Ok(
     HigherOrderPath {
         leading: false,
-        segments: MinLength(
-            Interlace {
-                values: [
-                    Generic(
-                        Id(
-                            Identifier(
-                                Ident(
-                                    hello,
-                                ),
-                            ),
+        segments: Interlace {
+            values: [
+                Generic(
+                    Id(
+                        Ident(
+                            hello,
                         ),
-                        GenericArgs {
-                            args: Interlace {
-                                values: [
-                                    Ty(
-                                        Ident(
-                                            Hi,
-                                        ),
-                                    ),
-                                ],
-                            },
-                        },
                     ),
-                ],
-            },
-        ),
+                    GenericArgs {
+                        args: Interlace {
+                            values: [
+                                Ty(
+                                    Ident(
+                                        Hi,
+                                    ),
+                                ),
+                            ],
+                        },
+                    },
+                ),
+            ],
+        },
     },
 )

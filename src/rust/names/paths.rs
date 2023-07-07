@@ -4,7 +4,7 @@ materialize! {
     #[derive(Debug)]
     pub struct HigherOrderPath<Segment> {
         leading peek <- PathSep;
-        segments <- MinLength<Interlace<Segment, PathSep>>;
+        segments <-  Interlace<Segment, PathSep> : MinLength<_> { segments.0 };
     }
 }
 
@@ -39,7 +39,7 @@ materialize! {
 materialize! {
     #[derive(Debug)]
     pub enum PathIdentSegment {
-        Id(v <- Identifier)
+        Id(v <- Ident : Identifier)
         Super(v <- KwSuper)
         LowerSelf(v <- KwLowerSelf)
         UpperSelf(v <- KwUpperSelf)
@@ -72,7 +72,7 @@ pub type GenericArgsConst = Infallible;
 materialize! {
     #[derive(Debug)]
     pub struct GenericArgsBinding<Ty>{
-        id <- Identifier;
+        id <- Ident : Identifier;
         <- Eq;
         ty <- Ty;
     }

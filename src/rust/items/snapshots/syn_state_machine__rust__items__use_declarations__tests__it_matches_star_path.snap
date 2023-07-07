@@ -9,19 +9,17 @@ Ok(
                 Some(
                     HigherOrderPath {
                         leading: false,
-                        segments: MinLength(
-                            Interlace {
-                                values: [
+                        segments: Interlace {
+                            values: [
+                                Identifier(
                                     Identifier(
-                                        Identifier(
-                                            Ident(
-                                                hello,
-                                            ),
+                                        Ident(
+                                            hello,
                                         ),
                                     ),
-                                ],
-                            },
-                        ),
+                                ),
+                            ],
+                        },
                     },
                 ),
             ),

@@ -1,0 +1,9 @@
+---
+source: src/rust/items/traits.rs
+expression: "insta_match_test!(+ parse\n    Trait<Infallible, Infallible, Type<Infallible>, Infallible> : unsafe trait\n    HelloWorld < T > : From < T > T : Sized { type Hello : World ; })"
+---
+Err(
+    Error(
+        "Expected '{ ... }'",
+    ),
+)

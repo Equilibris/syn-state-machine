@@ -1,0 +1,17 @@
+---
+source: src/type_atoms/typed_literals.rs
+expression: "(insta_match_test!(+ parse StringLit : \"C\"),\n    insta_match_test!(* peek StringLit : \"C\"))"
+---
+(
+    Ok(
+        StringLit {
+            raw: "\"C\"",
+            value: None,
+            num_hashes: None,
+            start_suffix: 3,
+        },
+    ),
+    Some(
+        1,
+    ),
+)

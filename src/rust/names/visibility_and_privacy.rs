@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    #[derive(Debug)]
     pub enum Visibility [ <- KwPub ] {
         Crate(<- Paren<KwCrate>)
         LSelf(<- Paren<KwLowerSelf>)

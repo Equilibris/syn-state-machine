@@ -11,10 +11,8 @@ Ok(
         ),
         as_clause: Some(
             AsClause {
-                id: IdentifierOrUnder(
-                    Ident(
-                        _,
-                    ),
+                id: Ident(
+                    _,
                 ),
             },
         ),

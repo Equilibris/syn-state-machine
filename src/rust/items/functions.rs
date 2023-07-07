@@ -5,7 +5,7 @@ materialize! {
     pub struct Function<Attr, Ty, Expr, Pat>{
         qualifiers <- FunctionQualifiers;
         <- KwFn;
-        id <- Identifier;
+        id <- Ident : Identifier;
         generic_parameters <- Option<GenericParams<Attr, Ty>>;
         params <- Paren<FunctionParameters<Attr, Ty, Pat>>;
         ret <- Option<Ty> : Option<FunctionReturnType<_>> { ret.map(|v|v.ty) };

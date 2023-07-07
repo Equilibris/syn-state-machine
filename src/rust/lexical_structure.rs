@@ -101,11 +101,23 @@ impl<'a> Peek<'a> for IdentifierOrUnder {
     }
 }
 
+impl Into<Ident> for IdentifierOrUnder {
+    fn into(self) -> Ident {
+        self.0
+    }
+}
+
 #[derive(Debug)]
 pub struct Identifier(pub Ident);
 impl<'a> Parse<'a> for Identifier {
     fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
         Ok(Self(input.ident_matching(get_error_from_ident)?.clone()))
+    }
+}
+
+impl Into<Ident> for Identifier {
+    fn into(self) -> Ident {
+        self.0
     }
 }
 

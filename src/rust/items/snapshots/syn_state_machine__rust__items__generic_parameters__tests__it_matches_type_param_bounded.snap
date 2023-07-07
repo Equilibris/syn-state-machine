@@ -4,10 +4,8 @@ expression: "insta_match_test!(+ parse TypeParam<Infallible, Infallible> : Hello
 ---
 Ok(
     TypeParam {
-        id: Identifier(
-            Ident(
-                Hello,
-            ),
+        id: Ident(
+            Hello,
         ),
         bound: Some(
             MinLength(
@@ -19,39 +17,31 @@ Ok(
                                 for_lts: None,
                                 path: HigherOrderPath {
                                     leading: false,
-                                    segments: MinLength(
-                                        Interlace {
-                                            values: [
-                                                Bare(
-                                                    Id(
-                                                        Identifier(
-                                                            Ident(
-                                                                std,
-                                                            ),
-                                                        ),
+                                    segments: Interlace {
+                                        values: [
+                                            Bare(
+                                                Id(
+                                                    Ident(
+                                                        std,
                                                     ),
                                                 ),
-                                                Bare(
-                                                    Id(
-                                                        Identifier(
-                                                            Ident(
-                                                                fmt,
-                                                            ),
-                                                        ),
+                                            ),
+                                            Bare(
+                                                Id(
+                                                    Ident(
+                                                        fmt,
                                                     ),
                                                 ),
-                                                Bare(
-                                                    Id(
-                                                        Identifier(
-                                                            Ident(
-                                                                Debug,
-                                                            ),
-                                                        ),
+                                            ),
+                                            Bare(
+                                                Id(
+                                                    Ident(
+                                                        Debug,
                                                     ),
                                                 ),
-                                            ],
-                                        },
-                                    ),
+                                            ),
+                                        ],
+                                    },
                                 },
                             },
                         ),

@@ -7,26 +7,24 @@ Ok(
         tree: Simple(
             HigherOrderPath {
                 leading: false,
-                segments: MinLength(
-                    Interlace {
-                        values: [
+                segments: Interlace {
+                    values: [
+                        Identifier(
                             Identifier(
-                                Identifier(
-                                    Ident(
-                                        hello,
-                                    ),
+                                Ident(
+                                    hello,
                                 ),
                             ),
+                        ),
+                        Identifier(
                             Identifier(
-                                Identifier(
-                                    Ident(
-                                        world,
-                                    ),
+                                Ident(
+                                    world,
                                 ),
                             ),
-                        ],
-                    },
-                ),
+                        ),
+                    ],
+                },
             },
             None,
         ),

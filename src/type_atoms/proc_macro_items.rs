@@ -229,7 +229,7 @@ macro_rules! grouped {
         impl<'a, T: PeekError<'a>> PeekError<'a> for $ty<T> {
             fn error(cursor: Cursor<'a>) -> Error {
                 match cursor.group(proc_macro2::Delimiter::$del) {
-                    Some((inner, span, after)) => T::error(inner),
+                    Some((inner, _, _)) => T::error(inner),
                     None => Error::new(cursor.span(), concat!("Expected '", $emsg, "'")),
                 }
             }

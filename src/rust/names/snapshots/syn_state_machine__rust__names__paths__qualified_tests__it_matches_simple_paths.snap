@@ -11,21 +11,17 @@ Ok(
             as_ty: Some(
                 HigherOrderPath {
                     leading: false,
-                    segments: MinLength(
-                        Interlace {
-                            values: [
-                                Bare(
-                                    Id(
-                                        Identifier(
-                                            Ident(
-                                                Default,
-                                            ),
-                                        ),
+                    segments: Interlace {
+                        values: [
+                            Bare(
+                                Id(
+                                    Ident(
+                                        Default,
                                     ),
                                 ),
-                            ],
-                        },
-                    ),
+                            ),
+                        ],
+                    },
                 },
             ),
         },
@@ -41,10 +37,8 @@ Ok(
                 ),
                 Bare(
                     Id(
-                        Identifier(
-                            Ident(
-                                Default,
-                            ),
+                        Ident(
+                            Default,
                         ),
                     ),
                 ),

@@ -9,32 +9,28 @@ Ok(
             mutable: true,
             ty: HigherOrderPath {
                 leading: false,
-                segments: MinLength(
-                    Interlace {
-                        values: [
-                            Generic(
-                                Id(
-                                    Identifier(
-                                        Ident(
-                                            Box,
-                                        ),
-                                    ),
+                segments: Interlace {
+                    values: [
+                        Generic(
+                            Id(
+                                Ident(
+                                    Box,
                                 ),
-                                GenericArgs {
-                                    args: Interlace {
-                                        values: [
-                                            Ty(
-                                                Ident(
-                                                    Self,
-                                                ),
-                                            ),
-                                        ],
-                                    },
-                                },
                             ),
-                        ],
-                    },
-                ),
+                            GenericArgs {
+                                args: Interlace {
+                                    values: [
+                                        Ty(
+                                            Ident(
+                                                Self,
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    ],
+                },
             },
         },
     ),

@@ -13,19 +13,17 @@ Ok(
                             Some(
                                 HigherOrderPath {
                                     leading: false,
-                                    segments: MinLength(
-                                        Interlace {
-                                            values: [
+                                    segments: Interlace {
+                                        values: [
+                                            Identifier(
                                                 Identifier(
-                                                    Identifier(
-                                                        Ident(
-                                                            hello,
-                                                        ),
+                                                    Ident(
+                                                        hello,
                                                     ),
                                                 ),
-                                            ],
-                                        },
-                                    ),
+                                            ),
+                                        ],
+                                    },
                                 },
                             ),
                         ),
@@ -33,26 +31,24 @@ Ok(
                     Simple(
                         HigherOrderPath {
                             leading: false,
-                            segments: MinLength(
-                                Interlace {
-                                    values: [
+                            segments: Interlace {
+                                values: [
+                                    Identifier(
                                         Identifier(
-                                            Identifier(
-                                                Ident(
-                                                    world,
-                                                ),
+                                            Ident(
+                                                world,
                                             ),
                                         ),
+                                    ),
+                                    Identifier(
                                         Identifier(
-                                            Identifier(
-                                                Ident(
-                                                    hi,
-                                                ),
+                                            Ident(
+                                                hi,
                                             ),
                                         ),
-                                    ],
-                                },
-                            ),
+                                    ),
+                                ],
+                            },
                         },
                         Some(
                             IdentifierOrUnder(
@@ -67,19 +63,17 @@ Ok(
                             Some(
                                 HigherOrderPath {
                                     leading: false,
-                                    segments: MinLength(
-                                        Interlace {
-                                            values: [
+                                    segments: Interlace {
+                                        values: [
+                                            Identifier(
                                                 Identifier(
-                                                    Identifier(
-                                                        Ident(
-                                                            nested,
-                                                        ),
+                                                    Ident(
+                                                        nested,
                                                     ),
                                                 ),
-                                            ],
-                                        },
-                                    ),
+                                            ),
+                                        ],
+                                    },
                                 },
                             ),
                         ),
@@ -88,45 +82,41 @@ Ok(
                                 Simple(
                                     HigherOrderPath {
                                         leading: false,
-                                        segments: MinLength(
-                                            Interlace {
-                                                values: [
+                                        segments: Interlace {
+                                            values: [
+                                                Identifier(
                                                     Identifier(
-                                                        Identifier(
-                                                            Ident(
-                                                                hello,
-                                                            ),
+                                                        Ident(
+                                                            hello,
                                                         ),
                                                     ),
+                                                ),
+                                                Identifier(
                                                     Identifier(
-                                                        Identifier(
-                                                            Ident(
-                                                                world,
-                                                            ),
+                                                        Ident(
+                                                            world,
                                                         ),
                                                     ),
-                                                ],
-                                            },
-                                        ),
+                                                ),
+                                            ],
+                                        },
                                     },
                                     None,
                                 ),
                                 Simple(
                                     HigherOrderPath {
                                         leading: false,
-                                        segments: MinLength(
-                                            Interlace {
-                                                values: [
+                                        segments: Interlace {
+                                            values: [
+                                                Identifier(
                                                     Identifier(
-                                                        Identifier(
-                                                            Ident(
-                                                                hi,
-                                                            ),
+                                                        Ident(
+                                                            hi,
                                                         ),
                                                     ),
-                                                ],
-                                            },
-                                        ),
+                                                ),
+                                            ],
+                                        },
                                     },
                                     None,
                                 ),

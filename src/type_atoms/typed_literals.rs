@@ -76,3 +76,11 @@ typed_lit!("Expected char literal" CharLit);
 typed_lit!("Expected byte literal" ByteLit);
 typed_lit!("Expected float literal" FloatLit);
 typed_lit!("Expected bytestring literal" ByteStringLit);
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test!(it_matches_simple_string_lit, StringLit : "Hello World");
+    insta_match_test!(it_matches_simple_abi, StringLit : "C");
+}

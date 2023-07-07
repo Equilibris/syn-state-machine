@@ -1,0 +1,101 @@
+---
+source: src/rust/items/implementations.rs
+expression: "insta_match_test!(+ parse\n    Implementation<Infallible, TypePath<Ident>, Infallible, Ident> : unsafe\n    impl < T : Copy > Copy for Option < T > {})"
+---
+Ok(
+    Trait(
+        TraitImpl {
+            unsafe: true,
+            generic_parameters: Some(
+                GenericParams {
+                    params: Interlace {
+                        values: [
+                            Ty(
+                                [],
+                                TypeParam {
+                                    id: Ident(
+                                        T,
+                                    ),
+                                    bound: Some(
+                                        MinLength(
+                                            Interlace {
+                                                values: [
+                                                    Tr(
+                                                        TraitBound {
+                                                            q: false,
+                                                            for_lts: None,
+                                                            path: HigherOrderPath {
+                                                                leading: false,
+                                                                segments: Interlace {
+                                                                    values: [
+                                                                        Bare(
+                                                                            Id(
+                                                                                Ident(
+                                                                                    Copy,
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    ),
+                                    ty: None,
+                                },
+                            ),
+                        ],
+                    },
+                },
+            ),
+            not: false,
+            path: HigherOrderPath {
+                leading: false,
+                segments: Interlace {
+                    values: [
+                        Bare(
+                            Id(
+                                Ident(
+                                    Copy,
+                                ),
+                            ),
+                        ),
+                    ],
+                },
+            },
+            ty: HigherOrderPath {
+                leading: false,
+                segments: Interlace {
+                    values: [
+                        Generic(
+                            Id(
+                                Ident(
+                                    Option,
+                                ),
+                            ),
+                            GenericArgs {
+                                args: Interlace {
+                                    values: [
+                                        Ty(
+                                            Ident(
+                                                T,
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+            where_clause: None,
+            items: (
+                [],
+                [],
+            ),
+        },
+    ),
+)

@@ -94,7 +94,7 @@ materialize! {
     pub struct IdentifierPattern <Pat> {
         r#ref peek <- KwRef;
         r#mut peek <- KwMut;
-        id <- Identifier;
+        id <- Ident : Identifier;
         pat <- Option<Pat> : Option<(At, _)> { pat.map(|v|v.1) }
     }
 }
@@ -146,8 +146,8 @@ impl<'a, Attr: Parse<'a>, Pat: Parse<'a>> Parse<'a> for StructPatternElements<At
 materialize! {
     pub enum StructPatternField<Attr, Pat> [ attrs <- Vec<OuterAttribute<Attr>> ] {
         TupleIdx(v <- TupleIndex; <- Colon; p <- Pat)
-        Id(v <- Identifier; <- Colon; p <- Pat)
-        Shorthand(r#ref peek <- KwRef; r#mut peek <- KwMut; id <- Identifier)
+        Id(v <- Ident : Identifier; <- Colon; p <- Pat)
+        Shorthand(r#ref peek <- KwRef; r#mut peek <- KwMut; id <- Ident : Identifier)
     }
 }
 

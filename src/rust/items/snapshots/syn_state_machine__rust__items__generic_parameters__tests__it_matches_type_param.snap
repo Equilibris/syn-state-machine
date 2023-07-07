@@ -4,10 +4,8 @@ expression: "insta_match_test!(+ parse TypeParam<Infallible, Infallible> : Hello
 ---
 Ok(
     TypeParam {
-        id: Identifier(
-            Ident(
-                Hello,
-            ),
+        id: Ident(
+            Hello,
         ),
         bound: None,
         ty: None,

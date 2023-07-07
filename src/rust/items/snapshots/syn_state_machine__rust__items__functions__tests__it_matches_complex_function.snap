@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/functions.rs
-expression: "insta_match_test!(+ parse Function<Infallible, Ident, Ident> : const async\n    unsafe extern \"C\" fn hello < T > (self, v : i64) -> T ;)"
+expression: "insta_match_test!(+ parse Function<Infallible, Ident, Infallible, Ident> :\n    const async unsafe extern \"C\" fn hello < T > (self, v : i64) -> T ;)"
 ---
 Ok(
     Function {
@@ -19,10 +19,8 @@ Ok(
                 ),
             ),
         },
-        id: Identifier(
-            Ident(
-                hello,
-            ),
+        id: Ident(
+            hello,
         ),
         generic_parameters: Some(
             GenericParams {
@@ -31,10 +29,8 @@ Ok(
                         Ty(
                             [],
                             TypeParam {
-                                id: Identifier(
-                                    Ident(
-                                        T,
-                                    ),
+                                id: Ident(
+                                    T,
                                 ),
                                 bound: None,
                                 ty: None,

@@ -5,29 +5,25 @@ expression: "insta_match_test!(+ parse TypePath<Infallible> : Fn())"
 Ok(
     HigherOrderPath {
         leading: false,
-        segments: MinLength(
-            Interlace {
-                values: [
-                    Fn(
-                        Id(
-                            Identifier(
-                                Ident(
-                                    Fn,
-                                ),
-                            ),
+        segments: Interlace {
+            values: [
+                Fn(
+                    Id(
+                        Ident(
+                            Fn,
                         ),
-                        TypePathFn {
-                            args: Paren(
-                                Interlace {
-                                    values: [],
-                                },
-                                Span,
-                            ),
-                            returns: None,
-                        },
                     ),
-                ],
-            },
-        ),
+                    TypePathFn {
+                        args: Paren(
+                            Interlace {
+                                values: [],
+                            },
+                            Span,
+                        ),
+                        returns: None,
+                    },
+                ),
+            ],
+        },
     },
 )

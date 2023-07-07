@@ -1,0 +1,28 @@
+---
+source: src/rust/items/enumerations.rs
+expression: "insta_match_test!(+ parse EnumItem<Infallible, Ident, Infallible> :\n    Block(World))"
+---
+Ok(
+    Tuple(
+        [],
+        None,
+        Ident(
+            Block,
+        ),
+        Paren(
+            Interlace {
+                values: [
+                    TupleField {
+                        attrs: [],
+                        vis: None,
+                        ty: Ident(
+                            World,
+                        ),
+                    },
+                ],
+            },
+            Span,
+        ),
+        None,
+    ),
+)

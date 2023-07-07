@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    #[derive(Debug)]
     pub struct MacroInvocation {
         path <- SimplePath;
         <- Not;
@@ -9,6 +10,7 @@ materialize! {
 }
 
 materialize! {
+    #[derive(Debug)]
     pub struct DelimTokenTree {
         stream <- TokenStream : Sum3<Paren<_>,Brace<_>,Bracket<_>> {
             match stream {
@@ -21,6 +23,7 @@ materialize! {
 }
 
 materialize! {
+    #[derive(Debug)]
     pub struct MacroInvocationSemi {
         path <- SimplePath;
         <- Not;

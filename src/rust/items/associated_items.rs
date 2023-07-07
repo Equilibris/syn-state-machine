@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    #[derive(Debug)]
     pub enum AssociateItem <Attr, Ty, Expr, Pat> [attrs <- Vec<OuterAttribute<Attr>>] {
         Macro(v <- MacroInvocationSemi)
         TypeAlias(vis <- Option<Visibility>; v <- TypeAlias<Attr,Ty>)
