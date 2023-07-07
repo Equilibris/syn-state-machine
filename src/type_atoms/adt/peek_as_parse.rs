@@ -3,11 +3,11 @@ use std::marker::PhantomData;
 
 pub struct PeekAsParse<T>(pub usize, PhantomData<T>);
 
-impl<Cursor: Skip, T: Peek<Cursor> + PeekError<Cursor>> Parse<Cursor> for PeekAsParse<T> {
+impl<Cursor: Iterator, T: Peek<Cursor> + PeekError<Cursor>> Parse<Cursor> for PeekAsParse<T> {
     fn parse(input: &mut crate::ParseBuffer<Cursor>) -> crate::Result<Self> {
         match T::peek(&input.cursor) {
             Some(c) => {
-                input.cursor.skip(c);
+                let _ = input.cursor.advance_by(c);
                 Ok(Self(c, PhantomData))
             }
             None => Err(T::error(&input.cursor)),

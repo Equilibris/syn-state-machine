@@ -1,6 +1,6 @@
 use proc_macro2::Span;
 
-use crate::{internals::Result, Error};
+use crate::internals::*;
 
 #[derive(Clone, Copy)]
 pub struct ParseBuffer<C> {
@@ -13,10 +13,10 @@ impl<C> From<C> for ParseBuffer<C> {
     }
 }
 
-impl<C: Skip> ParseBuffer<C> {
+impl<C: Iterator> ParseBuffer<C> {
     pub fn peek<T: Peek<C>>(&mut self) -> bool {
         if let Some(x) = T::peek(&self.cursor) {
-            self.cursor.skip(x);
+            let _ = self.cursor.advance_by(x);
             true
         } else {
             false
@@ -24,7 +24,7 @@ impl<C: Skip> ParseBuffer<C> {
     }
     pub fn errored_peek<T: Peek<C> + PeekError<C>>(&mut self) -> Result<()> {
         if let Some(x) = T::peek(&self.cursor) {
-            self.cursor.skip(x);
+            let _ = self.cursor.advance_by(x);
             Ok(())
         } else {
             Err(T::error(&self.cursor))
@@ -44,26 +44,4 @@ impl<C: Spanned> Spanned for ParseBuffer<C> {
     fn span(&self) -> Span {
         self.cursor.span()
     }
-}
-
-pub trait Skip {
-    fn eof(&self) -> bool;
-    fn skip(&mut self, count: usize);
-}
-
-pub trait Spanned {
-    fn span(&self) -> Span;
-}
-
-pub trait Parse<C>: Sized {
-    fn parse(input: &mut ParseBuffer<C>) -> Result<Self>;
-}
-pub trait Peek<C> {
-    fn peek(input: &C) -> Option<usize>;
-}
-pub trait FixedPeek {
-    const SKIP: usize;
-}
-pub trait PeekError<C> {
-    fn error(input: &C) -> Error;
 }

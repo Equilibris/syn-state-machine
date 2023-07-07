@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{Cursor, Parse, ParseBuffer, Peek, Result, Skip};
+use crate::{Parse, ParseBuffer, Peek, Result};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
@@ -33,7 +33,9 @@ impl<A, B> Interlace<A, B> {
     }
 }
 
-impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor> for Interlace<A, B> {
+impl<Cursor: Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
+    for Interlace<A, B>
+{
     fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
         let mut temp = input.clone();
         let mut values = Vec::new();
@@ -46,7 +48,7 @@ impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor> for 
             _ => return Ok(Self::new(values)),
         }
 
-        while !input.cursor.eof() {
+        while input.cursor.size_hint().0 > 0 {
             let mut tmp = input.clone();
 
             if tmp.peek::<B>() {
@@ -66,7 +68,7 @@ impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor> for 
     }
 }
 
-impl<Cursor: Skip + Clone, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for Interlace<A, B> {
+impl<Cursor: Iterator + Clone, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for Interlace<A, B> {
     fn peek(cursor: &Cursor) -> Option<usize> {
         let mut offset = 0;
         let mut cursor = cursor.clone();
@@ -74,17 +76,17 @@ impl<Cursor: Skip + Clone, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for In
         match A::peek(&cursor) {
             Some(value) => {
                 offset += value;
-                cursor.skip(value)
+                let _ = cursor.advance_by(value);
             }
             _ => return Some(0),
         }
 
-        while !cursor.eof() {
+        while cursor.size_hint().0 > 0 {
             let mut temp = cursor.clone();
             if let Some(a) = B::peek(&temp) {
-                temp.skip(a);
+                let _ = temp.advance_by(a);
                 if let Some(b) = A::peek(&temp) {
-                    temp.skip(b);
+                    let _ = temp.advance_by(b);
                     cursor = temp;
                     offset += a + b;
                 } else {
@@ -130,7 +132,7 @@ impl<A, B> InterlaceTrail<A, B> {
     }
 }
 
-impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
+impl<Cursor: Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
     for InterlaceTrail<A, B>
 {
     fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
@@ -146,7 +148,7 @@ impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
             _ => return Ok(Self::new(values)),
         }
 
-        while !input.cursor.eof() {
+        while input.cursor.size_hint().0 > 0 {
             if input.peek::<B>() {
                 match input.parse() {
                     Ok(value) => {
@@ -163,7 +165,9 @@ impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
     }
 }
 
-impl<Cursor: Clone + Skip, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for InterlaceTrail<A, B> {
+impl<Cursor: Clone + Iterator, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor>
+    for InterlaceTrail<A, B>
+{
     fn peek(input: &Cursor) -> Option<usize> {
         let mut offset = 0;
         let mut cursor = input.clone();
@@ -172,17 +176,17 @@ impl<Cursor: Clone + Skip, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for In
             Some(value) => offset += value,
             _ => return Some(0),
         }
-        cursor.skip(offset);
+        let _ = cursor.advance_by(offset);
 
-        while !input.eof() {
+        while input.size_hint().0 > 0 {
             if let Some(a) = B::peek(&cursor) {
-                cursor.skip(a);
+                let _ = cursor.advance_by(a);
                 offset += a;
             } else {
                 return Some(offset);
             }
             if let Some(b) = A::peek(&cursor) {
-                cursor.skip(b);
+                let _ = cursor.advance_by(b);
                 offset += b
             } else {
                 return Some(offset);

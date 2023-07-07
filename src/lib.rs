@@ -1,6 +1,6 @@
-#![feature(lint_reasons)]
+#![feature(lint_reasons, iter_advance_by, fn_traits)]
 #![expect(incomplete_features)]
-#![feature(adt_const_params, fn_traits)]
+#![feature(adt_const_params)]
 
 mod internals;
 mod materialize;

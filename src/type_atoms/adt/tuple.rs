@@ -37,18 +37,18 @@ macro_rules! tuple_impl {
             }
         }
 
-        impl<Cursor: Skip + Clone, $last_gen: Peek<Cursor>, $($gen: Peek<Cursor>),*> Peek<Cursor> for ($last_gen, $($gen,)*) {
+        impl<Cursor: Iterator + Clone, $last_gen: Peek<Cursor>, $($gen: Peek<Cursor>),*> Peek<Cursor> for ($last_gen, $($gen,)*) {
 
             fn peek(cursor: &Cursor) -> Option<usize> {
                 #[allow(unused_mut)]
                 let mut v = $last_gen::peek(cursor)?;
                 let mut cursor = cursor.clone();
 
-                cursor.skip(v);
+                let _ = cursor.advance_by(v);
 
                 $({
                     let delta = $gen::peek(&cursor)?;
-                    cursor.skip(delta);
+                    let _ = cursor.advance_by(delta);
                     v += delta;
                 })*
 
@@ -62,16 +62,16 @@ macro_rules! tuple_impl {
         }
         // Not perfect. In reality the last generic does not have to impl FixedPeek but this is
         // close enougth
-        impl<Cursor: Clone + Skip, $last_gen: PeekError<Cursor> + FixedPeek, $($gen: PeekError<Cursor> + FixedPeek),*> PeekError<Cursor> for ($last_gen, $($gen,)*) {
+        impl<Cursor: Clone + Iterator, $last_gen: PeekError<Cursor> + FixedPeek, $($gen: PeekError<Cursor> + FixedPeek),*> PeekError<Cursor> for ($last_gen, $($gen,)*) {
             fn error(cursor: &Cursor) -> Error {
                 #[allow(unused_mut)]
                 let mut e = $last_gen::error(&cursor);
                 let mut cursor = cursor.clone();
-                cursor.skip($last_gen::SKIP);
+                let _ = cursor.advance_by($last_gen::SKIP);
 
                 $({
                     e.combine($gen::error(&cursor));
-                    cursor.skip($gen::SKIP);
+                    let _  =cursor.advance_by($gen::SKIP);
                 })*
 
                 e

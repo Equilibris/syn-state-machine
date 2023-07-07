@@ -1,7 +1,9 @@
+use std::num::NonZeroUsize;
+
 use proc_macro2::extra::DelimSpan;
 use proc_macro2::{Delimiter, Group, Ident, Literal, Punct, Span, TokenStream, TokenTree};
 
-use crate::{Error, ParseBuffer, Result, Skip, Spanned};
+use crate::{Error, ParseBuffer, Result, Spanned};
 
 // Copied from syn with very slight changes
 #[derive(Debug)]
@@ -125,14 +127,14 @@ impl<'a> Cursor<'a> {
     fn ignore_none(&mut self) {
         while let Entry::Group(group, _) = self.entry() {
             if group.delimiter() == Delimiter::None {
-                *self = self.next();
+                let _ = self.advance_by(1);
             } else {
                 break;
             }
         }
     }
 
-    pub fn remaining(self) -> usize {
+    pub fn remaining(&self) -> usize {
         self.end - self.current
     }
 
@@ -294,12 +296,55 @@ impl<'a> Spanned for Cursor<'a> {
     }
 }
 
-impl<'a> Skip for Cursor<'a> {
-    fn eof(&self) -> bool {
-        self.current >= self.end
+impl<'a> Iterator for Cursor<'a> {
+    type Item = TokenTree;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let Some((a, b)) = self.token_tree() else { return None };
+
+        *self = b;
+
+        Some(a)
     }
-    fn skip(&mut self, count: usize) {
-        self.current += count;
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.remaining(), None)
+    }
+
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.remaining()
+    }
+
+    fn last(self) -> Option<Self::Item>
+    where
+        Self: Sized,
+    {
+        let Self { buf, current, end } = self;
+
+        if current < end {
+            Self {
+                current: end - 1,
+                end,
+                buf,
+            }
+            .token_tree()
+            .map(|v| v.0)
+        } else {
+            None
+        }
+    }
+
+    fn advance_by(&mut self, n: usize) -> std::result::Result<(), std::num::NonZeroUsize> {
+        self.current += n;
+
+        if self.current > self.end {
+            Err(unsafe { NonZeroUsize::new_unchecked(self.current - self.end) })
+        } else {
+            Ok(())
+        }
     }
 }
 

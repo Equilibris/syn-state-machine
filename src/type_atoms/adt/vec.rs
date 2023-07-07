@@ -1,11 +1,11 @@
 use crate::internals::*;
 
-impl<C: Skip + Clone, T: Parse<C>> Parse<C> for Vec<T> {
+impl<C: Iterator + Clone, T: Parse<C>> Parse<C> for Vec<T> {
     fn parse(input: &mut ParseBuffer<C>) -> Result<Self> {
         let mut temp = input.clone();
         let mut vs = Vec::new();
 
-        while !temp.cursor.eof() {
+        while temp.cursor.size_hint().0 > 0 {
             match temp.parse() {
                 Ok(a) => vs.push(a),
                 Err(_) => {
@@ -19,16 +19,16 @@ impl<C: Skip + Clone, T: Parse<C>> Parse<C> for Vec<T> {
         Ok(vs)
     }
 }
-impl<C: Skip + Clone, T: Peek<C>> Peek<C> for Vec<T> {
+impl<C: Iterator + Clone, T: Peek<C>> Peek<C> for Vec<T> {
     fn peek(cursor: &C) -> Option<usize> {
         let mut step = 0;
         let mut cursor = cursor.clone();
 
-        while !cursor.eof() {
+        while cursor.size_hint().0 > 0 {
             match T::peek(&cursor) {
                 Some(a) => {
-                    cursor.skip(a);
                     step += a;
+                    let _ = cursor.advance_by(a);
                 }
                 None => return Some(step),
             }
