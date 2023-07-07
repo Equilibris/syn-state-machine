@@ -1,61 +1,38 @@
-use proc_macro2::{Ident, Span};
+use proc_macro2::Span;
 
 use crate::{internals::Result, Error};
 
-use super::cursor::Cursor;
-
 #[derive(Clone, Copy)]
-pub struct ParseBuffer<'a>(Cursor<'a>);
+pub struct ParseBuffer<C> {
+    pub cursor: C,
+}
 
-impl<'a> From<Cursor<'a>> for ParseBuffer<'a> {
-    fn from(value: Cursor<'a>) -> Self {
-        Self(value)
+impl<C> From<C> for ParseBuffer<C> {
+    fn from(cursor: C) -> Self {
+        Self { cursor }
     }
 }
 
-impl<'a> ParseBuffer<'a> {
-    pub fn span(&self) -> Span {
-        self.0.span()
-    }
-    pub fn cursor(&self) -> Cursor<'a> {
-        self.0
-    }
-
-    pub fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<()>>(
-        &mut self,
-        pred: Pred,
-    ) -> Result<&'a Ident> {
-        match self.cursor().ident() {
-            Some((val, cur)) => {
-                if let Err(e) = pred.call_once((val,)) {
-                    Err(e)
-                } else {
-                    self.0 = cur;
-                    Ok(val)
-                }
-            }
-            None => Err(Error::new(self.span(), "Expected Ident")),
-        }
-    }
-
-    pub fn peek<T: Peek<'a>>(&mut self) -> bool {
-        if let Some(x) = T::peek(self.0) {
-            self.0 = self.0.skip(x);
+impl<C: Skip> ParseBuffer<C> {
+    pub fn peek<T: Peek<C>>(&mut self) -> bool {
+        if let Some(x) = T::peek(&self.cursor) {
+            self.cursor.skip(x);
             true
         } else {
             false
         }
     }
-    pub fn errored_peek<T: Peek<'a> + PeekError<'a>>(&mut self) -> Result<()> {
-        if let Some(x) = T::peek(self.0) {
-            self.0 = self.0.skip(x);
+    pub fn errored_peek<T: Peek<C> + PeekError<C>>(&mut self) -> Result<()> {
+        if let Some(x) = T::peek(&self.cursor) {
+            self.cursor.skip(x);
             Ok(())
         } else {
-            Err(T::error(self.0))
+            Err(T::error(&self.cursor))
         }
     }
-
-    pub fn parse<T: Parse<'a>>(&mut self) -> Result<T> {
+}
+impl<C> ParseBuffer<C> {
+    pub fn parse<T: Parse<C>>(&mut self) -> Result<T> {
         T::parse(self)
     }
     pub fn call<T, E>(&mut self, function: impl Fn(&mut Self) -> Result<T>) -> Result<T> {
@@ -63,15 +40,30 @@ impl<'a> ParseBuffer<'a> {
     }
 }
 
-pub trait Parse<'a>: Sized {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self>;
+impl<C: Spanned> Spanned for ParseBuffer<C> {
+    fn span(&self) -> Span {
+        self.cursor.span()
+    }
 }
-pub trait Peek<'a> {
-    fn peek(input: Cursor<'a>) -> Option<usize>;
+
+pub trait Skip {
+    fn eof(&self) -> bool;
+    fn skip(&mut self, count: usize);
+}
+
+pub trait Spanned {
+    fn span(&self) -> Span;
+}
+
+pub trait Parse<C>: Sized {
+    fn parse(input: &mut ParseBuffer<C>) -> Result<Self>;
+}
+pub trait Peek<C> {
+    fn peek(input: &C) -> Option<usize>;
 }
 pub trait FixedPeek {
     const SKIP: usize;
 }
-pub trait PeekError<'a> {
-    fn error(input: Cursor<'a>) -> Error;
+pub trait PeekError<C> {
+    fn error(input: &C) -> Error;
 }

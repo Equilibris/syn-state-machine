@@ -122,8 +122,10 @@ pub struct StructPatternElements<Attr, Pat> {
     pub et_cetera: Option<StructPatternEtCetera<Attr>>,
 }
 
-impl<'a, Attr: Parse<'a>, Pat: Parse<'a>> Parse<'a> for StructPatternElements<Attr, Pat> {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a, Attr: Parse<Cursor<'a>>, Pat: Parse<Cursor<'a>>> Parse<Cursor<'a>>
+    for StructPatternElements<Attr, Pat>
+{
+    fn parse(input: &mut ParseBuffer<Cursor<'a>>) -> Result<Self> {
         Ok(
             match input.parse::<Sum2<(_, Sum3<Comma, (Comma, _), ()>), _>>()? {
                 Sum2::V0((fields, Sum3::V0(_) | Sum3::V2(_))) => Self {

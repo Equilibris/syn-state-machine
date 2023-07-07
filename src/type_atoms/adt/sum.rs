@@ -59,8 +59,8 @@ macro_rules! sum_impl {
             )*
         }
 
-        impl<'a, $gen: Parse<'a>, $($gens: Parse<'a>,)*> Parse<'a> for $ty<$gen, $($gens,)*> {
-            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<Cursor: Clone, $gen: Parse<Cursor>, $($gens: Parse<Cursor>,)*> Parse<Cursor> for $ty<$gen, $($gens,)*> {
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
                 let mut temp = input.clone();
 
                 let mut e = match temp.parse() {
@@ -86,8 +86,8 @@ macro_rules! sum_impl {
                 Err(e)
             }
         }
-        impl<'a, $gen: Peek<'a>, $($gens: Peek<'a>,)*> Peek<'a> for $ty<$gen, $($gens,)*> {
-            fn peek(input: Cursor<'a>) -> Option<usize> {
+        impl<Cursor, $gen: Peek<Cursor>, $($gens: Peek<Cursor>,)*> Peek<Cursor> for $ty<$gen, $($gens,)*> {
+            fn peek(input: &Cursor) -> Option<usize> {
                 if let Some(v) = $gen::peek(input) {
                     return Some(v);
                 }
@@ -100,8 +100,8 @@ macro_rules! sum_impl {
                 None
             }
         }
-        impl<'a, $gen: PeekError<'a>, $($gens: PeekError<'a>,)*> PeekError<'a> for $ty<$gen, $($gens,)*> {
-            fn error(input: Cursor<'a>) -> Error {
+        impl<Cursor, $gen: PeekError<Cursor>, $($gens: PeekError<Cursor>,)*> PeekError<Cursor> for $ty<$gen, $($gens,)*> {
+            fn error(input: &Cursor) -> Error {
                 let mut e = $gen::error(input);
 
                 $(e.combine($gens::error(input));)*

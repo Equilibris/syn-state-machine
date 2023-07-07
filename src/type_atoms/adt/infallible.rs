@@ -2,18 +2,18 @@ pub use std::convert::Infallible;
 
 use crate::*;
 
-impl<'a> Parse<'a> for Infallible {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<Cursor: Spanned> Parse<Cursor> for Infallible {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
         Err(Error::new(input.span(), "Reached Infallible"))
     }
 }
-impl<'a> Peek<'a> for Infallible {
-    fn peek(_: Cursor<'a>) -> Option<usize> {
+impl<Cursor> Peek<Cursor> for Infallible {
+    fn peek(_: &Cursor) -> Option<usize> {
         None
     }
 }
-impl<'a> PeekError<'a> for Infallible {
-    fn error(input: Cursor<'a>) -> Error {
+impl<Cursor: Spanned> PeekError<Cursor> for Infallible {
+    fn error(input: &Cursor) -> Error {
         Error::new(input.span(), "Reached Infallible")
     }
 }

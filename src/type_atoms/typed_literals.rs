@@ -1,7 +1,7 @@
 use crate::*;
 
-impl<'a> Parse<'a> for bool {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<'a> Parse<Cursor<'a>> for bool {
+    fn parse(input: &mut ParseBuffer<Cursor<'a>>) -> Result<Self> {
         Ok(input.ident_matching(|id| {
             if id == "true" || id == "false" {
                 Ok(())
@@ -11,17 +11,17 @@ impl<'a> Parse<'a> for bool {
         })? == "true")
     }
 }
-impl<'a> Peek<'a> for bool {
-    fn peek(input: Cursor<'a>) -> Option<usize> {
+impl<'a> Peek<Cursor<'a>> for bool {
+    fn peek(input: &Cursor<'a>) -> Option<usize> {
         todo!()
     }
 }
 
 macro_rules! typed_lit {
     ($err:literal $ty:ty) => {
-        impl<'a> Parse<'a> for $ty {
-            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
-                let cursor = input.cursor();
+        impl<'a> Parse<Cursor<'a>> for $ty {
+            fn parse(input: &mut ParseBuffer<Cursor<'a>>) -> Result<Self> {
+                let cursor = input.cursor;
                 match cursor.literal() {
                     Some((lit, cursor)) => {
                         let v = Self::try_from(lit).map_err(|_| Error::new(cursor.span(), $err))?;
@@ -35,8 +35,8 @@ macro_rules! typed_lit {
             }
         }
 
-        impl<'a> Peek<'a> for $ty {
-            fn peek(input: Cursor<'a>) -> Option<usize> {
+        impl<'a> Peek<Cursor<'a>> for $ty {
+            fn peek(input: &Cursor<'a>) -> Option<usize> {
                 match input.literal() {
                     Some((lit, _)) => {
                         Self::try_from(lit).ok()?;
@@ -49,8 +49,8 @@ macro_rules! typed_lit {
         impl FixedPeek for $ty {
             const SKIP: usize = 1;
         }
-        impl<'a> PeekError<'a> for $ty {
-            fn error(input: Cursor<'a>) -> Error {
+        impl<'a> PeekError<Cursor<'a>> for $ty {
+            fn error(input: &Cursor<'a>) -> Error {
                 Error::new(input.span(), $err)
             }
         }

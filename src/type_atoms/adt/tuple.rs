@@ -2,13 +2,13 @@ use crate::internals::*;
 
 macro_rules! tuple_impl {
     () => {
-        impl<'a> Parse<'a> for () {
-            fn parse(_: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<C> Parse<C> for () {
+            fn parse(_: &mut ParseBuffer<C>) -> Result<Self> {
                 Ok(())
             }
         }
-        impl<'a> Peek<'a> for () {
-            fn peek(_: Cursor<'a>) -> Option<usize> {
+        impl<C> Peek<C> for () {
+            fn peek(_: &C) -> Option<usize> {
                 Some(0)
             }
         }
@@ -25,8 +25,8 @@ macro_rules! tuple_impl {
         // }
     };
     ($last_gen:ident $($gen:ident)*) => {
-        impl<'a, $last_gen: Parse<'a>, $($gen: Parse<'a>,)*> Parse<'a> for ($last_gen, $($gen,)* ) {
-            fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+        impl<Cursor: Clone, $last_gen: Parse<Cursor>, $($gen: Parse<Cursor>,)*> Parse<Cursor> for ($last_gen, $($gen,)* ) {
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
                 let mut temp = input.clone();
 
                 let vs = (temp.parse()?, $(temp.parse::<$gen>()?,)*);
@@ -37,15 +37,22 @@ macro_rules! tuple_impl {
             }
         }
 
-        impl<'a, $last_gen: Peek<'a>, $($gen: Peek<'a>),*> Peek<'a> for ($last_gen, $($gen,)*) {
-            #[allow(unused_mut)]
-            fn peek(input: Cursor<'a>) -> Option<usize> {
-                let mut v = $last_gen::peek(input)?;
+        impl<Cursor: Skip + Clone, $last_gen: Peek<Cursor>, $($gen: Peek<Cursor>),*> Peek<Cursor> for ($last_gen, $($gen,)*) {
+
+            fn peek(cursor: &Cursor) -> Option<usize> {
+                #[allow(unused_mut)]
+                let mut v = $last_gen::peek(cursor)?;
+                let mut cursor = cursor.clone();
+
+                cursor.skip(v);
 
                 $({
-                    v += $gen::peek(input.skip(v))?;
+                    let delta = $gen::peek(&cursor)?;
+                    cursor.skip(delta);
+                    v += delta;
                 })*
 
+                dbg!(v);
                 Some(v)
             }
         }
@@ -55,15 +62,16 @@ macro_rules! tuple_impl {
         }
         // Not perfect. In reality the last generic does not have to impl FixedPeek but this is
         // close enougth
-        impl<'a, $last_gen: PeekError<'a> + FixedPeek, $($gen: PeekError<'a> + FixedPeek),*> PeekError<'a> for ($last_gen, $($gen,)*) {
-            #[allow(unused_mut, unused)]
-            fn error(input: Cursor<'a>) -> Error {
-                let mut e = $last_gen::error(input);
-                let mut skip = $last_gen::SKIP;
+        impl<Cursor: Clone + Skip, $last_gen: PeekError<Cursor> + FixedPeek, $($gen: PeekError<Cursor> + FixedPeek),*> PeekError<Cursor> for ($last_gen, $($gen,)*) {
+            fn error(cursor: &Cursor) -> Error {
+                #[allow(unused_mut)]
+                let mut e = $last_gen::error(&cursor);
+                let mut cursor = cursor.clone();
+                cursor.skip($last_gen::SKIP);
 
                 $({
-                    e.combine($gen::error(input.skip(skip)));
-                    skip += $gen::SKIP;
+                    e.combine($gen::error(&cursor));
+                    cursor.skip($gen::SKIP);
                 })*
 
                 e
@@ -80,6 +88,8 @@ tuple_impl!(Z Y X W V U T S R Q P O N M L K J I H G F E D C B A);
 mod tests {
     use crate::*;
 
+    insta_match_test!(it_fails_2_tuple, (Ident, FIdent<"world">) : hello *);
+    insta_match_test!(it_fails_2_types, (Ident, Ident) : hello *);
     insta_match_test!(it_matches_2_tuple, (Ident, FIdent<"world">) : hello world);
     insta_match_test!(it_steps_back_for_options, (Option<Ident>, Option<Punct>) : <);
     insta_match_test!(it_only_steps_back_on_fail_for_options, (Option<Ident>, Option<Punct>) : hi);

@@ -12,22 +12,22 @@ pub use materialize::*;
 pub use rust::*;
 pub use type_atoms::*;
 
-pub fn parse_borrowed<'a, T: Parse<'a>>(buf: &'a TokenBuffer) -> Result<T> {
+pub fn parse_borrowed<'a, T: Parse<Cursor<'a>>>(buf: &'a TokenBuffer) -> Result<T> {
     let mut stream = ParseBuffer::from(buf.begin());
 
     stream.parse()
 }
-pub fn parse<T: for<'a> Parse<'a>>(ts: TokenStream) -> Result<T> {
+pub fn parse<T: for<'a> Parse<Cursor<'a>>>(ts: TokenStream) -> Result<T> {
     let buf = TokenBuffer::from(ts);
 
     parse_borrowed(&buf)
 }
 
 #[cfg(test)]
-pub fn test_peek<T: for<'a> Peek<'a>>(ts: TokenStream) -> Option<usize> {
+pub fn test_peek<T: for<'a> Peek<Cursor<'a>>>(ts: TokenStream) -> Option<usize> {
     let buf = TokenBuffer::from(ts);
 
-    T::peek(buf.begin())
+    T::peek(&buf.begin())
 }
 
 #[cfg(test)]

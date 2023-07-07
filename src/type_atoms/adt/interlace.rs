@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{Cursor, Parse, ParseBuffer, Peek, Result};
+use crate::{Cursor, Parse, ParseBuffer, Peek, Result, Skip};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
@@ -33,8 +33,8 @@ impl<A, B> Interlace<A, B> {
     }
 }
 
-impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for Interlace<A, B> {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor> for Interlace<A, B> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
         let mut temp = input.clone();
         let mut values = Vec::new();
 
@@ -46,7 +46,7 @@ impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for Interlace<A, B> {
             _ => return Ok(Self::new(values)),
         }
 
-        while !input.cursor().eof() {
+        while !input.cursor.eof() {
             let mut tmp = input.clone();
 
             if tmp.peek::<B>() {
@@ -66,19 +66,27 @@ impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for Interlace<A, B> {
     }
 }
 
-impl<'a, A: Peek<'a>, B: Peek<'a>> Peek<'a> for Interlace<A, B> {
-    fn peek(cursor: Cursor<'a>) -> Option<usize> {
+impl<Cursor: Skip + Clone, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for Interlace<A, B> {
+    fn peek(cursor: &Cursor) -> Option<usize> {
         let mut offset = 0;
+        let mut cursor = cursor.clone();
 
-        match A::peek(cursor) {
-            Some(value) => offset += value,
-            _ => return Some(offset),
+        match A::peek(&cursor) {
+            Some(value) => {
+                offset += value;
+                cursor.skip(value)
+            }
+            _ => return Some(0),
         }
 
-        while !cursor.skip(offset).eof() {
-            if let Some(a) = B::peek(cursor.skip(offset)) {
-                if let Some(b) = A::peek(cursor.skip(offset + a)) {
-                    offset += a + b
+        while !cursor.eof() {
+            let mut temp = cursor.clone();
+            if let Some(a) = B::peek(&temp) {
+                temp.skip(a);
+                if let Some(b) = A::peek(&temp) {
+                    temp.skip(b);
+                    cursor = temp;
+                    offset += a + b;
                 } else {
                     return Some(offset);
                 }
@@ -122,8 +130,10 @@ impl<A, B> InterlaceTrail<A, B> {
     }
 }
 
-impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for InterlaceTrail<A, B> {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+impl<Cursor: Clone + Skip, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
+    for InterlaceTrail<A, B>
+{
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
         let mut temp = input.clone();
 
         let mut values = Vec::new();
@@ -136,7 +146,7 @@ impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for InterlaceTrail<A, B> {
             _ => return Ok(Self::new(values)),
         }
 
-        while !input.cursor().eof() {
+        while !input.cursor.eof() {
             if input.peek::<B>() {
                 match input.parse() {
                     Ok(value) => {
@@ -153,22 +163,26 @@ impl<'a, A: Parse<'a>, B: Peek<'a>> Parse<'a> for InterlaceTrail<A, B> {
     }
 }
 
-impl<'a, A: Peek<'a>, B: Peek<'a>> Peek<'a> for InterlaceTrail<A, B> {
-    fn peek(input: Cursor<'a>) -> Option<usize> {
+impl<Cursor: Clone + Skip, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor> for InterlaceTrail<A, B> {
+    fn peek(input: &Cursor) -> Option<usize> {
         let mut offset = 0;
+        let mut cursor = input.clone();
 
         match A::peek(input) {
             Some(value) => offset += value,
-            _ => return Some(offset),
+            _ => return Some(0),
         }
+        cursor.skip(offset);
 
-        while !input.skip(offset).eof() {
-            if let Some(a) = B::peek(input.skip(offset)) {
+        while !input.eof() {
+            if let Some(a) = B::peek(&cursor) {
+                cursor.skip(a);
                 offset += a;
             } else {
                 return Some(offset);
             }
-            if let Some(b) = A::peek(input.skip(offset)) {
+            if let Some(b) = A::peek(&cursor) {
+                cursor.skip(b);
                 offset += b
             } else {
                 return Some(offset);

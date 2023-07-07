@@ -1,0 +1,12 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "(insta_match_test!(+ parse (Ident, Ident) : hello *),\n    insta_match_test!(* peek (Ident, Ident) : hello *))"
+---
+(
+    Err(
+        Error(
+            "Expected ident",
+        ),
+    ),
+    None,
+)

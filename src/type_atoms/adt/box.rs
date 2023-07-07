@@ -1,20 +1,20 @@
 use crate::*;
 
-impl<'a, T: Parse<'a>> Parse<'a> for Box<T> {
-    fn parse(input: &mut crate::ParseBuffer<'a>) -> crate::Result<Self> {
+impl<Cursor, T: Parse<Cursor>> Parse<Cursor> for Box<T> {
+    fn parse(input: &mut crate::ParseBuffer<Cursor>) -> crate::Result<Self> {
         input.parse().map(Box::new)
     }
 }
-impl<'a, T: Peek<'a>> Peek<'a> for Box<T> {
-    fn peek(input: crate::Cursor<'a>) -> Option<usize> {
+impl<Cursor, T: Peek<Cursor>> Peek<Cursor> for Box<T> {
+    fn peek(input: &Cursor) -> Option<usize> {
         T::peek(input)
     }
 }
 impl<T: FixedPeek> FixedPeek for Box<T> {
     const SKIP: usize = T::SKIP;
 }
-impl<'a, T: PeekError<'a>> PeekError<'a> for Box<T> {
-    fn error(input: crate::Cursor<'a>) -> crate::Error {
+impl<Cursor, T: PeekError<Cursor>> PeekError<Cursor> for Box<T> {
+    fn error(input: &Cursor) -> crate::Error {
         T::error(input)
     }
 }

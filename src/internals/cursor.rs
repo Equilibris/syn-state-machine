@@ -1,6 +1,8 @@
 use proc_macro2::extra::DelimSpan;
 use proc_macro2::{Delimiter, Group, Ident, Literal, Punct, Span, TokenStream, TokenTree};
 
+use crate::{Error, ParseBuffer, Result, Skip, Spanned};
+
 // Copied from syn with very slight changes
 #[derive(Debug)]
 pub enum Entry {
@@ -268,10 +270,10 @@ impl<'a> Cursor<'a> {
         };
         Some((tree, rest))
     }
+}
 
-    /// Returns the `Span` of the current token, or `Span::call_site()` if this
-    /// cursor points to eof.
-    pub fn span(self) -> Span {
+impl<'a> Spanned for Cursor<'a> {
+    fn span(&self) -> Span {
         match self.entry() {
             Entry::Group(group, _) => group.delim_span().open(),
             Entry::Literal(literal) => literal.span(),
@@ -290,38 +292,48 @@ impl<'a> Cursor<'a> {
             }
         }
     }
+}
 
-    /// Returns the `Span` of the token immediately prior to the position of
-    /// this cursor, or of the current token if there is no previous one.
-    #[cfg(any(feature = "full", feature = "derive"))]
-    pub(crate) fn prev_span(mut self) -> Span {
-        if start_of_buffer(self) < self.ptr {
-            self.ptr = unsafe { self.ptr.offset(-1) };
-            if let Entry::End(_) = self.entry() {
-                // Locate the matching Group begin token.
-                let mut depth = 1;
-                loop {
-                    self.ptr = unsafe { self.ptr.offset(-1) };
-                    match self.entry() {
-                        Entry::Group(group, _) => {
-                            depth -= 1;
-                            if depth == 0 {
-                                return group.span();
-                            }
-                        }
-                        Entry::End(_) => depth += 1,
-                        Entry::Literal(_) | Entry::Ident(_) | Entry::Punct(_) => {}
-                    }
+impl<'a> Skip for Cursor<'a> {
+    fn eof(&self) -> bool {
+        self.current >= self.end
+    }
+    fn skip(&mut self, count: usize) {
+        self.current += count;
+    }
+}
+
+pub trait ParseBufExt<'a> {
+    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<()>>(
+        &mut self,
+        pred: Pred,
+    ) -> Result<&'a Ident>;
+}
+
+impl<'a> ParseBufExt<'a> for ParseBuffer<Cursor<'a>> {
+    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<()>>(
+        &mut self,
+        pred: Pred,
+    ) -> Result<&'a Ident> {
+        match self.cursor.ident() {
+            Some((val, cur)) => {
+                if let Err(e) = pred.call_once((val,)) {
+                    Err(e)
+                } else {
+                    self.cursor = cur;
+                    Ok(val)
                 }
             }
+            None => Err(Error::new(self.span(), "Expected Ident")),
         }
-        self.span()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use quote::quote;
+
+    use crate::Spanned;
 
     use super::TokenBuffer;
 

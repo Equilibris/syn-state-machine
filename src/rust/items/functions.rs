@@ -67,10 +67,10 @@ pub struct FunctionParameters<Attr, Ty, Pat> {
     pub params: InterlaceTrail<FunctionParam<Attr, Ty, Pat>, Comma>,
 }
 
-impl<'a, Attr: Parse<'a>, Ty: Parse<'a>, Pat: Parse<'a>> Parse<'a>
+impl<'a, Attr: Parse<Cursor<'a>>, Ty: Parse<Cursor<'a>>, Pat: Parse<Cursor<'a>>> Parse<Cursor<'a>>
     for FunctionParameters<Attr, Ty, Pat>
 {
-    fn parse(input: &mut ParseBuffer<'a>) -> Result<Self> {
+    fn parse(input: &mut ParseBuffer<Cursor<'a>>) -> Result<Self> {
         Ok(
             match input.parse::<Sum2<(Option<(_, Comma)>, _), (_, Option<Comma>)>>()? {
                 Sum2::V0((self_param, params)) => Self {
