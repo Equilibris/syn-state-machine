@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{Parse, ParseBuffer, Peek, Result};
+use crate::{Parse, ParseBuffer, ParserCursor, Peek};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
@@ -33,10 +33,10 @@ impl<A, B> Interlace<A, B> {
     }
 }
 
-impl<Cursor: Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
+impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
     for Interlace<A, B>
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
         let mut temp = input.clone();
         let mut values = Vec::new();
 
@@ -132,10 +132,10 @@ impl<A, B> InterlaceTrail<A, B> {
     }
 }
 
-impl<Cursor: Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
+impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
     for InterlaceTrail<A, B>
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
         let mut temp = input.clone();
 
         let mut values = Vec::new();

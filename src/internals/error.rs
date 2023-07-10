@@ -1,4 +1,5 @@
 use crate::internals::ThreadBound;
+use crate::{CombineError, LocError};
 use proc_macro2::{
     Delimiter, Group, Ident, LexError, Literal, Punct, Spacing, Span, TokenStream, TokenTree,
 };
@@ -8,8 +9,13 @@ use std::fmt::{self, Debug, Display};
 use std::slice;
 use std::vec;
 
-pub type Result<T> = std::result::Result<T, Error>;
+impl<'a> From<LocError<'a, Span>> for Error {
+    fn from(value: LocError<'a, Span>) -> Self {
+        Self::new(value.1, value.0)
+    }
+}
 
+#[derive(Default)]
 pub struct Error {
     messages: Vec<ErrorMessage>,
 }
@@ -89,10 +95,15 @@ impl Error {
     pub fn into_compile_error(self) -> TokenStream {
         self.to_compile_error()
     }
+}
 
-    pub fn combine(&mut self, another: Error) {
-        self.messages.extend(another.messages);
+impl<Other: Into<Error>> CombineError<Other> for Error {
+    fn combine(&mut self, other: Other) {
+        self.messages.extend(other.into().messages);
     }
+}
+impl CombineError<std::convert::Infallible> for Error {
+    fn combine(&mut self, other: std::convert::Infallible) {}
 }
 
 impl ErrorMessage {

@@ -21,8 +21,8 @@ materialize! {
 
 #[derive(Debug)]
 pub struct CrateRef(pub Ident);
-impl<'a> Parse<Cursor<'a>> for CrateRef {
-    fn parse(input: &mut ParseBuffer<Cursor<'a>>) -> Result<Self> {
+impl<'a> Parse<RustCursor<'a>> for CrateRef {
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
         Ok(Self(
             input
                 .ident_matching(|id| {

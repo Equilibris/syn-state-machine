@@ -1,7 +1,7 @@
 use crate::internals::*;
 
-impl<Cursor: Clone, T: Parse<Cursor>> Parse<Cursor> for Option<T> {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
+impl<Cursor: Clone + ParserCursor, T: Parse<Cursor>> Parse<Cursor> for Option<T> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
         let mut temp = input.clone();
 
         Ok(match temp.parse() {

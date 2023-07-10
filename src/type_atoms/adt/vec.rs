@@ -1,7 +1,7 @@
 use crate::internals::*;
 
-impl<C: Iterator + Clone, T: Parse<C>> Parse<C> for Vec<T> {
-    fn parse(input: &mut ParseBuffer<C>) -> Result<Self> {
+impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Vec<T> {
+    fn parse(input: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
         let mut temp = input.clone();
         let mut vs = Vec::new();
 

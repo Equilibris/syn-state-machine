@@ -2,8 +2,8 @@ use crate::internals::*;
 
 macro_rules! tuple_impl {
     () => {
-        impl<C> Parse<C> for () {
-            fn parse(_: &mut ParseBuffer<C>) -> Result<Self> {
+        impl<C: ParserCursor> Parse<C> for () {
+            fn parse(_: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
                 Ok(())
             }
         }
@@ -25,8 +25,9 @@ macro_rules! tuple_impl {
         // }
     };
     ($last_gen:ident $($gen:ident)*) => {
-        impl<Cursor: Clone, $last_gen: Parse<Cursor>, $($gen: Parse<Cursor>,)*> Parse<Cursor> for ($last_gen, $($gen,)* ) {
-            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
+        impl<Cursor: Clone + ParserCursor, $last_gen: Parse<Cursor>, $($gen: Parse<Cursor>,)*> Parse<Cursor> for ($last_gen, $($gen,)* )
+        {
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
                 let mut temp = input.clone();
 
                 let vs = (temp.parse()?, $(temp.parse::<$gen>()?,)*);
@@ -38,7 +39,6 @@ macro_rules! tuple_impl {
         }
 
         impl<Cursor: Iterator + Clone, $last_gen: Peek<Cursor>, $($gen: Peek<Cursor>),*> Peek<Cursor> for ($last_gen, $($gen,)*) {
-
             fn peek(cursor: &Cursor) -> Option<usize> {
                 #[allow(unused_mut)]
                 let mut v = $last_gen::peek(cursor)?;
@@ -62,8 +62,11 @@ macro_rules! tuple_impl {
         }
         // Not perfect. In reality the last generic does not have to impl FixedPeek but this is
         // close enougth
-        impl<Cursor: Clone + Iterator, $last_gen: PeekError<Cursor> + FixedPeek, $($gen: PeekError<Cursor> + FixedPeek),*> PeekError<Cursor> for ($last_gen, $($gen,)*) {
-            fn error(cursor: &Cursor) -> Error {
+        impl<Cursor: ParserCursor + Clone + Iterator, $last_gen: PeekError<Cursor> + FixedPeek, $($gen: PeekError<Cursor> + FixedPeek),*> PeekError<Cursor> for ($last_gen, $($gen,)*)
+        where
+            Cursor::Error: CombineError<Cursor::Error>
+        {
+            fn error(cursor: &Cursor) -> Cursor::Error {
                 #[allow(unused_mut)]
                 let mut e = $last_gen::error(&cursor);
                 let mut cursor = cursor.clone();

@@ -3,7 +3,7 @@ use std::num::NonZeroUsize;
 use proc_macro2::extra::DelimSpan;
 use proc_macro2::{Delimiter, Group, Ident, Literal, Punct, Span, TokenStream, TokenTree};
 
-use crate::{Error, ParseBuffer, Result, Spanned};
+use crate::{Error, ParseBuffer, ParserCursor, Spanned};
 
 // Copied from syn with very slight changes
 #[derive(Debug)]
@@ -48,8 +48,8 @@ impl TokenBuffer {
             entries: entries.into_boxed_slice(),
         }
     }
-    pub fn begin<'a>(&'a self) -> Cursor<'a> {
-        Cursor {
+    pub fn begin<'a>(&'a self) -> RustCursor<'a> {
+        RustCursor {
             buf: self,
             current: 0,
             end: self.entries.len() - 1,
@@ -69,18 +69,18 @@ impl From<TokenStream> for TokenBuffer {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct Cursor<'a> {
+pub struct RustCursor<'a> {
     buf: &'a TokenBuffer,
     pub current: usize,
     pub end: usize,
 }
 
-impl<'a> Cursor<'a> {
+impl<'a> RustCursor<'a> {
     pub fn entry(self) -> &'a Entry {
         &self.buf.entries[self.current]
     }
 
-    pub fn next(self) -> Cursor<'a> {
+    pub fn next(self) -> RustCursor<'a> {
         let Self { buf, current, end } = self;
         Self {
             buf,
@@ -88,7 +88,7 @@ impl<'a> Cursor<'a> {
             end,
         }
     }
-    pub fn skip_to_end(self) -> Cursor<'a> {
+    pub fn skip_to_end(self) -> RustCursor<'a> {
         let Self {
             buf,
             current: _,
@@ -100,7 +100,7 @@ impl<'a> Cursor<'a> {
             end,
         }
     }
-    pub fn prev(self) -> Cursor<'a> {
+    pub fn prev(self) -> RustCursor<'a> {
         let Self { buf, current, end } = self;
         Self {
             buf,
@@ -109,7 +109,7 @@ impl<'a> Cursor<'a> {
         }
     }
 
-    pub fn skip(self, count: usize) -> Cursor<'a> {
+    pub fn skip(self, count: usize) -> RustCursor<'a> {
         let Self { buf, current, end } = self;
 
         Self {
@@ -142,7 +142,10 @@ impl<'a> Cursor<'a> {
         self.current == self.end
     }
 
-    pub fn group(mut self, delim: Delimiter) -> Option<(Cursor<'a>, DelimSpan, Cursor<'a>)> {
+    pub fn group(
+        mut self,
+        delim: Delimiter,
+    ) -> Option<(RustCursor<'a>, DelimSpan, RustCursor<'a>)> {
         // If we're not trying to enter a none-delimited group, we want to
         // ignore them. We have to make sure to _not_ ignore them when we want
         // to enter them, of course. For obvious reasons.
@@ -175,7 +178,7 @@ impl<'a> Cursor<'a> {
         None
     }
 
-    pub fn any_group(self) -> Option<(Cursor<'a>, Delimiter, DelimSpan, Cursor<'a>)> {
+    pub fn any_group(self) -> Option<(RustCursor<'a>, Delimiter, DelimSpan, RustCursor<'a>)> {
         if let Entry::Group(group, end_offset) = self.entry() {
             let Self { buf, current, end } = self;
             let delim = group.delimiter();
@@ -200,7 +203,7 @@ impl<'a> Cursor<'a> {
         None
     }
 
-    pub fn any_group_token(self) -> Option<(Group, Cursor<'a>)> {
+    pub fn any_group_token(self) -> Option<(Group, RustCursor<'a>)> {
         if let Entry::Group(group, end_offset) = self.entry() {
             let Self { buf, current, end } = self;
 
@@ -218,7 +221,7 @@ impl<'a> Cursor<'a> {
 
     /// If the cursor is pointing at a `Ident`, returns it along with a cursor
     /// pointing at the next `TokenTree`.
-    pub fn ident(mut self) -> Option<(&'a Ident, Cursor<'a>)> {
+    pub fn ident(mut self) -> Option<(&'a Ident, RustCursor<'a>)> {
         self.ignore_none();
         match self.entry() {
             Entry::Ident(ident) => Some((ident, self.next())),
@@ -228,7 +231,7 @@ impl<'a> Cursor<'a> {
 
     /// If the cursor is pointing at a `Punct`, returns it along with a cursor
     /// pointing at the next `TokenTree`.
-    pub fn punct(mut self) -> Option<(&'a Punct, Cursor<'a>)> {
+    pub fn punct(mut self) -> Option<(&'a Punct, RustCursor<'a>)> {
         self.ignore_none();
         match self.entry() {
             Entry::Punct(punct) => Some((punct, self.next())),
@@ -238,7 +241,7 @@ impl<'a> Cursor<'a> {
 
     /// If the cursor is pointing at a `Literal`, return it along with a cursor
     /// pointing at the next `TokenTree`.
-    pub fn literal(mut self) -> Option<(&'a Literal, Cursor<'a>)> {
+    pub fn literal(mut self) -> Option<(&'a Literal, RustCursor<'a>)> {
         self.ignore_none();
         match self.entry() {
             Entry::Literal(literal) => Some((literal, self.next())),
@@ -256,7 +259,7 @@ impl<'a> Cursor<'a> {
         tts.into_iter().collect()
     }
 
-    pub fn token_tree(self) -> Option<(TokenTree, Cursor<'a>)> {
+    pub fn token_tree(self) -> Option<(TokenTree, RustCursor<'a>)> {
         let (tree, len) = match self.entry() {
             Entry::Group(group, end_offset) => (group.clone().into(), *end_offset),
             Entry::Literal(literal) => (literal.clone().into(), 1),
@@ -274,7 +277,12 @@ impl<'a> Cursor<'a> {
     }
 }
 
-impl<'a> Spanned for Cursor<'a> {
+impl<'a> ParserCursor for RustCursor<'a> {
+    type Error = Error;
+}
+impl<'a> Spanned for RustCursor<'a> {
+    type Loc = Span;
+
     fn span(&self) -> Span {
         match self.entry() {
             Entry::Group(group, _) => group.delim_span().open(),
@@ -296,11 +304,13 @@ impl<'a> Spanned for Cursor<'a> {
     }
 }
 
-impl<'a> Iterator for Cursor<'a> {
+impl<'a> Iterator for RustCursor<'a> {
     type Item = TokenTree;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let Some((a, b)) = self.token_tree() else { return None };
+        let Some((a, b)) = self.token_tree() else {
+            return None;
+        };
 
         *self = b;
 
@@ -349,17 +359,17 @@ impl<'a> Iterator for Cursor<'a> {
 }
 
 pub trait ParseBufExt<'a> {
-    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<()>>(
+    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<(), Error>>(
         &mut self,
         pred: Pred,
-    ) -> Result<&'a Ident>;
+    ) -> Result<&'a Ident, Error>;
 }
 
-impl<'a> ParseBufExt<'a> for ParseBuffer<Cursor<'a>> {
-    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<()>>(
+impl<'a> ParseBufExt<'a> for ParseBuffer<RustCursor<'a>> {
+    fn ident_matching<Pred: FnOnce(&'a Ident) -> Result<(), Error>>(
         &mut self,
         pred: Pred,
-    ) -> Result<&'a Ident> {
+    ) -> Result<&'a Ident, Error> {
         match self.cursor.ident() {
             Some((val, cur)) => {
                 if let Err(e) = pred.call_once((val,)) {

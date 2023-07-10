@@ -149,8 +149,8 @@ macro_rules! materialize {
      [$($prev_parse:tt)*]:[$($prev_names:tt)*][]
      [$($prev_type:tt)*][$($prev_match:tt)*]
     ) => {
-        impl<'a, $($($gen: Parse<$crate::Cursor<'a>>),*)?> $crate::Parse<$crate::Cursor<'a>> for $id$(<$($gen),*>)? {
-            fn parse($input: &mut $crate::ParseBuffer<$crate::Cursor<'a>>) -> $crate::Result<Self>{
+        impl<'a, $($($gen: Parse<$crate::RustCursor<'a>>),*)?> $crate::Parse<$crate::RustCursor<'a>> for $id$(<$($gen),*>)? {
+            fn parse($input: &mut $crate::ParseBuffer<$crate::RustCursor<'a>>) -> Result<Self, $crate::Error>{
                 $($prev_parse)*
 
                 use $crate::$sum_name::*;
@@ -384,8 +384,8 @@ macro_rules! materialize {
     // </Struct Building>
     // <Parser Building>
     (+struct $id:ident $input:ident $(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][]) => {
-        impl<'a, $($($gen: $crate::Parse<$crate::Cursor<'a>>),*)?> $crate::Parse<$crate::Cursor<'a>> for $id$(<$($gen),*>)? {
-            fn parse($input: &mut $crate::ParseBuffer<$crate::Cursor<'a>>) -> $crate::Result<Self> {
+        impl<'a, $($($gen: $crate::Parse<$crate::RustCursor<'a>>),*)?> $crate::Parse<$crate::RustCursor<'a>> for $id$(<$($gen),*>)? {
+            fn parse($input: &mut $crate::ParseBuffer<$crate::RustCursor<'a>>) -> Result<Self, $crate::Error> {
                 $($prev_main)*
 
                 Ok(Self {

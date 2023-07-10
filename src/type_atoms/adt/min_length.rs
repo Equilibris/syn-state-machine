@@ -1,4 +1,4 @@
-use crate::{Error, Interlace, InterlaceTrail, Parse, ParseBuffer, Result, Spanned};
+use crate::{Interlace, InterlaceTrail, LocError, Parse, ParseBuffer, ParserCursor, Spanned};
 
 pub trait ParsableLength {
     fn len(&self) -> usize;
@@ -32,13 +32,15 @@ impl<T: ParsableLength> ParsableLength for Box<T> {
 
 #[derive(Debug, Clone)]
 pub struct MinLength<T, const LEN: usize = 1>(pub T);
-impl<Cursor: Spanned, const LEN: usize, T: Parse<Cursor> + ParsableLength> Parse<Cursor>
-    for MinLength<T, LEN>
+impl<Cursor: ParserCursor + Spanned, const LEN: usize, T: Parse<Cursor> + ParsableLength>
+    Parse<Cursor> for MinLength<T, LEN>
+where
+    Cursor::Error: for<'a> From<LocError<'a, Cursor::Loc>>,
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
         let c: T = input.parse()?;
         if c.len() < LEN {
-            Err(Error::new(input.span(), "Expected value"))
+            Err(LocError("Expected value", input.span()).into())
         } else {
             Ok(Self(c))
         }
