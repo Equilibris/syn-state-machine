@@ -1,5 +1,5 @@
 ---
-source: src/type_atoms/proc_macro_items.rs
+source: src/rust/atoms/proc_macro_items.rs
 expression: "(insta_match_test!(+ parse FPunct<'$'> : $),\n    insta_match_test!(* peek FPunct<'$'> : $))"
 ---
 (

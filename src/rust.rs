@@ -1,3 +1,4 @@
+mod atoms;
 mod attributes;
 mod items;
 mod lexical_structure;
@@ -6,6 +7,7 @@ mod names;
 mod patterns;
 mod type_system;
 
+pub use atoms::*;
 pub use attributes::*;
 pub use items::*;
 pub use lexical_structure::*;

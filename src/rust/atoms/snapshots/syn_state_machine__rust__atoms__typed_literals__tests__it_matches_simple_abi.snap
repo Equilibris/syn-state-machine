@@ -1,5 +1,5 @@
 ---
-source: src/type_atoms/typed_literals.rs
+source: src/rust/atoms/typed_literals.rs
 expression: "(insta_match_test!(+ parse StringLit : \"C\"),\n    insta_match_test!(* peek StringLit : \"C\"))"
 ---
 (
