@@ -9,7 +9,7 @@ materialize! {
         generic_parameters <- Option<GenericParams<Attr, Ty>>;
         bounds <- Option<TypeParamBound<Attr, Ty>> : Option<(Colon, Option<_>)> { bounds.and_then(|v| v.1) };
         where_clause <- Option<WhereClause<Attr, Ty>>;
-        items <- (Vec<InnerAttribute<Attr>>, Vec<AssociateItem<Attr, Ty, Expr, Pat>>) : Brace<_> { items.0 }
+        items <- WithInnerAttrs<Attr, Vec<AssociateItem<Attr, Ty, Expr, Pat>> > : Brace<_> { items.0 }
     }
 }
 

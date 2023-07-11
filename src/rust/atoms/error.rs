@@ -1,4 +1,4 @@
-use crate::internals::ThreadBound;
+use super::ThreadBound;
 use crate::{CombineError, LocError};
 use proc_macro2::{
     Delimiter, Group, Ident, LexError, Literal, Punct, Spacing, Span, TokenStream, TokenTree,
@@ -101,9 +101,6 @@ impl<Other: Into<Error>> CombineError<Other> for Error {
     fn combine(&mut self, other: Other) {
         self.messages.extend(other.into().messages);
     }
-}
-impl CombineError<std::convert::Infallible> for Error {
-    fn combine(&mut self, other: std::convert::Infallible) {}
 }
 
 impl ErrorMessage {

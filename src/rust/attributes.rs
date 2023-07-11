@@ -15,6 +15,10 @@ materialize! {
         content <- T : Bracket<T> {content.0};
     }
 }
+
+pub type WithOuterAttrs<Attr, Ty> = (Vec<OuterAttribute<Attr>>, Ty);
+pub type WithInnerAttrs<Attr, Ty> = (Vec<InnerAttribute<Attr>>, Ty);
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -13,7 +13,14 @@ impl<'a> Parse<RustCursor<'a>> for bool {
 }
 impl<'a> Peek<RustCursor<'a>> for bool {
     fn peek(input: &RustCursor<'a>) -> Option<usize> {
-        todo!()
+        let Some((id, _)) = input.ident() else {
+            return None;
+        };
+        if id == "true" || id == "false" {
+            Some(1)
+        } else {
+            None
+        }
     }
 }
 

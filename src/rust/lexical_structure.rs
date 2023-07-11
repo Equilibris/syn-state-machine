@@ -53,7 +53,7 @@ pub type KwUnsized = FIdent<"unsized">;
 pub type KwVirtual = FIdent<"virtual">;
 pub type KwYield = FIdent<"yield">;
 
-pub fn get_error_from_ident_or_under<'a>(id: &'a Ident) -> Result<(), Error> {
+pub fn get_error_from_ident_or_under(id: &Ident) -> Result<(), Error> {
     if id == "r#crate" {
         Err(Error::new(id.span(), "'r#crate' is not a valid identifier"))
     } else if id == "r#super" {
@@ -66,7 +66,7 @@ pub fn get_error_from_ident_or_under<'a>(id: &'a Ident) -> Result<(), Error> {
         Ok(())
     }
 }
-pub fn get_error_from_ident<'a>(id: &'a Ident) -> Result<(), Error> {
+pub fn get_error_from_ident(id: &Ident) -> Result<(), Error> {
     get_error_from_ident_or_under(id)?;
 
     if id == "_" {

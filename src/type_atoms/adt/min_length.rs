@@ -26,7 +26,7 @@ impl<T: ParsableLength> ParsableLength for MinLength<T> {
 }
 impl<T: ParsableLength> ParsableLength for Box<T> {
     fn len(&self) -> usize {
-        self.len()
+        self.as_ref().len()
     }
 }
 

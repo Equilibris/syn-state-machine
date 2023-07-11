@@ -6,7 +6,7 @@ materialize! {
         r#unsafe peek <- KwUnsafe;
         <- KwExtern;
         abi <- Option<Abi>;
-        items <- (Vec<InnerAttribute<Attr>>, Vec<ExternalItem<Attr, Ty, Expr, Pat>>) : Brace<_> { items.0 }
+        items <- WithInnerAttrs< Attr, Vec<ExternalItem<Attr, Ty, Expr, Pat>> > : Brace<_> { items.0 }
     }
 }
 

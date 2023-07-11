@@ -1,8 +1,6 @@
 mod buffer;
-mod thread;
 
 pub use buffer::*;
-pub(crate) use thread::*;
 
 pub trait ParserCursor {
     type Error;

@@ -1,5 +1,3 @@
-use proc_macro2::Span;
-
 use crate::internals::*;
 
 #[derive(Clone, Copy)]

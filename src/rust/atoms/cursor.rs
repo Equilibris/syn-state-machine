@@ -48,7 +48,7 @@ impl TokenBuffer {
             entries: entries.into_boxed_slice(),
         }
     }
-    pub fn begin<'a>(&'a self) -> RustCursor<'a> {
+    pub fn begin(&self) -> RustCursor<'_> {
         RustCursor {
             buf: self,
             current: 0,
