@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct InnerAttribute<T>{
         <- Pound;
@@ -9,6 +10,7 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct OuterAttribute<T>{
         <- Pound;

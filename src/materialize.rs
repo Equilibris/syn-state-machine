@@ -1,446 +1,858 @@
-// Please somehow refactor into something sane
 #[macro_export]
 macro_rules! materialize {
-    // <enum>
-    // <enum binding>
-    // construct enum
-    (!!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$($content:tt)*][]) => {
-        $(#[$($macro_input)+])*
-        $vis enum $id $(<$($gen),*>)? {$($content)*}
-    };
-    // <variant>
-    // continue to next variant
     (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$($next_variants:tt)*]
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
 
-        $variant:ident
+        $input:ident
 
-        [$($prior:tt)*]
-        []
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  []
     ) => {
-        materialize!(!!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)*][$($content)* $variant ($($prev)* $($prior)*),][$($next_variants)*] );
-    };
-    // match peek in variant
-    (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$($next_variants:tt)*]
+        $(#[$($macro_input)*])*
+        $vis enum $id $(<$($gen),*>)*{
+            $($out_def)*
+        }
 
-        $variant:ident
-
-        [$($prior:tt)*]
-        [$_:ident peek <- $ty:ty$(; $($next_variant_source_code:tt)*)?]
-    ) => {
-        materialize!(
-            !!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)*][$($content)*]
-            [$($next_variants)*]
-
-            $variant
-
-            [$($prior)* bool,]
-            [$($($next_variant_source_code)*)?]
-        );
-    };
-    // match mapped parse in variant
-    (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$($next_variants:tt)*]
-
-        $variant:ident
-
-        [$($prior:tt)*]
-        [$_:ident <- $ty:ty : $from_ty:ty $({ $($conversion:tt)* })?$(; $($next_variant_source_code:tt)*)?]
-    ) => {
-        materialize!(
-            !!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)*][$($content)*]
-            [$($next_variants)*]
-
-            $variant
-
-            [$($prior)* $ty,]
-            [$($($next_variant_source_code)*)?]
-        );
-    };
-    // match parse in variant
-    (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$($next_variants:tt)*]
-
-        $variant:ident
-
-        [$($prior:tt)*]
-        [$_:ident <- $ty:ty$(; $($next_variant_source_code:tt)*)?]
-    ) => {
-        materialize!(
-            !!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)*][$($content)*]
-            [$($next_variants)*]
-
-            $variant
-
-            [$($prior)* $ty,]
-            [$($($next_variant_source_code)*)?]
-        );
-    };
-    // match erring peek in variant
-    (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$($next_variants:tt)*]
-
-        $variant:ident
-
-        [$($prior:tt)*]
-        [<- $ty:ty$(; $($next_variant_source_code:tt)*)?]
-    ) => {
-        materialize!(
-            !!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)*][$($content)*]
-            [$($next_variants)*]
-
-            $variant
-            [$($prior)*]
-            [$($($next_variant_source_code)*)?]
-        );
-    };
-    // Select variant from variant listing and start parsing it
-    (
-        !!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-        [$($prev:tt)*][$($content:tt)*]
-        [$variant:ident ($($curr_source_code:tt)*) $($next_variants:tt)*]
-    ) => {
-        materialize!(!!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)*][$($content)*][$($next_variants)*] $variant [][$($curr_source_code)*] );
-    };
-    // </variant>
-    // <shared>
-    // conclude matching of shared data
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][][$($variant_source_code:tt)*]) => {
-        materialize!(!!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)*][][$($variant_source_code)*]);
-    };
-    // match shared erring peek
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][<- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)*][$($($src_next)*)?][$($variant_source_code)*]);
-    };
-    // match shared mapped parse
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$_:ident<- $ty:ty : $from_ty:ty $({$($conversion:tt)*})?$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)* $ty,][$($($src_next)*)?][$($variant_source_code)*]);
-    };
-    // match shared parse
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$_:ident<- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)* $ty,][$($($src_next)*)?][$($variant_source_code)*]);
-    };
-    // match shared peek
-    (!enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?[$($prev:tt)*][$_:ident peek <- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(!enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[$($prev)* bool,][$($($src_next)*)?][$($variant_source_code)*]);
-    };
-    // </shared>
-    // </enum binding>
-    // <enum parsing>
-
-    // Conclude Variant matching
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-    ) => {
-        impl<'a, $($($gen: Parse<$crate::RustCursor<'a>>),*)?> $crate::Parse<$crate::RustCursor<'a>> for $id$(<$($gen),*>)? {
-            fn parse($input: &mut $crate::ParseBuffer<$crate::RustCursor<'a>>) -> Result<Self, $crate::Error>{
-                $($prev_parse)*
+        impl<
+            $($($domain_lts,)*
+            $($domain_gens,)*)?
+            $($($gen: $crate::Parse<$domain>,)*)?
+        > $crate::Parse<$domain> for $id $(<$($gen,)*>)? {
+            fn parse(
+                $input: &mut $crate::ParseBuffer<$domain>
+            ) -> Result<
+                $id$(<$($gen,)*>)?, <$domain as $crate::ParserCursor>::Error
+            > {
+                $($common_parse_code)*
 
                 use $crate::$sum_name::*;
-
-                Ok(match $input.parse::<$crate::$sum_name<$($prev_type)*>>()? {
-                    $($prev_match)*
-                })
+                Ok(match $input.parse::<$crate::$sum_name<$($out_type)*>> ()? { $($out_match)* })
             }
         }
     };
+    ([+Sum0 V0] $($next:tt)*) => { materialize!{ [Sum1 V1] $($next)* } };
+    ([+Sum1 V1] $($next:tt)*) => { materialize!{ [Sum2 V2] $($next)* } };
+    ([+Sum2 V2] $($next:tt)*) => { materialize!{ [Sum3 V3] $($next)* } };
+    ([+Sum3 V3] $($next:tt)*) => { materialize!{ [Sum4 V4] $($next)* } };
+    ([+Sum4 V4] $($next:tt)*) => { materialize!{ [Sum5 V5] $($next)* } };
+    ([+Sum5 V5] $($next:tt)*) => { materialize!{ [Sum6 V6] $($next)* } };
+    ([+Sum6 V6] $($next:tt)*) => { materialize!{ [Sum7 V7] $($next)* } };
+    ([+Sum7 V7] $($next:tt)*) => { materialize!{ [Sum8 V8] $($next)* } };
+    ([+Sum8 V8] $($next:tt)*) => { materialize!{ [Sum9 V9] $($next)* } };
+    ([+Sum9 V9] $($next:tt)*) => { materialize!{ [Sum10 V10] $($next)* } };
+    ([+Sum10 V10] $($next:tt)*) => { materialize!{ [Sum11 V11] $($next)* } };
+    ([+Sum11 V11] $($next:tt)*) => { materialize!{ [Sum12 V12] $($next)* } };
+    ([+Sum12 V12] $($next:tt)*) => { materialize!{ [Sum13 V13] $($next)* } };
+    ([+Sum13 V13] $($next:tt)*) => { materialize!{ [Sum14 V14] $($next)* } };
+    ([+Sum14 V14] $($next:tt)*) => { materialize!{ [Sum15 V15] $($next)* } };
+    ([+Sum15 V15] $($next:tt)*) => { materialize!{ [Sum16 V16] $($next)* } };
+    ([+Sum16 V16] $($next:tt)*) => { materialize!{ [Sum17 V17] $($next)* } };
+    ([+Sum17 V17] $($next:tt)*) => { materialize!{ [Sum18 V18] $($next)* } };
+    ([+Sum18 V18] $($next:tt)*) => { materialize!{ [Sum19 V19] $($next)* } };
+    ([+Sum19 V19] $($next:tt)*) => { materialize!{ [Sum20 V20] $($next)* } };
+    ([+Sum20 V20] $($next:tt)*) => { WENT TOO DEEP };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
 
-    // Conclude single variant, continue to next
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident []
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)* ($($prev_match_type)*),][$($prev_match)* $current_variant_name (($($prev_match_pat)*)) => Self::$variant ($($prev_names)* $($prev_output_map)*),]
-        );
-    };
-    // Handle variant erring peek
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident [<- $ty:ty$(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* $crate::PeekAsParse<$ty>,]:[$($prev_match_pat)* _,]:[$($prev_output_map)*]
-        );
-    };
-    // Handle variant peek
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident [$variant_id:ident peek <- $ty:ty $(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* Option<$crate::PeekAsParse<$ty>>,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id.is_some(),]
-        );
-    };
-    // Handle variant mapped parse into
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident [$variant_id:ident <- $ty:ty : $from_ty:ty $(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* $from_ty,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id.into(),]
-        );
-    };
-    // Handle variant mapped parse
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident [$variant_id:ident <- $ty:ty : $from_ty:ty {$($conversion:tt)*}$(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* $from_ty,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* {$($conversion)*},]
-        );
-    };
-    // Handle variant parse
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$($next_variant_source_code:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
-     $variant:ident [$variant_id:ident <- $ty:ty$(; $($variant_source_code:tt)*)?]
-     [$($prev_match_type:tt)*]:[$($prev_match_pat:tt)*]:[$($prev_output_map:tt)*]) => {
-        materialize!(
-            ++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($next_variant_source_code)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($($variant_source_code)*)?]
-            [$($prev_match_type)* $ty,]:[$($prev_match_pat)* $variant_id,]:[$($prev_output_map)* $variant_id,]
-        );
-    };
-    // Entry for individual variant
-    (++$sum_name:ident $current_variant_name:ident enum
-     $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident
-     [$($prev_parse:tt)*]:[$($prev_names:tt)*][$variant:ident ($($variant_source_code:tt)*) $($variant_next:tt)*]
-     [$($prev_type:tt)*][$($prev_match:tt)*]
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident () $(, $($after:tt)*)?]
     ) => {
-        materialize!(
-            +++$sum_name $current_variant_name enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($variant_next)*]
-            [$($prev_type)*][$($prev_match)*]
-            $variant [$($variant_source_code)*]
-            []:[]:[]
-        );
+        materialize! {
+            [+$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   []
+            variant_parse_output: []
+            variant_parse_code:   []
+            variant_parse_names:  []
+
+            out_type:  [$($out_type)* ($($variant_parse_code)*),]
+            out_match: [
+                $($out_match)* $variant_name(($($variant_parse_names)*)) =>
+                    $id::$variant_id($($common_parse_output)* $($variant_parse_output)*),
+            ]
+            out_def:[
+                $($out_def)* $variant_id ($($common_definition)* $($variant_definition)*),
+            ]
+
+            before: []
+            munch:  [$($($after)*)?]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident (<- $ty:ty $(; $($next_var:tt)*)?) $($after:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)* $crate::PeekAsParse<$ty>,]
+            variant_parse_names:  [$($variant_parse_names)* _, ]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: []
+            munch:  [$variant_id ($($($next_var)*)?) $($after)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident ($val:ident peek <- $ty:ty $(; $($next_var:tt)*)?) $($after:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   [$($variant_definition)* bool,]
+            variant_parse_output: [$($variant_parse_output)* $val.is_some(),]
+            variant_parse_code:   [$($variant_parse_code)* Option<$ty>, ]
+            variant_parse_names:  [$($variant_parse_names)* $val,]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: []
+            munch:  [$variant_id ($($($next_var)*)?) $($after)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident ($val:ident <- $ty:ty : $from_ty:ty { $($conversion:tt)* } $(; $($next_var:tt)*)?) $($after:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   [$($variant_definition)* $ty,]
+            variant_parse_output: [$($variant_parse_output)* {$($conversion)*},]
+            variant_parse_code:   [$($variant_parse_code)* $from_ty, ]
+            variant_parse_names:  [$($variant_parse_names)* $val, ]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: []
+            munch:  [$variant_id ($($($next_var)*)?) $($after)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident ($val:ident <- $ty:ty : $from_ty:ty $(; $($next_var:tt)*)?) $($after:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   [$($variant_definition)*   $ty,]
+            variant_parse_output: [$($variant_parse_output)* <$from_ty as Into<$ty>>::into($val),]
+            variant_parse_code:   [$($variant_parse_code)*   $from_ty, ]
+            variant_parse_names:  [$($variant_parse_names)*  $val, ]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: []
+            munch:  [$variant_id ($($($next_var)*)?) $($after)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: []
+        munch:  [$variant_id:ident ($val:ident <- $ty:ty $(; $($next_var:tt)*)?) $($after:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)*]
+            common_parse_code:   [$($common_parse_code)*]
+
+            variant_definition:   [$($variant_definition)*   $ty,  ]
+            variant_parse_output: [$($variant_parse_output)* $val, ]
+            variant_parse_code:   [$($variant_parse_code)*   $ty,  ]
+            variant_parse_names:  [$($variant_parse_names)*  $val, ]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: []
+            munch:  [$variant_id ($($($next_var)*)?) $($after)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: [$val:ident <- $ty:ty : $from:ty {$($conversion:tt)*} $(; $($next:tt)*)?]
+        munch:  [$($source_code:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)* $ty,]
+            common_parse_output: [$($common_parse_output)* $val,]
+            common_parse_code:   [$($common_parse_code)* let $val: $ty = {let $val: $from = $input.parse()?; $($conversion)* };]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)*]
+            variant_parse_names:  [$($variant_parse_names)*]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: [$($($next)*)?]
+            munch:  [$($source_code)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: [$val:ident <- $ty:ty : $from_ty:ty $(; $($next:tt)*)?]
+        munch: [$($source_code:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)* $ty,]
+            common_parse_output: [$($common_parse_output)* $val,]
+            common_parse_code:   [$($common_parse_code)* let $val: $ty = <$from_ty as Into<$ty>>::into($input.parse::<$from_ty>()?);]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)*]
+            variant_parse_names:  [$($variant_parse_names)*]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: [$($($next)*)?]
+            munch:  [$($source_code)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: [<- $ty:ty $(; $($next:tt)*)?]
+        munch: [$($source_code:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)*]
+            common_parse_output: [$($common_parse_output)* ]
+            common_parse_code:   [$($common_parse_code)* $input.errored_peek::<$ty>()?;]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)*]
+            variant_parse_names:  [$($variant_parse_names)*]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: [$($($next)*)?]
+            munch: [$($source_code)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: [$val:ident peek <- $ty:ty $(; $($next:tt)*)?]
+        munch: [$($source_code:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)* bool,]
+            common_parse_output: [$($common_parse_output)* $val,]
+            common_parse_code:   [$($common_parse_code)* let $val = $input.peek::<$ty>();]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)*]
+            variant_parse_names:  [$($variant_parse_names)*]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: [$($($next)*)?]
+            munch: [$($source_code)*]
+        }
+    };
+    (
+        [$sum_name:ident $variant_name:ident]
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])*
+        $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        common_definition:   [$($common_definition:tt)*]
+        common_parse_output: [$($common_parse_output:tt)*]
+        common_parse_code:   [$($common_parse_code:tt)*]
+
+        variant_definition:   [$($variant_definition:tt)*]
+        variant_parse_output: [$($variant_parse_output:tt)*]
+        variant_parse_code:   [$($variant_parse_code:tt)*]
+        variant_parse_names:  [$($variant_parse_names:tt)*]
+
+        out_type:  [$($out_type:tt)* ]
+        out_match: [$($out_match:tt)*]
+        out_def:   [$($out_def:tt)*]
+
+        before: [$val:ident <- $ty:ty $(; $($next:tt)*)?]
+        munch:  [$($source_code:tt)*]
+    ) => {
+        materialize! {
+            [$sum_name $variant_name]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
+
+            $input
+
+            common_definition:   [$($common_definition)* $ty,]
+            common_parse_output: [$($common_parse_output)* $val,]
+            common_parse_code:   [$($common_parse_code)* let $val: $ty = $input.parse()?;]
+
+            variant_definition:   [$($variant_definition)*]
+            variant_parse_output: [$($variant_parse_output)*]
+            variant_parse_code:   [$($variant_parse_code)*]
+            variant_parse_names:  [$($variant_parse_names)*]
+
+            out_type:  [$($out_type)* ]
+            out_match: [$($out_match)*]
+            out_def: [$($out_def)*]
+
+            before: [$($($next)*)?]
+            munch:  [$($source_code)*]
+        }
     };
 
-    // Basic run length counting, succ
-    (+++Sum0 NO $($next:tt)*)=> { materialize!(++Sum1 V0 $($next)*); };
-    (+++Sum1 V0 $($next:tt)*)=> { materialize!(++Sum2 V1 $($next)*); };
-    (+++Sum2 V1 $($next:tt)*)=> { materialize!(++Sum3 V2 $($next)*); };
-    (+++Sum3 V2 $($next:tt)*)=> { materialize!(++Sum4 V3 $($next)*); };
-    (+++Sum4 V3 $($next:tt)*)=> { materialize!(++Sum5 V4 $($next)*); };
-    (+++Sum5 V4 $($next:tt)*)=> { materialize!(++Sum6 V5 $($next)*); };
-    (+++Sum6 V5 $($next:tt)*)=> { materialize!(++Sum7 V6 $($next)*); };
-    (+++Sum7 V6 $($next:tt)*)=> { materialize!(++Sum8 V7 $($next)*); };
-    (+++Sum8 V7 $($next:tt)*)=> { materialize!(++Sum9 V8 $($next)*); };
-    (+++Sum9 V8 $($next:tt)*)=> { materialize!(++Sum10 V9 $($next)*); };
-    (+++Sum10 V9 $($next:tt)*)=> { materialize!(++Sum11 V10 $($next)*); };
-    (+++Sum11 V10 $($next:tt)*)=> { materialize!(++Sum12 V11 $($next)*); };
-    (+++Sum12 V11 $($next:tt)*)=> { materialize!(++Sum13 V12 $($next)*); };
-    (+++Sum13 V12 $($next:tt)*)=> { materialize!(++Sum14 V13 $($next)*); };
-    (+++Sum14 V13 $($next:tt)*)=> { materialize!(++Sum15 V14 $($next)*); };
-    (+++Sum15 V14 $($next:tt)*)=> { materialize!(++Sum16 V15 $($next)*); };
+    (on $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)? [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis enum $id:ident$(<$($gen:ident),*>)?
+        $([$($before:tt)*])?
+        {$($source_code:tt)*}
+    ) => {
+        materialize! {
+            [Sum0 V0]
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            enum $id$(<$($gen),*>)?
 
-    // <shared>
-    // Conclude shared parsing, continue to variants
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)?
-     $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][][$($variant_source_code:tt)*]) => {
-        materialize!(
-            ++Sum0 NO enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)? $input
-            [$($prev_parse)*]:[$($prev_names)*][$($variant_source_code)*]
-            [][]
-        );
-    };
-    // Handle parsing of shared erring peek
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][<- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(
-            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            $input[$($prev_parse)* $input.errored_peek::<$ty>()?;]:[$($prev_names)*]
-            [$($($src_next)*)?][$($variant_source_code)*]
-        );
-    };
-    // Handle parsing of shared mapped parse into
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][$p_name:ident<- $ty:ty : $from_ty:ty $(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(
-            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            $input[$($prev_parse)* let $p_name: $ty = $input.parse::<$from_ty>()?.into();]:[$($prev_names)* $p_name,]
-            [$($($src_next)*)?][$($variant_source_code)*]
-        );
-    };
-    // Handle parsing of shared mapped parse
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][$p_name:ident<- $ty:ty : $from_ty:ty {$($conversion:tt)*}$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(
-            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            $input[$($prev_parse)* let $p_name: $ty = {let $p_name: $from_ty = $input.parse()?; $($conversion)*};]:[$($prev_names)* $p_name,]
-            [$($($src_next)*)?][$($variant_source_code)*]
-        );
-    };
-    // Handle parsing of shared parse
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][$p_name:ident<- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(
-            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            $input[$($prev_parse)* let $p_name:$ty = $input.parse()?;]:[$($prev_names)* $p_name,]
-            [$($($src_next)*)?][$($variant_source_code)*]
-        );
-    };
-    // Handle parsing of shared peek
-    (+enum $(#[$($macro_input:tt)+])* $vis:vis $id:ident $(<$($gen:ident),*>)? $input:ident[$($prev_parse:tt)*]:[$($prev_names:tt)*][$p_name:ident peek <- $ty:ty$(; $($src_next:tt)*)?][$($variant_source_code:tt)*]) => {
-        materialize!(
-            +enum $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            $input[$($prev_parse)* let $p_name = $input.peek::<$ty>();]:[$($prev_names)* $p_name,]
-            [$($($src_next)*)?][$($variant_source_code)*]
-        );
-    };
-    // </shared>
-    // </enum parsing>
-    // Enum entry
-    ($(#[$($macro_input:tt)+])*
-     $vis:vis enum $id:ident$(<$($gen:ident),*>)? $([$($source_code:tt)*])? {$($variant:ident($($variant_source_code:tt)*))*}) => {
-        materialize!(
-            !enum $(#[$($macro_input)+])*
-            $vis $id
-            $(<$($gen),*>)?[][$($($source_code)*)?]
-            [$($variant($($variant_source_code)*))*]
-        );
+            input
 
-        materialize!(
-            +enum $(#[$($macro_input)+])*
-            $vis $id
-            $(<$($gen),*>)? input []:[][$($($source_code)*)?]
-            [$($variant($($variant_source_code)*))*]
-        );
+            common_definition:   []
+            common_parse_output: []
+            common_parse_code:   []
+
+            variant_definition:   []
+            variant_parse_output: []
+            variant_parse_code:   []
+            variant_parse_names:  []
+
+            out_type:  []
+            out_match: []
+            out_def: []
+
+            before: [$($($before)*)?]
+            munch:  [$($source_code)*]
+        }
     };
 
-    // </enum>
-    // <Struct>
-    // <Struct Building>
-    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][]) => {
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: []
+    ) => {
         $(#[$($macro_input)+])*
-        $vis struct $id $(<$($gen),*>)? {$($prev)*}
-    };
-    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][$var:ident peek <- $ty:ty $(: $from_ty:ty {$($convert:tt)*})?$(; $($next:tt)*)?]) => {
-        materialize!(
-            !struct $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)* $vis $var: bool,]
-            [$($($next)*)?]
-        );
-    };
-    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][$var:ident <- $ty:ty $(: $from_ty:ty $({$($convert:tt)*})?)?$(; $($next:tt)*)?]) => {
-        materialize!(
-            !struct $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)* $vis $var: $ty,]
-            [$($($next)*)?]
-        );
-    };
-    (!struct $(#[$($macro_input:tt)+])* $vis:vis $id:ident$(<$($gen:ident),*>)?[$($prev:tt)*][<- $ty:ty$(; $($next:tt)*)?]) => {
-        materialize!(
-            !struct $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?
-            [$($prev)*]
-            [$($($next)*)?]
-        );
-    };
-    // </Struct Building>
-    // <Parser Building>
-    (+struct $id:ident $input:ident $(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][]) => {
-        impl<'a, $($($gen: $crate::Parse<$crate::RustCursor<'a>>),*)?> $crate::Parse<$crate::RustCursor<'a>> for $id$(<$($gen),*>)? {
-            fn parse($input: &mut $crate::ParseBuffer<$crate::RustCursor<'a>>) -> Result<Self, $crate::Error> {
-                $($prev_main)*
+        $vis struct $id $(<$($gen,)*>)? { $($defs)* }
 
-                Ok(Self {
-                    $($prev_self)*
-                })
+        impl<
+            $($($domain_lts,)*
+            $($domain_gens,)*)?
+            $($($gen: $crate::Parse<$domain>,)*)?
+        > $crate::Parse<$domain> for $id $(<$($gen,)*>)? {
+            fn parse(
+                $input: &mut $crate::ParseBuffer<$domain>
+            ) -> Result<
+                $id$(<$($gen,)*>)?, <$domain as $crate::ParserCursor>::Error
+            > {
+                $($parse_code)*
+
+                Ok(Self { $($parse_out)* })
             }
         }
     };
-    // match mapped parse convert
-    (+struct $id:ident $input:ident$(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident <- $ty:ty : $from_ty:ty $(; $($next:tt)*)?]) => {
-        materialize!(
-            +struct $id $input $(<$($gen),*>)?
-            [$($prev_self)* $var,][$($prev_main)* let $var: $ty = $input.parse::<$from_ty>()?.into();]
-            [$($($next)*)?]
-        );
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: [$val:ident peek <- $ty:ty $(; $($source_code:tt)*)?]
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            $input
+
+            definition:   [$($defs)*       $vis $val: bool, ]
+            parse_output: [$($parse_out)*  $val, ]
+            parse_code:   [$($parse_code)* let $val = $input.peek::<$ty>();]
+            munch: [$($($source_code)*)?]
+        }
     };
-    // match mapped parse
-    (+struct $id:ident $input:ident$(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident <- $ty:ty : $from_ty:ty {$($convert:tt)*}$(; $($next:tt)*)?]) => {
-        materialize!(
-            +struct $id $input $(<$($gen),*>)?
-            [$($prev_self)* $var,][$($prev_main)* let $var = {let $var = $input.parse::<$from_ty>()?; {$($convert)*}};]
-            [$($($next)*)?]
-        );
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: [$val:ident <- $ty:ty : $from_ty:ty $(; $($source_code:tt)*)?]
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            $input
+
+            definition:   [$($defs)*       $vis $val: $ty, ]
+            parse_output: [$($parse_out)*  $val, ]
+            parse_code:   [$($parse_code)* let $val: $ty = <$from_ty as Into<$ty>>::into($input.parse::<$from_ty>()?); ]
+            munch: [$($($source_code)*)?]
+        }
     };
-    // match peek
-    (+struct $id:ident $input:ident $(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident peek <- $ty:ty$(; $($next:tt)*)?]) => {
-        materialize!(
-            +struct $id $input $(<$($gen),*>)?
-            [$($prev_self)* $var,][$($prev_main)* let $var = $input.peek::<$ty>();]
-            [$($($next)*)?]
-        );
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: [$val:ident <- $ty:ty : $from_ty:ty {$($conversion:tt)*} $(; $($source_code:tt)*)?]
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            $input
+
+            definition:   [$($defs)*       $vis $val: $ty, ]
+            parse_output: [$($parse_out)*  $val, ]
+            parse_code:   [$($parse_code)* let $val: $ty = { let $val: $from_ty = $input.parse()?; $($conversion)*}; ]
+            munch: [$($($source_code)*)?]
+        }
     };
-    // match parse
-    (+struct $id:ident $input:ident $(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][$var:ident <- $ty:ty$(; $($next:tt)*)?]) => {
-        materialize!(
-            +struct $id $input $(<$($gen),*>)?
-            [$($prev_self)* $var,][$($prev_main)* let $var = $input.parse::<$ty>()?;]
-            [$($($next)*)?]
-        );
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: [$val:ident <- $ty:ty $(; $($source_code:tt)*)?]
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            $input
+
+            definition:   [$($defs)*       $vis $val: $ty, ]
+            parse_output: [$($parse_out)*  $val, ]
+            parse_code:   [$($parse_code)* let $val: $ty = $input.parse()?; ]
+            munch: [$($($source_code)*)?]
+        }
     };
-    // match erring peek
-    (+struct $id:ident $input:ident $(<$($gen:ident),*>)?[$($prev_self:tt)*][$($prev_main:tt)*][<- $ty:ty$(; $($next:tt)*)?]) => {
-        materialize!(
-            +struct $id $input $(<$($gen),*>)?
-            [$($prev_self)*][$($prev_main)* $input.errored_peek::<$ty>()?;]
-            [$($($next)*)?]
-        );
+    (
+        $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)?
+        [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis
+        struct $id:ident$(<$($gen:ident),*>)?
+
+        $input:ident
+
+        definition: [$($defs:tt)*]
+        parse_output: [$($parse_out:tt)*]
+        parse_code: [$($parse_code:tt)*]
+        munch: [<- $ty:ty $(; $($source_code:tt)*)?]
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            $input
+
+            definition:   [$($defs)* ]
+            parse_output: [$($parse_out)* ]
+            parse_code:   [$($parse_code)* $input.errored_peek::<$ty>()?; ]
+            munch: [$($($source_code)*)?]
+        }
     };
-    // </Parser Building>
-    // Entry
-    ($(#[$($macro_input:tt)+])* $vis:vis struct $id:ident$(<$($gen:ident),*>)? {$($source_code:tt)*}) => {
-        materialize!(!struct $(#[$($macro_input)+])* $vis $id $(<$($gen),*>)?[][$($source_code)*]);
-        materialize!(+struct $id input $(<$($gen),*>)?[][][$($source_code)*]);
+
+    (on $(<$($domain_lts:lifetime)* $($domain_gens:ident)*>)? [$domain:ty]
+        $(#[$($macro_input:tt)+])* $vis:vis struct $id:ident$(<$($gen:ident),*>)?
+        {$($source_code:tt)*}
+    ) => {
+        materialize! {
+            $(<$($domain_lts)* $($domain_gens)*>)?
+            [$domain]
+            $(#[$($macro_input)+])* $vis
+            struct $id$(<$($gen),*>)?
+
+            input
+
+            definition: []
+            parse_output: []
+            parse_code: []
+            munch: [$($source_code)*]
+        }
     };
-    // </Struct>
 }
 
 #[cfg(test)]
@@ -448,11 +860,13 @@ mod tests {
     use proc_macro2::Ident;
 
     materialize! {
+        on <'a> [crate::RustCursor<'a>]
         #[derive(Debug)]
         pub enum Hello [
             hi0 <- Ident;
             <- Ident;
             hi1 <- Ident : Ident { hi1 };
+            hi10 <- Ident : Ident;
             hi2 peek <- Ident
         ] {
             Hi(
@@ -460,15 +874,23 @@ mod tests {
                 <- Ident;
                 hi4 <- Ident : Ident { hi4 };
                 hi5 <- Ident;
-                hi6 peek <- Ident;
-            )
+            ),
             World()
         }
     }
-
     materialize! {
+        on <'a> [crate::RustCursor<'a>]
         pub struct Hi {
             hi0 <- Ident;
+            <- Ident;
+            hi1 <- Ident : Ident { hi1 };
+            hi2 peek <- Ident
+        }
+    }
+    materialize! {
+        on <'a> [crate::RustCursor<'a>]
+        pub struct Hi2<Other> {
+            hi0 <- Other;
             <- Ident;
             hi1 <- Ident : Ident { hi1 };
             hi2 peek <- Ident

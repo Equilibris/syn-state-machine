@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct Pattern<Attr, Ty> {
         leading peek <- Or;
 
@@ -9,59 +10,66 @@ materialize! {
 }
 
 materialize! {
-    pub enum PatternNoTopAlt <Attr, Ty> {
-        PatternWithoutRange(v <- PatternWithoutRange<Attr, Ty>)
+    on <'a> [crate::RustCursor<'a>]
+    pub enum PatternNoTopAlt<Attr, Ty> {
+        PatternWithoutRange(v <- PatternWithoutRange<Attr, Ty>),
         RangePattern(v <- RangePattern<Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum PatternWithoutRange<Attr, Ty> {
-        LiteralPattern(v <- LiteralPattern)
-        IdentifierPattern(v <- IdentifierPattern<Box<Pattern<Attr, Ty>>>)
-        WildcardPattern(v <- WildcardPattern)
-        RestPattern(v <- RestPattern)
-        ReferencePattern(v <- ReferencePattern<Box<Pattern<Attr, Ty>>>)
-        StructPattern(v <- StructPattern<Attr, Ty, Box<Pattern<Attr, Ty>>>)
-        TupleStructPattern(v <- TupleStructPattern<Attr, Ty>)
-        TuplePattern(v <- TuplePattern<Box<Pattern<Attr, Ty>>>)
-        GroupedPattern(v <- GroupedPattern<Box<Pattern<Attr, Ty>>>)
-        SlicePattern(v <- SlicePattern<Box<Pattern<Attr, Ty>>>)
-        PathPattern(v <- PathPattern)
+        LiteralPattern(v <- LiteralPattern),
+        IdentifierPattern(v <- IdentifierPattern<Box<Pattern<Attr, Ty>>>),
+        WildcardPattern(v <- WildcardPattern),
+        RestPattern(v <- RestPattern),
+        ReferencePattern(v <- ReferencePattern<Box<Pattern<Attr, Ty>>>),
+        StructPattern(v <- StructPattern<Attr, Ty, Box<Pattern<Attr, Ty>>>),
+        TupleStructPattern(v <- TupleStructPattern<Attr, Ty>),
+        TuplePattern(v <- TuplePattern<Box<Pattern<Attr, Ty>>>),
+        GroupedPattern(v <- GroupedPattern<Box<Pattern<Attr, Ty>>>),
+        SlicePattern(v <- SlicePattern<Box<Pattern<Attr, Ty>>>),
+        PathPattern(v <- PathPattern),
         MacroInvocation(v <- MacroInvocation)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum RangePattern <Ty> {
-        RangeToInclusivePattern(v <- RangeToInclusivePattern<Ty>)
-        RangeInclusivePattern(v <- RangeInclusivePattern<Ty>)
-        ObsoleteRangePattern(v <- ObsoleteRangePattern<Ty>)
+        RangeToInclusivePattern(v <- RangeToInclusivePattern<Ty>),
+        RangeInclusivePattern(v <- RangeInclusivePattern<Ty>),
+        ObsoleteRangePattern(v <- ObsoleteRangePattern<Ty>),
         RangeFromPattern(v <- RangeFromPattern<Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct RangeToInclusivePattern <Ty> {
         <- DotDotEq;
         r <- RangePatternBound<Ty>;
     }
 }
 materialize! {
-    pub struct RangeFromPattern <Ty> {
+    on <'a> [crate::RustCursor<'a>]
+    pub struct RangeFromPattern<Ty> {
         l <- RangePatternBound<Ty>;
         <- DotDot;
     }
 }
 materialize! {
-    pub struct RangeInclusivePattern <Ty> {
+    on <'a> [crate::RustCursor<'a>]
+    pub struct RangeInclusivePattern<Ty> {
         l <- RangePatternBound<Ty>;
         <- DotDotEq;
         r <- RangePatternBound<Ty>;
     }
 }
 materialize! {
-    pub struct ObsoleteRangePattern <Ty> {
+    on <'a> [crate::RustCursor<'a>]
+    pub struct ObsoleteRangePattern<Ty> {
         l <- RangePatternBound<Ty>;
         <- DotDotDot;
         r <- RangePatternBound<Ty>;
@@ -69,28 +77,31 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum RangePatternBound <Ty> {
-        Char(v <- CharLit)
-        Byte(v <- ByteLit)
-        Int(v <- SignedIntegerLit)
-        Float(v <- SignedFloatLit)
+        Char(v <- CharLit),
+        Byte(v <- ByteLit),
+        Int(v <- SignedIntegerLit),
+        Float(v <- SignedFloatLit),
         Path(v <- PathInExpression<Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum LiteralPattern {
-        Bool(v <- bool)
-        Char(v <- CharLit)
-        Byte(v <- ByteLit)
-        String(v <- StringLit)
-        ByteString(v <- ByteStringLit)
-        Int(v <- SignedIntegerLit)
+        Bool(v <- bool),
+        Char(v <- CharLit),
+        Byte(v <- ByteLit),
+        String(v <- StringLit),
+        ByteString(v <- ByteStringLit),
+        Int(v <- SignedIntegerLit),
         Float(v <- SignedFloatLit)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct IdentifierPattern <Pat> {
         r#ref peek <- KwRef;
         r#mut peek <- KwMut;
@@ -102,6 +113,7 @@ pub type WildcardPattern = FIdent<"_">;
 pub type RestPattern = DotDot;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct ReferencePattern <Pat> {
         <- And;
         double peek <- And;
@@ -111,6 +123,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct StructPattern <Attr, Ty, Pat> {
         path <- PathInExpression<Ty>;
         elements <- StructPatternElements<Attr, Pat>
@@ -146,21 +159,24 @@ impl<'a, Attr: Parse<RustCursor<'a>>, Pat: Parse<RustCursor<'a>>> Parse<RustCurs
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum StructPatternField<Attr, Pat> [ attrs <- Vec<OuterAttribute<Attr>> ] {
-        TupleIdx(v <- TupleIndex; <- Colon; p <- Pat)
-        Id(v <- Ident : Identifier; <- Colon; p <- Pat)
+        TupleIdx(v <- TupleIndex; <- Colon; p <- Pat),
+        Id(v <- Ident : Identifier; <- Colon; p <- Pat),
         Shorthand(r#ref peek <- KwRef; r#mut peek <- KwMut; id <- Ident : Identifier)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct StructPatternEtCetera<Attr> {
         attrs <- Vec<OuterAttribute<Attr>>;
-        <- DotDot;
+        <- DotDot
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct TupleStructPattern <Ty, Pat> {
         path <- PathInExpression<Ty>;
         items <- TupleStructItems<Pat> : Paren<_> { items.0 }
@@ -172,9 +188,10 @@ pub type TupleStructItems<Pat> = InterlaceTrail<Pat, Comma>;
 pub type TuplePattern<Pat> = Paren<Option<TuplePatternItems<Pat>>>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub enum TuplePatternItems<Pat> {
-        Pat(v <- Pat)
-        Rest(v <- RestPattern)
+        Pat(v <- Pat),
+        Rest(v <- RestPattern),
         Items(v <- InterlaceTrail<Pat, Comma> : MinLength<_, 2> { v.0 })
     }
 }

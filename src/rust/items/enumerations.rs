@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct Enumeration <Attr, Ty, Expr> {
         <- KwEnum;
@@ -14,14 +15,15 @@ materialize! {
 pub type EnumItems<Attr, Ty, Expr> = InterlaceTrail<EnumItem<Attr, Ty, Expr>, Comma>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum EnumItem <Attr, Ty, Expr> [
         attrs <- Vec<OuterAttribute<Attr>>;
         vis <- Option<Visibility>;
         id <- Ident : Identifier
     ] {
-        Tuple(v <- EnumItemTuple<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>)
-        Struct(v <- EnumItemStruct<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>)
+        Tuple(v <- EnumItemTuple<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>),
+        Struct(v <- EnumItemStruct<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>),
         Unit(desc <- Option<EnumItemDiscriminant<Expr>>)
     }
 }
@@ -29,6 +31,7 @@ pub type EnumItemTuple<Attr, Ty> = Paren<TupleFields<Attr, Ty>>;
 pub type EnumItemStruct<Attr, Ty> = Brace<StructFields<Attr, Ty>>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct EnumItemDiscriminant <Expr> {
         <- Eq;

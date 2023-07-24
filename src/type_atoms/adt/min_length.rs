@@ -46,3 +46,21 @@ where
         }
     }
 }
+
+#[cfg(feature = "printing")]
+impl<T: quote::ToTokens> quote::ToTokens for MinLength<T> {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        self.0.to_tokens(tokens)
+    }
+
+    fn to_token_stream(&self) -> proc_macro2::TokenStream {
+        self.0.to_token_stream()
+    }
+
+    fn into_token_stream(self) -> proc_macro2::TokenStream
+    where
+        Self: Sized,
+    {
+        self.0.into_token_stream()
+    }
+}

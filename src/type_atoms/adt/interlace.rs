@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use quote::{ToTokens, TokenStreamExt};
+
 use crate::{Parse, ParseBuffer, ParserCursor, Peek};
 
 pub struct Interlace<A, B> {
@@ -194,6 +196,36 @@ impl<Cursor: Clone + Iterator, A: Peek<Cursor>, B: Peek<Cursor>> Peek<Cursor>
         }
 
         Some(offset)
+    }
+}
+
+#[cfg(feature = "printing")]
+impl<A: ToTokens, B: ToTokens + Default> ToTokens for Interlace<A, B> {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let mut iterator = self.values.iter();
+
+        if let Some(v) = iterator.next() {
+            v.to_tokens(tokens);
+        }
+        for i in iterator {
+            tokens.append_all(B::default().into_token_stream());
+            i.to_tokens(tokens);
+        }
+    }
+}
+
+#[cfg(feature = "printing")]
+impl<A: ToTokens, B: ToTokens + Default> ToTokens for InterlaceTrail<A, B> {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let mut iterator = self.values.iter();
+
+        if let Some(v) = iterator.next() {
+            v.to_tokens(tokens);
+        }
+        for i in iterator {
+            tokens.append_all(B::default().into_token_stream());
+            i.to_tokens(tokens);
+        }
     }
 }
 

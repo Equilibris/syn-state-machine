@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ConstantItem <Ty, Expr> {
         <- KwConst;

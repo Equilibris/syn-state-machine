@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ReferenceType<Ty> {
         <- And;
@@ -11,9 +12,10 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum RawPointerType <Ty> [ <- Star ] {
-        Mut(<- KwMut; v <- Ty)
+        Mut(<- KwMut; v <- Ty),
         Const(<- KwConst; v <- Ty)
     }
 }

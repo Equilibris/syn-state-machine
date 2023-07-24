@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     pub struct Union <Attr, Ty> {
         <- KwUnion;
         id <- Ident : Identifier;

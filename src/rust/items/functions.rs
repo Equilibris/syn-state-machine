@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct Function<Attr, Ty, Expr, Pat>{
         qualifiers <- FunctionQualifiers;
@@ -14,6 +15,7 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct FunctionQualifiers {
         r#const peek <- KwConst;
@@ -24,19 +26,22 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum SelfParam<Attr, Ty> [attrs <- Vec<OuterAttribute<Attr>>] {
-        Typed(v <- TypedSelf<Ty>)
+        Typed(v <- TypedSelf<Ty>),
         Shorthand(v <- ShorthandSelf)
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ShorthandSelf {
         reference <- Option<Option<Lifetime>> : Option<(And, _)> { reference.map(|v|v.1) };
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TypedSelf<Ty> {
         mutable peek <- KwMut;
@@ -46,17 +51,19 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum FunctionParam <Attr, Ty, Pat>[attrs <- Vec<OuterAttribute<Attr>> ] {
-        FunctionParamPattern(v <- FunctionParamPattern<Ty, Pat>)
-        Ty(v <- Ty)
+        FunctionParamPattern(v <- FunctionParamPattern<Ty, Pat>),
+        Ty(v <- Ty),
         Rest(v <- DotDotDot)
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum FunctionParamPattern<Ty, Pat> [ pat <- Pat; <- Colon ] {
-        Ty(v <- Ty)
+        Ty(v <- Ty),
         Unknown(v <- DotDotDot)
     }
 }
@@ -87,6 +94,7 @@ impl<'a, Attr: Parse<RustCursor<'a>>, Ty: Parse<RustCursor<'a>>, Pat: Parse<Rust
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct FunctionReturnType<Ty> { <- RArrow; ty <- Ty}
 }

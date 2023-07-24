@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct HigherOrderPath<Segment> {
         leading peek <- PathSep;
@@ -13,12 +14,13 @@ materialize! {
 pub type SimplePath = HigherOrderPath<SimplePathSegment>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum SimplePathSegment {
-        Identifier(v <-Identifier)
-        Super(v <- KwSuper)
-        SSelf(v <- KwLowerSelf)
-        Crate(v <- KwCrate)
+        Identifier(v <-Identifier),
+        Super(v <- KwSuper),
+        SSelf(v <- KwLowerSelf),
+        Crate(v <- KwCrate),
         MacroCrate(v <- (Dollar, KwCrate))
     }
 }
@@ -29,6 +31,7 @@ materialize! {
 pub type PathInExpression<Ty> = HigherOrderPath<PathExprSegment<Ty>>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct PathExprSegment<Ty> {
         id <- PathIdentSegment;
@@ -37,32 +40,35 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum PathIdentSegment {
-        Id(v <- Ident : Identifier)
-        Super(v <- KwSuper)
-        LowerSelf(v <- KwLowerSelf)
-        UpperSelf(v <- KwUpperSelf)
-        Crate(v <- KwCrate)
+        Id(v <- Ident : Identifier),
+        Super(v <- KwSuper),
+        LowerSelf(v <- KwLowerSelf),
+        UpperSelf(v <- KwUpperSelf),
+        Crate(v <- KwCrate),
         MacroCrate(v <- (Dollar, KwCrate))
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct GenericArgs<Ty>{
         <- Lt;
         args <- InterlaceTrail<GenericArg<Ty>, Comma>;
-        <- Gt;
+        <- Gt
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum GenericArg<Ty> {
-        Lt(v <- Lifetime)
-        Ty(v <- Ty)
-        Const(v <- GenericArgsConst)
+        Lt(v <- Lifetime),
+        Ty(v <- Ty),
+        Const(v <- GenericArgsConst),
         Binding(v <- GenericArgsBinding<Ty>)
     }
 }
@@ -70,6 +76,7 @@ materialize! {
 pub type GenericArgsConst = Infallible;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct GenericArgsBinding<Ty>{
         id <- Ident : Identifier;
@@ -82,6 +89,7 @@ materialize! {
 // <Qualified paths>
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct QualifiedPathInExpression<Ty>{
         qualifier <- QualifiedPathType<Ty>;
@@ -90,6 +98,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct QualifiedPathType<Ty> {
         <- Lt;
@@ -100,6 +109,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct QualifiedPathInType<Ty>{
         qualifier <- QualifiedPathType<Ty>;
@@ -112,15 +122,17 @@ materialize! {
 pub type TypePath<Ty> = HigherOrderPath<TypePathSegment<Ty>>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum TypePathSegment<Ty> [path <- PathIdentSegment] {
-        Fn(fun <- TypePathFn<Ty> : (Option<PathSep>, _) { fun.1 })
-        Generic(args <- GenericArgs<Ty> : (Option<PathSep>,_) { args.1 })
+        Fn(fun <- TypePathFn<Ty> : (Option<PathSep>, _) { fun.1 }),
+        Generic(args <- GenericArgs<Ty> : (Option<PathSep>,_) { args.1 }),
         Bare()
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TypePathFn<Ty> {
         args <- Paren<TypePathFnInputs<Ty>>;

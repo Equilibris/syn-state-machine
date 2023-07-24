@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct BareFunctionType <Attr, Ty, TyNB>{
         for_lifetimes <- Option<ForLifetimes<Attr, Ty>>;
@@ -11,6 +12,7 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct FunctionTypeQualifiers {
         r#unsafe peek <- KwUnsafe;
@@ -20,14 +22,16 @@ materialize! {
 pub type BareFunctionReturnType<TyNB> = FunctionReturnType<TyNB>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum FunctionParametersMaybeNamedVariadic <Attr, Ty> {
-        NAdic(v <- MaybeNamedFunctionParametersVariadic<Attr, Ty>)
+        NAdic(v <- MaybeNamedFunctionParametersVariadic<Attr, Ty>),
         Variadic(v <- MaybeNamedFunctionParameters<Attr, Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct MaybeNamedFunctionParametersVariadic<Attr, Ty> {
         params <- Interlace<MaybeNamedParam<Attr,Ty>, Comma>;
@@ -40,6 +44,7 @@ materialize! {
 pub type MaybeNamedFunctionParameters<Attr, Ty> = InterlaceTrail<MaybeNamedParam<Attr, Ty>, Comma>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct MaybeNamedParam <Attr, Ty> {
         attrs <- Vec<OuterAttribute<Attr>>;

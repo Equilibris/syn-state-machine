@@ -9,14 +9,16 @@ edition = "2021"
 materialize = []
 adt = ["dep:paste"]
 typed-lits = ["dep:litrs"]
+printing = ["dep:quote"]
 rust-atoms = ["adt", "materialize", "typed-lits", "dep:proc-macro2"]
 rust = ["rust-atoms"]
-default = ["rust"]
+default = ["rust", "printing"]
 
 [dependencies]
 proc-macro2 = { version = "1",   optional = true }
 litrs       = { version = "0.4", optional = true }
 paste       = { version = "1",   optional = true }
+quote       = { version = "1",   optional = true }
 
 [dev-dependencies]
 insta = "1"

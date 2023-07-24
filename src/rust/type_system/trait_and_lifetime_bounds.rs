@@ -3,14 +3,16 @@ use crate::*;
 pub type TypeParamBounds<Attr, Ty> = MinLength<InterlaceTrail<TypeParamBound<Attr, Ty>, Plus>>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum TypeParamBound<Attr, Ty> {
-        Lt(v <- Lifetime)
+        Lt(v <- Lifetime),
         Tr(v <- TraitBound<Attr, Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TraitBound<Attr, Ty> {
         q peek  <- Question;
@@ -23,6 +25,7 @@ pub type LifetimeBounds = MinLength<Interlace<Lifetime, Plus>>;
 pub type Lifetime = LifetimeToken;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ForLifetimes<Attr, Ty> {
         <- KwFor;

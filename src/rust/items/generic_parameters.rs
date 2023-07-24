@@ -1,6 +1,7 @@
-use crate::{rust::attributes::OuterAttribute, *};
+use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct GenericParams<Attr, Ty>{
         <- Lt;
@@ -10,15 +11,17 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum GenericParam<Attr, Ty> [attrs <- Vec<OuterAttribute<Attr>>;] {
-        Lt(lt <-LifetimeParam;)
-        Ty(ty <-TypeParam<Attr, Ty>;)
+        Lt(lt <-LifetimeParam;),
+        Ty(ty <-TypeParam<Attr, Ty>;),
         Cp(cp <- ConstParam<Ty>;)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct LifetimeParam {
         lt <- LifetimeOrLabel;
@@ -27,6 +30,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TypeParam<Attr, Ty> {
         id <- Ident : Identifier;
@@ -35,6 +39,7 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ConstParam<Ty> {
         <- KwConst;
@@ -48,6 +53,7 @@ materialize! {
 // Where Clause
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct WhereClause<Attr, Ty>{
         <- KwWhere;
@@ -56,14 +62,16 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum WhereClauseItem<Attr, Ty> {
-        Ty(ty <- TypeBoundWhereClauseItem<Attr, Ty>;)
+        Ty(ty <- TypeBoundWhereClauseItem<Attr, Ty>;),
         Lt(lt <- LifetimeWhereClauseItem;)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct LifetimeWhereClauseItem {
         lt <- Lifetime;
@@ -73,6 +81,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TypeBoundWhereClauseItem<Attr, Ty> {
         for_lts <- Option<ForLifetimes<Attr, Ty>>;

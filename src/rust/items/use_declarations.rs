@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct UseDeclaration {
         <- KwUse;
@@ -10,16 +11,17 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum UseTree {
         Star(
             path <- Option<Option<SimplePath>> : Option<(_, PeekAsParse<PathSep>)> { path.map(|v|v.0) };
             <- Star;
-        )
+        ),
         Branch(
             path <- Option<Option<SimplePath>> : Option<(_, PeekAsParse<PathSep>)> { path.map(|v|v.0) };
             children <- InterlaceTrail<Box<Self>, Comma> : Brace<_> { children.0 };
-        )
+        ),
         Simple(
             path <- SimplePath;
             r#as <- Option<IdentifierOrUnder> : Option<(KwAs, _)> {r#as.map(|v|v.1)};

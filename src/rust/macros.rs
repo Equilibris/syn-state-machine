@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct MacroInvocation {
         path <- SimplePath;
@@ -10,6 +11,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct DelimTokenTree {
         stream <- TokenStream : Sum3<Paren<_>,Brace<_>,Bracket<_>> {
@@ -23,6 +25,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct MacroInvocationSemi {
         path <- SimplePath;

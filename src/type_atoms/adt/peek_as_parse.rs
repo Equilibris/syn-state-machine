@@ -29,3 +29,20 @@ impl<Cursor: ParserCursor, T: PeekError<Cursor>> PeekError<Cursor> for PeekAsPar
         T::error(input)
     }
 }
+
+impl<T: quote::ToTokens + Default> quote::ToTokens for PeekAsParse<T> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.0.to_tokens(tokens)
+    }
+
+    fn to_token_stream(&self) -> TokenStream {
+        self.0.to_token_stream()
+    }
+
+    fn into_token_stream(self) -> TokenStream
+    where
+        Self: Sized,
+    {
+        self.0.into_token_stream()
+    }
+}

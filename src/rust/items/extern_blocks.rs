@@ -1,6 +1,7 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ExternBlock <Attr, Ty, Expr, Pat> {
         r#unsafe peek <- KwUnsafe;
@@ -11,10 +12,11 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum ExternalItem<Attr, Ty, Expr, Pat> [attrs <- Vec<OuterAttribute<Attr>> ] {
-        Macro(v <- MacroInvocationSemi)
-        Static(vis <- Option<Visibility>; v <- StaticItem<Ty, Expr>)
+        Macro(v <- MacroInvocationSemi),
+        Static(vis <- Option<Visibility>; v <- StaticItem<Ty, Expr>),
         Function(vis <- Option<Visibility>; v <- Function<Attr, Ty, Expr, Pat>)
     }
 }

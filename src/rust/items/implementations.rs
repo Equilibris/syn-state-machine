@@ -1,14 +1,16 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum Implementation <Attr, Ty, Expr, Pat> {
-        Inherent(v <- InherentImpl<Attr, Ty, Expr, Pat>)
+        Inherent(v <- InherentImpl<Attr, Ty, Expr, Pat>),
         Trait(v <- TraitImpl<Attr, Ty, Expr, Pat>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct InherentImpl <Attr, Ty, Expr, Pat> {
         <- KwImpl;
@@ -20,6 +22,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TraitImpl <Attr, Ty, Expr, Pat> {
         r#unsafe peek <- KwUnsafe;

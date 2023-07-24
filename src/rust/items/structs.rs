@@ -1,14 +1,16 @@
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum Struct<Attr, Ty>{
-        StructStruct(v <- StructStruct<Attr, Ty>)
+        StructStruct(v <- StructStruct<Attr, Ty>),
         TupleStruct(v <- TupleStruct<Attr, Ty>)
     }
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct StructStruct<Attr, Ty> {
         <- KwStruct;
@@ -20,6 +22,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TupleStruct<Attr, Ty> {
         <- KwStruct;
@@ -35,6 +38,7 @@ pub type StructFields<Attr, Ty> = Interlace<StructField<Attr, Ty>, Comma>;
 pub type TupleFields<Attr, Ty> = Interlace<TupleField<Attr, Ty>, Comma>;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct StructField <Attr, Ty> {
         attrs <- Vec<OuterAttribute<Attr>>;
@@ -46,6 +50,7 @@ materialize! {
 }
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TupleField <Attr, Ty> {
         attrs <- Vec<OuterAttribute<Attr>>;

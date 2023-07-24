@@ -3,6 +3,7 @@ use crate::internals::*;
 use proc_macro2::{extra::DelimSpan, Spacing, Span};
 
 pub use proc_macro2::{Ident, Literal, Punct, TokenStream, TokenTree};
+use quote::TokenStreamExt;
 
 impl<'a> Parse<RustCursor<'a>> for TokenStream {
     fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
@@ -233,6 +234,15 @@ macro_rules! grouped {
                     Some((inner, _, _)) => T::error(&inner),
                     None => Error::new(cursor.span(), concat!("Expected '", $emsg, "'")),
                 }
+            }
+        }
+        #[cfg(feature = "printing")]
+        impl<T: quote::ToTokens> quote::ToTokens for $ty<T> {
+            fn to_tokens(&self, tokens: &mut TokenStream) {
+                tokens.append(proc_macro2::Group::new(
+                    proc_macro2::Delimiter::$del,
+                    self.0.to_token_stream(),
+                ))
             }
         }
     };

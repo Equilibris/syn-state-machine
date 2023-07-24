@@ -3,6 +3,7 @@ use proc_macro2::Ident;
 use crate::*;
 
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ExternCrate {
         <- KwExtern;
@@ -12,6 +13,7 @@ materialize! {
     }
 }
 materialize! {
+    on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct AsClause {
         <- KwAs;
