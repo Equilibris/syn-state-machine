@@ -1,4 +1,6 @@
 use crate::*;
+#[cfg(feature = "printing")]
+use quote::TokenStreamExt;
 
 materialize! {
     on <'a> [crate::RustCursor<'a>]
@@ -9,6 +11,32 @@ materialize! {
         content <- T : Bracket<T> {content.0};
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct InnerAttribute<T> {
+        <- Pound;
+        <- Not;
+        content <- tokens into {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Bracket,
+                    content.into_token_stream()
+                )
+            )
+        } to {
+            let mut inner = proc_macro2::TokenStream::new();
+            content.to_tokens(&mut inner);
+
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Bracket,
+                    inner
+                )
+            )
+        }
+    }
+}
+
 materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
@@ -17,9 +45,30 @@ materialize! {
         content <- T : Bracket<T> {content.0};
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct OuterAttribute<T> {
+        <- Pound;
+        content <- tokens into {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Bracket,
+                    content.into_token_stream()
+                )
+            )
+        } to {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Bracket,
+                    content.to_token_stream()
+                )
+            )
+        }
+    }
+}
 
-pub type WithOuterAttrs<Attr, Ty> = (Vec<OuterAttribute<Attr>>, Ty);
-pub type WithInnerAttrs<Attr, Ty> = (Vec<InnerAttribute<Attr>>, Ty);
+pub type WithOuterAttrs<Attr, Ty> = P2<Rep<OuterAttribute<Attr>>, Ty>;
+pub type WithInnerAttrs<Attr, Ty> = P2<Rep<InnerAttribute<Attr>>, Ty>;
 
 #[cfg(test)]
 mod tests {

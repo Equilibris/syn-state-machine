@@ -1,4 +1,6 @@
 use crate::*;
+#[cfg(feature = "printing")]
+use quote::TokenStreamExt;
 
 materialize! {
     on <'a> [crate::RustCursor<'a>]
@@ -8,7 +10,32 @@ materialize! {
         id <- Ident : Identifier;
         generic_params <- Option<GenericParams<Attr, Ty>>;
         where_clause <- Option<WhereClause<Attr, Ty>>;
-        items <- Vec<EnumItems<Attr, Ty, Expr>> : Brace<_> { items.0 };
+        items <- Rep<EnumItems<Attr, Ty, Expr>> : Brace<_> { items.0 };
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct Enumeration<Attr, Ty, Expr> {
+        <- KwEnum;
+        id <- Ident;
+        generic_params <- Option<GenericParams<Attr, Ty>>;
+        where_clause <- Option<WhereClause<Attr, Ty>>;
+        items <- tokens into {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Brace,
+                    items.into_token_stream()
+
+                )
+            )
+        } to {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Brace,
+                    items.to_token_stream()
+                )
+            )
+        }
     }
 }
 
@@ -18,7 +45,7 @@ materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum EnumItem <Attr, Ty, Expr> [
-        attrs <- Vec<OuterAttribute<Attr>>;
+        attrs <- Rep<OuterAttribute<Attr>>;
         vis <- Option<Visibility>;
         id <- Ident : Identifier
     ] {
@@ -27,6 +54,19 @@ materialize! {
         Unit(desc <- Option<EnumItemDiscriminant<Expr>>)
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for enum EnumItem<Attr, Ty, Expr> [
+        attrs <- Rep<OuterAttribute<Attr>>;
+        vis <- Option<Visibility>;
+        id <- Ident
+    ] {
+        Tuple(v <- EnumItemTuple<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>),
+        Struct(v <- EnumItemStruct<Attr, Ty>; desc <- Option<EnumItemDiscriminant<Expr>>),
+        Unit(desc <- Option<EnumItemDiscriminant<Expr>>)
+    }
+}
+
 pub type EnumItemTuple<Attr, Ty> = Paren<TupleFields<Attr, Ty>>;
 pub type EnumItemStruct<Attr, Ty> = Brace<StructFields<Attr, Ty>>;
 
@@ -34,6 +74,13 @@ materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct EnumItemDiscriminant <Expr> {
+        <- Eq;
+        expr <- Expr
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct EnumItemDiscriminant<Expr> {
         <- Eq;
         expr <- Expr
     }

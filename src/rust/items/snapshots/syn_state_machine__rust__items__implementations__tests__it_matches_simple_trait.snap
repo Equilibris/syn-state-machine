@@ -11,7 +11,9 @@ Ok(
                     params: Interlace {
                         values: [
                             Ty(
-                                [],
+                                Rep(
+                                    [],
+                                ),
                                 TypeParam {
                                     id: Ident(
                                         T,
@@ -92,9 +94,13 @@ Ok(
                 },
             },
             where_clause: None,
-            items: (
-                [],
-                [],
+            items: P2(
+                Rep(
+                    [],
+                ),
+                Rep(
+                    [],
+                ),
             ),
         },
     ),

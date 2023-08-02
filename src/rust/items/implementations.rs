@@ -1,9 +1,19 @@
 use crate::*;
 
+#[cfg(feature = "printing")]
+use quote::TokenStreamExt;
+
 materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub enum Implementation <Attr, Ty, Expr, Pat> {
+        Inherent(v <- InherentImpl<Attr, Ty, Expr, Pat>),
+        Trait(v <- TraitImpl<Attr, Ty, Expr, Pat>)
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for enum Implementation<Attr, Ty, Expr, Pat> {
         Inherent(v <- InherentImpl<Attr, Ty, Expr, Pat>),
         Trait(v <- TraitImpl<Attr, Ty, Expr, Pat>)
     }
@@ -17,7 +27,31 @@ materialize! {
         generic_parameters <- Option<GenericParams<Attr, Ty>>;
         ty <- Ty;
         where_clause <- Option<WhereClause<Attr, Ty>>;
-        items <- WithInnerAttrs<Attr, Vec<AssociateItem<Attr, Ty, Expr, Pat>>> : Brace<_> { items.0 }
+        items <- WithInnerAttrs<Attr, Rep<AssociateItem<Attr, Ty, Expr, Pat>>> : Brace<_> { items.0 }
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct InherentImpl<Attr, Ty, Expr, Pat> {
+        <- KwImpl;
+        generic_parameters <- Option<GenericParams<Attr, Ty>>;
+        ty <- Ty;
+        where_clause <- Option<WhereClause<Attr, Ty>>;
+        items <- tokens into {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Parenthesis,
+                    items.into_token_stream()
+                )
+            )
+        } to {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Parenthesis,
+                    items.to_token_stream()
+                )
+            )
+        }
     }
 }
 
@@ -33,7 +67,36 @@ materialize! {
         <- KwFor;
         ty <- Ty;
         where_clause <- Option<WhereClause<Attr, Ty>>;
-        items <- WithInnerAttrs<Attr, Vec<AssociateItem<Attr, Ty, Expr, Pat>> > : Brace<_> { items.0 }
+        items <- WithInnerAttrs<Attr, Rep<AssociateItem<Attr, Ty, Expr, Pat>> > : Brace<_> { items.0 }
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct TraitImpl<Attr, Ty, Expr, Pat> {
+        r#unsafe peek <- KwUnsafe;
+        <- KwImpl;
+        generic_parameters <- Option<GenericParams<Attr, Ty>>;
+        not peek <- Not;
+        path <- TypePath<Ty>;
+        <- KwFor;
+        ty <- Ty;
+        where_clause <- Option<WhereClause<Attr, Ty>>;
+        items <- tokens into {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Parenthesis,
+                    items.into_token_stream()
+                )
+            )
+        } to {
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Parenthesis,
+                    items.to_token_stream()
+                )
+            )
+        }
+
     }
 }
 

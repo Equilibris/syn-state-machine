@@ -10,11 +10,26 @@ materialize! {
         Tr(v <- TraitBound<Attr, Ty>)
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for enum TypeParamBound<Attr, Ty> {
+        Lt(v <- Lifetime),
+        Tr(v <- TraitBound<Attr, Ty>)
+    }
+}
 
 materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct TraitBound<Attr, Ty> {
+        q peek  <- Question;
+        for_lts <- Option<ForLifetimes<Attr, Ty>>;
+        path    <- TypePath<Ty>;
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct TraitBound<Attr, Ty> {
         q peek  <- Question;
         for_lts <- Option<ForLifetimes<Attr, Ty>>;
         path    <- TypePath<Ty>;
@@ -28,6 +43,13 @@ materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
     pub struct ForLifetimes<Attr, Ty> {
+        <- KwFor;
+        args <- GenericParams<Attr, Ty>;
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct ForLifetimes<Attr, Ty> {
         <- KwFor;
         args <- GenericParams<Attr, Ty>;
     }

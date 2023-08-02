@@ -27,7 +27,9 @@ Ok(
                 params: Interlace {
                     values: [
                         Ty(
-                            [],
+                            Rep(
+                                [],
+                            ),
                             TypeParam {
                                 id: Ident(
                                     T,
@@ -42,17 +44,22 @@ Ok(
         ),
         params: Paren(
             FunctionParameters {
-                self_param: None,
+                self_param: Some(
+                    Shorthand(
+                        Rep(
+                            [],
+                        ),
+                        ShorthandSelf {
+                            reference: None,
+                        },
+                    ),
+                ),
                 params: Interlace {
                     values: [
-                        Ty(
-                            [],
-                            Ident(
-                                self,
-                            ),
-                        ),
                         FunctionParamPattern(
-                            [],
+                            Rep(
+                                [],
+                            ),
                             Ty(
                                 Ident(
                                     v,

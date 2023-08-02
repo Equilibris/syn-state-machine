@@ -6,22 +6,20 @@ Ok(
     UseDeclaration {
         tree: Star(
             Some(
-                Some(
-                    HigherOrderPath {
-                        leading: false,
-                        segments: Interlace {
-                            values: [
+                HigherOrderPath {
+                    leading: false,
+                    segments: Interlace {
+                        values: [
+                            Identifier(
                                 Identifier(
-                                    Identifier(
-                                        Ident(
-                                            hello,
-                                        ),
+                                    Ident(
+                                        hello,
                                     ),
                                 ),
-                            ],
-                        },
+                            ),
+                        ],
                     },
-                ),
+                },
             ),
         ),
     },

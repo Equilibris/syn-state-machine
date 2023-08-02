@@ -26,6 +26,24 @@ macro_rules! sum_impl {
             $($gens($gens),)*
         }
 
+        #[cfg(feature = "printing")]
+        impl<
+            $gen: quote::ToTokens, $($gens: quote::ToTokens,)*
+        > quote::ToTokens for $ty<$gen, $($gens,)*> {
+            fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+                match self {
+                    Self::$gen(ref $prod) => $prod.to_tokens(tokens),
+                    $(Self::$gens(ref $prods) => $prods.to_tokens(tokens),)*
+                }
+            }
+            fn into_token_stream(self) -> proc_macro2::TokenStream {
+                match self {
+                    Self::$gen($prod) => $prod.into_token_stream(),
+                    $(Self::$gens($prods) => $prods.into_token_stream(),)*
+                }
+            }
+        }
+
         impl<$gen, $($gens,)*> $ty <$gen, $($gens,)*> {
             ::paste::paste! {
                 pub fn [< is_ $prod >](&self) -> bool {

@@ -11,15 +11,15 @@ Ok(
                     params: Interlace {
                         values: [
                             Lt(
-                                [],
+                                Rep(
+                                    [],
+                                ),
                                 LifetimeParam {
-                                    lt: LifetimeOrLabel(
-                                        Identifier(
-                                            Ident(
-                                                a,
-                                            ),
+                                    lt: LifetimeOrLabel {
+                                        ident: Ident(
+                                            a,
                                         ),
-                                    ),
+                                    },
                                     bound: None,
                                 },
                             ),

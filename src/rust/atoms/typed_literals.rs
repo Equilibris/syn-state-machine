@@ -1,4 +1,6 @@
 use crate::*;
+#[cfg(feature = "printing")]
+use quote::TokenStreamExt;
 
 impl<'a> Parse<RustCursor<'a>> for bool {
     fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
@@ -71,11 +73,47 @@ pub type StringLit = litrs::StringLit<String>;
 pub type CharLit = litrs::CharLit<String>;
 pub type ByteLit = litrs::ByteLit<String>;
 
-pub type NegativeIntegerLit = (FPunct<'-'>, IntegerLit);
-pub type NegativeFloatLit = (FPunct<'-'>, FloatLit);
+macro_rules! signed_lit {
+    ($name:ident $neg_name:ident $ty_name:ident) => {
+        materialize! {
+            on <'a> [crate::RustCursor<'a>]
+                pub struct $neg_name {
+                    <- FPunct<'-'>;
+                    lit <- $ty_name
+                }
+        }
+        to_tokens! {
+            impl ToTokens for struct $neg_name {
+                <- FPunct<'-'>;
+                lit <- tokens into {
+                    tokens.append(Literal::from(lit))
+                } to {
+                    tokens.append(Literal::from(lit.clone()))
+                }
+            }
+        }
 
-pub type SignedIntegerLit = (Option<FPunct<'-'>>, IntegerLit);
-pub type SignedFloatLit = (Option<FPunct<'-'>>, FloatLit);
+        materialize! {
+            on <'a> [crate::RustCursor<'a>]
+                pub struct $name {
+                    neg peek <- FPunct<'-'>;
+                    lit <- $ty_name
+                }
+        }
+        to_tokens! {
+            impl ToTokens for struct $name {
+                neg peek <- FPunct<'-'>;
+                lit <- tokens into {
+                    tokens.append(Literal::from(lit))
+                } to {
+                    tokens.append(Literal::from(lit.clone()))
+                }
+            }
+        }
+    };
+}
+signed_lit!(SignedIntegerLit NegativeIntegerLit IntegerLit);
+signed_lit!(SignedFloatLit NegativeFloatLit FloatLit);
 
 typed_lit!("Expected string literal" StringLit);
 typed_lit!("Expected int literal" IntegerLit);

@@ -4,7 +4,9 @@ expression: "insta_match_test!(+ parse\n    ExternalItem<Infallible, Type<Infall
 ---
 Ok(
     Function(
-        [],
+        Rep(
+            [],
+        ),
         None,
         Function {
             qualifiers: FunctionQualifiers {
@@ -23,7 +25,9 @@ Ok(
                     params: Interlace {
                         values: [
                             FunctionParamPattern(
-                                [],
+                                Rep(
+                                    [],
+                                ),
                                 Ty(
                                     Ident(
                                         format,

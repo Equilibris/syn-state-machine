@@ -6,16 +6,16 @@ Ok(
     MinLength(
         Interlace {
             values: [
-                LifetimeToken(
-                    Ident(
+                LifetimeToken {
+                    ident: Ident(
                         a,
                     ),
-                ),
-                LifetimeToken(
-                    Ident(
+                },
+                LifetimeToken {
+                    ident: Ident(
                         b,
                     ),
-                ),
+                },
             ],
         },
     ),

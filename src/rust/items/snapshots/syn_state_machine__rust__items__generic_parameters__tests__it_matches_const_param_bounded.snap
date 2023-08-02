@@ -11,7 +11,7 @@ Ok(
             i8,
         ),
         eq: Some(
-            V2(
+            V1(
                 Literal {
                     lit: 10,
                 },

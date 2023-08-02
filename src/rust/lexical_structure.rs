@@ -100,10 +100,27 @@ impl<'a> Peek<RustCursor<'a>> for IdentifierOrUnder {
         }
     }
 }
+#[cfg(feature = "printing")]
+impl quote::ToTokens for IdentifierOrUnder {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.0.to_tokens(tokens)
+    }
 
-impl Into<Ident> for IdentifierOrUnder {
-    fn into(self) -> Ident {
-        self.0
+    fn to_token_stream(&self) -> TokenStream {
+        self.0.to_token_stream()
+    }
+
+    fn into_token_stream(self) -> TokenStream
+    where
+        Self: Sized,
+    {
+        self.0.into_token_stream()
+    }
+}
+
+impl From<IdentifierOrUnder> for Ident {
+    fn from(val: IdentifierOrUnder) -> Self {
+        val.0
     }
 }
 
@@ -115,9 +132,27 @@ impl<'a> Parse<RustCursor<'a>> for Identifier {
     }
 }
 
-impl Into<Ident> for Identifier {
-    fn into(self) -> Ident {
-        self.0
+#[cfg(feature = "printing")]
+impl quote::ToTokens for Identifier {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.0.to_tokens(tokens)
+    }
+
+    fn to_token_stream(&self) -> TokenStream {
+        self.0.to_token_stream()
+    }
+
+    fn into_token_stream(self) -> TokenStream
+    where
+        Self: Sized,
+    {
+        self.0.into_token_stream()
+    }
+}
+
+impl From<Identifier> for Ident {
+    fn from(val: Identifier) -> Self {
+        val.0
     }
 }
 
@@ -150,50 +185,56 @@ pub type Caret = FPunct<'^'>;
 pub type Not = FPunct<'!'>;
 pub type And = FPunct<'&'>;
 pub type Or = FPunct<'|'>;
-pub type AndAnd = (FJointPunct<'&'>, FPunct<'&'>);
-pub type OrOr = (FJointPunct<'|'>, FPunct<'|'>);
-pub type Shl = (FJointPunct<'<'>, FPunct<'<'>);
-pub type Shr = (FJointPunct<'>'>, FPunct<'>'>);
-pub type PlusEq = (FJointPunct<'+'>, FPunct<'='>);
-pub type MinusEq = (FJointPunct<'-'>, FPunct<'='>);
-pub type StarEq = (FJointPunct<'*'>, FPunct<'='>);
-pub type SlashEq = (FJointPunct<'/'>, FPunct<'='>);
-pub type PercentEq = (FJointPunct<'%'>, FPunct<'='>);
-pub type CaretEq = (FJointPunct<'^'>, FPunct<'='>);
-pub type AndEq = (FJointPunct<'&'>, FPunct<'='>);
-pub type OrEq = (FJointPunct<'|'>, FPunct<'='>);
-pub type ShlEq = (FJointPunct<'<'>, FJointPunct<'<'>, FPunct<'='>);
-pub type ShrEq = (FJointPunct<'>'>, FJointPunct<'>'>, FPunct<'='>);
+pub type AndAnd = P2<FJointPunct<'&'>, FPunct<'&'>>;
+pub type OrOr = P2<FJointPunct<'|'>, FPunct<'|'>>;
+pub type Shl = P2<FJointPunct<'<'>, FPunct<'<'>>;
+pub type Shr = P2<FJointPunct<'>'>, FPunct<'>'>>;
+pub type PlusEq = P2<FJointPunct<'+'>, FPunct<'='>>;
+pub type MinusEq = P2<FJointPunct<'-'>, FPunct<'='>>;
+pub type StarEq = P2<FJointPunct<'*'>, FPunct<'='>>;
+pub type SlashEq = P2<FJointPunct<'/'>, FPunct<'='>>;
+pub type PercentEq = P2<FJointPunct<'%'>, FPunct<'='>>;
+pub type CaretEq = P2<FJointPunct<'^'>, FPunct<'='>>;
+pub type AndEq = P2<FJointPunct<'&'>, FPunct<'='>>;
+pub type OrEq = P2<FJointPunct<'|'>, FPunct<'='>>;
+pub type ShlEq = P3<FJointPunct<'<'>, FJointPunct<'<'>, FPunct<'='>>;
+pub type ShrEq = P3<FJointPunct<'>'>, FJointPunct<'>'>, FPunct<'='>>;
 pub type Eq = FPunct<'='>;
-pub type EqEq = (FJointPunct<'='>, FPunct<'='>);
-pub type Ne = (FJointPunct<'!'>, FPunct<'='>);
+pub type EqEq = P2<FJointPunct<'='>, FPunct<'='>>;
+pub type Ne = P2<FJointPunct<'!'>, FPunct<'='>>;
 pub type Gt = FPunct<'>'>;
 pub type Lt = FPunct<'<'>;
-pub type Ge = (FJointPunct<'>'>, FPunct<'='>);
-pub type Le = (FJointPunct<'<'>, FPunct<'='>);
+pub type Ge = P2<FJointPunct<'>'>, FPunct<'='>>;
+pub type Le = P2<FJointPunct<'<'>, FPunct<'='>>;
 pub type At = FPunct<'@'>;
 pub type Dot = FPunct<'.'>;
-pub type DotDot = (FJointPunct<'.'>, FPunct<'.'>);
-pub type DotDotDot = (FJointPunct<'.'>, FJointPunct<'.'>, FPunct<'.'>);
-pub type DotDotEq = (FJointPunct<'.'>, FJointPunct<'.'>, FPunct<'='>);
+pub type DotDot = P2<FJointPunct<'.'>, FPunct<'.'>>;
+pub type DotDotDot = P3<FJointPunct<'.'>, FJointPunct<'.'>, FPunct<'.'>>;
+pub type DotDotEq = P3<FJointPunct<'.'>, FJointPunct<'.'>, FPunct<'='>>;
 pub type Comma = FPunct<','>;
 pub type Semi = FPunct<';'>;
 pub type Colon = FPunct<':'>;
-pub type PathSep = (FJointPunct<':'>, FPunct<':'>);
-pub type RArrow = (FJointPunct<'-'>, FPunct<'>'>);
-pub type FatArrow = (FJointPunct<'='>, FPunct<'>'>);
+pub type PathSep = P2<FJointPunct<':'>, FPunct<':'>>;
+pub type RArrow = P2<FJointPunct<'-'>, FPunct<'>'>>;
+pub type FatArrow = P2<FJointPunct<'='>, FPunct<'>'>>;
 pub type Pound = FPunct<'#'>;
 pub type Dollar = FPunct<'$'>;
 pub type Question = FPunct<'?'>;
 pub type Tilde = FPunct<'~'>;
 
-#[derive(Debug)]
-pub struct LifetimeToken(pub Ident);
-impl<'a> Parse<RustCursor<'a>> for LifetimeToken {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        input.errored_peek::<FPunct<'\''>>()?;
-
-        Ok(Self(input.parse()?))
+materialize! {
+    on <'a> [RustCursor<'a>]
+    #[derive(Debug)]
+    pub struct LifetimeToken {
+        <- FPunct<'\''>;
+        ident <- Ident
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct LifetimeToken {
+        <- FPunct<'\''>;
+        ident <- Ident
     }
 }
 
@@ -211,13 +252,19 @@ impl FixedPeek for LifetimeToken {
     const SKIP: usize = 2;
 }
 
-#[derive(Debug)]
-pub struct LifetimeOrLabel(pub Identifier);
-impl<'a> Parse<RustCursor<'a>> for LifetimeOrLabel {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        input.errored_peek::<FPunct<'\''>>()?;
-
-        Ok(Self(input.parse()?))
+materialize! {
+    on <'a> [RustCursor<'a>]
+    #[derive(Debug)]
+    pub struct LifetimeOrLabel{
+        <- FPunct<'\''>;
+        ident <- Ident : Identifier
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct LifetimeOrLabel {
+        <- FPunct<'\''>;
+        ident <- Ident
     }
 }
 

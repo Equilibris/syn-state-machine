@@ -1,12 +1,13 @@
-use crate::{Interlace, InterlaceTrail, LocError, Parse, ParseBuffer, ParserCursor, Spanned};
+use crate::{Interlace, InterlaceTrail, LocError, Parse, ParseBuffer, ParserCursor, Rep, Spanned};
 
+#[allow(clippy::len_without_is_empty)]
 pub trait ParsableLength {
     fn len(&self) -> usize;
 }
 
-impl<T> ParsableLength for Vec<T> {
+impl<T> ParsableLength for Rep<T> {
     fn len(&self) -> usize {
-        self.len()
+        self.0.len()
     }
 }
 impl<A, B> ParsableLength for Interlace<A, B> {

@@ -13,3 +13,25 @@ materialize! {
         <- Semi
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct StaticItem<Ty, Expr> {
+        <- KwStatic;
+        r#mut peek <- KwMut;
+        id <- Ident;
+        <- Colon;
+        ty <- Ty;
+        eq <- tokens into {
+            if let Some(eq) = eq {
+                tokens.extend(Eq::default().into_token_stream());
+                tokens.extend(eq.into_token_stream())
+            }
+        } to {
+            if let Some(eq) = eq {
+                tokens.extend(Eq::default().into_token_stream());
+                tokens.extend(eq.into_token_stream())
+            }
+        };
+        <- Semi
+    }
+}

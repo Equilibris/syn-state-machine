@@ -1,34 +1,36 @@
 ---
 source: src/type_atoms/adt/vec.rs
-expression: "(insta_match_test!(+ parse Vec<(Ident, Option<Punct>)> : hello < world hi),\n    insta_match_test!(* peek Vec<(Ident, Option<Punct>)> : hello < world hi))"
+expression: "(insta_match_test!(+ parse Rep<(Ident, Option<Punct>)> : hello < world hi),\n    insta_match_test!(* peek Rep<(Ident, Option<Punct>)> : hello < world hi))"
 ---
 (
     Ok(
-        [
-            (
-                Ident(
-                    hello,
+        Rep(
+            [
+                (
+                    Ident(
+                        hello,
+                    ),
+                    Some(
+                        Punct {
+                            char: '<',
+                            spacing: Alone,
+                        },
+                    ),
                 ),
-                Some(
-                    Punct {
-                        char: '<',
-                        spacing: Alone,
-                    },
+                (
+                    Ident(
+                        world,
+                    ),
+                    None,
                 ),
-            ),
-            (
-                Ident(
-                    world,
+                (
+                    Ident(
+                        hi,
+                    ),
+                    None,
                 ),
-                None,
-            ),
-            (
-                Ident(
-                    hi,
-                ),
-                None,
-            ),
-        ],
+            ],
+        ),
     ),
     Some(
         4,

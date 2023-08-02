@@ -1,34 +1,36 @@
 ---
 source: src/type_atoms/adt/vec.rs
-expression: "(insta_match_test!(+ parse Vec<TokenTree> : r#hello hello struct _ 'a'\n        { \"hi\" }),\n    insta_match_test!(* peek Vec<TokenTree> : r#hello hello struct _ 'a'\n        { \"hi\" }))"
+expression: "(insta_match_test!(+ parse Rep<TokenTree> : r#hello hello struct _ 'a'\n        { \"hi\" }),\n    insta_match_test!(* peek Rep<TokenTree> : r#hello hello struct _ 'a'\n        { \"hi\" }))"
 ---
 (
     Ok(
-        [
-            Ident {
-                sym: r#hello,
-            },
-            Ident {
-                sym: hello,
-            },
-            Ident {
-                sym: struct,
-            },
-            Ident {
-                sym: _,
-            },
-            Literal {
-                lit: 'a',
-            },
-            Group {
-                delimiter: Brace,
-                stream: TokenStream [
-                    Literal {
-                        lit: "hi",
-                    },
-                ],
-            },
-        ],
+        Rep(
+            [
+                Ident {
+                    sym: r#hello,
+                },
+                Ident {
+                    sym: hello,
+                },
+                Ident {
+                    sym: struct,
+                },
+                Ident {
+                    sym: _,
+                },
+                Literal {
+                    lit: 'a',
+                },
+                Group {
+                    delimiter: Brace,
+                    stream: TokenStream [
+                        Literal {
+                            lit: "hi",
+                        },
+                    ],
+                },
+            ],
+        ),
     ),
     Some(
         7,

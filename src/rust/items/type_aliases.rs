@@ -13,6 +13,46 @@ materialize! {
         <- Semi
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct TypeAlias <Attr,Ty> {
+        <- KwType;
+        id <- Ident;
+        generic_parameters <- Option<GenericParams<Attr, Ty>>;
+        bounds <- tokens into {
+            if let Some(bounds) = bounds {
+                tokens.extend(KwIn::default().into_token_stream());
+                tokens.extend(bounds.into_token_stream());
+            }
+        } to {
+            if let Some(bounds) = bounds {
+                tokens.extend(KwIn::default().into_token_stream());
+                bounds.to_tokens(tokens)
+            }
+        };
+        where_clause <- Option<WhereClause<Attr, Ty>>;
+        eq <- tokens into {
+            if let Some((ty, bound)) = eq {
+                tokens.extend(Eq::default().into_token_stream());
+                tokens.extend(ty.into_token_stream());
+
+                if let Some(bound) = bound {
+                    tokens.extend(bound.into_token_stream())
+                }
+            }
+        } to {
+            if let Some((ty, bound)) = eq {
+                tokens.extend(Eq::default().into_token_stream());
+                ty.to_tokens(tokens);
+
+                if let Some(bound) = bound {
+                    bound.to_tokens(tokens)
+                }
+            }
+        };
+        <- Semi
+    }
+}
 
 #[cfg(test)]
 mod tests {

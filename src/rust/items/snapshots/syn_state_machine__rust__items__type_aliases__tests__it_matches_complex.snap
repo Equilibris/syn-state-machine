@@ -12,7 +12,9 @@ Ok(
                 params: Interlace {
                     values: [
                         Ty(
-                            [],
+                            Rep(
+                                [],
+                            ),
                             TypeParam {
                                 id: Ident(
                                     T,

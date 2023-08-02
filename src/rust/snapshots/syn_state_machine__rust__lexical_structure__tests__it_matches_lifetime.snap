@@ -4,11 +4,11 @@ expression: "(insta_match_test!(+ parse LifetimeToken : 'hi),\n    insta_match_t
 ---
 (
     Ok(
-        LifetimeToken(
-            Ident(
+        LifetimeToken {
+            ident: Ident(
                 hi,
             ),
-        ),
+        },
     ),
     Some(
         2,

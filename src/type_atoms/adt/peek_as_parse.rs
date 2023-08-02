@@ -30,6 +30,7 @@ impl<Cursor: ParserCursor, T: PeekError<Cursor>> PeekError<Cursor> for PeekAsPar
     }
 }
 
+#[cfg(feature = "printing")]
 impl<T: quote::ToTokens + Default> quote::ToTokens for PeekAsParse<T> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.0.to_tokens(tokens)

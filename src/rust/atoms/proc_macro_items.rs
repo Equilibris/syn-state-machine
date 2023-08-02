@@ -3,6 +3,7 @@ use crate::internals::*;
 use proc_macro2::{extra::DelimSpan, Spacing, Span};
 
 pub use proc_macro2::{Ident, Literal, Punct, TokenStream, TokenTree};
+#[cfg(feature = "printing")]
 use quote::TokenStreamExt;
 
 impl<'a> Parse<RustCursor<'a>> for TokenStream {
@@ -91,6 +92,18 @@ impl<'a, const VAL: &'static str> PeekError<RustCursor<'a>> for FIdent<VAL> {
     }
 }
 
+#[cfg(feature = "printing")]
+impl<const VAL: &'static str> quote::ToTokens for FIdent<VAL> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append(Ident::new(VAL, Span::call_site()))
+    }
+}
+impl<const VAL: &'static str> Default for FIdent<VAL> {
+    fn default() -> Self {
+        Self(Span::call_site())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct FPunct<const VAL: char>(pub Span);
 impl<'a, const VAL: char> Parse<RustCursor<'a>> for FPunct<VAL> {
@@ -120,6 +133,18 @@ impl<const VAL: char> FixedPeek for FPunct<VAL> {
 impl<'a, const VAL: char> PeekError<RustCursor<'a>> for FPunct<VAL> {
     fn error(input: &RustCursor<'a>) -> Error {
         Error::new(input.span(), format!("Expected '{}'", VAL))
+    }
+}
+
+#[cfg(feature = "printing")]
+impl<const VAL: char> quote::ToTokens for FPunct<VAL> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append(Punct::new(VAL, Spacing::Alone))
+    }
+}
+impl<const VAL: char> Default for FPunct<VAL> {
+    fn default() -> Self {
+        Self(Span::call_site())
     }
 }
 
@@ -155,6 +180,18 @@ impl<'a, const VAL: char> PeekError<RustCursor<'a>> for FJointPunct<VAL> {
     }
 }
 
+#[cfg(feature = "printing")]
+impl<const VAL: char> quote::ToTokens for FJointPunct<VAL> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append(Punct::new(VAL, Spacing::Joint))
+    }
+}
+impl<const VAL: char> Default for FJointPunct<VAL> {
+    fn default() -> Self {
+        Self(Span::call_site())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct FAlonePunct<const VAL: char>(pub Span);
 impl<'a, const VAL: char> Parse<RustCursor<'a>> for FAlonePunct<VAL> {
@@ -187,10 +224,31 @@ impl<'a, const VAL: char> PeekError<RustCursor<'a>> for FAlonePunct<VAL> {
     }
 }
 
+#[cfg(feature = "printing")]
+impl<const VAL: char> quote::ToTokens for FAlonePunct<VAL> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append(Punct::new(VAL, Spacing::Alone))
+    }
+}
+impl<const VAL: char> Default for FAlonePunct<VAL> {
+    fn default() -> Self {
+        Self(Span::call_site())
+    }
+}
+
 macro_rules! grouped {
     ($ty:ident $del:ident $emsg:literal) => {
         #[derive(Debug, Clone)]
         pub struct $ty<T>(pub T, pub DelimSpan);
+        impl<T: Default> Default for $ty<T> {
+            fn default() -> Self {
+                Self(
+                    T::default(),
+                    proc_macro2::Group::new(proc_macro2::Delimiter::$del, TokenStream::new())
+                        .delim_span(),
+                )
+            }
+        }
         impl<'a, T: Parse<RustCursor<'a>>> Parse<RustCursor<'a>> for $ty<T> {
             fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
                 let cur = input.cursor;

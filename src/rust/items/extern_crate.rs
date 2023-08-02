@@ -12,6 +12,16 @@ materialize! {
         as_clause <- Option<AsClause>;
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct ExternCrate {
+        <- KwExtern;
+        <- KwCrate;
+        crate_ref <- CrateRef;
+        as_clause <- Option<AsClause>;
+    }
+}
+
 materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
@@ -20,13 +30,22 @@ materialize! {
         id <- Ident : IdentifierOrUnder;
     }
 }
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct AsClause {
+        <- KwAs;
+        id <- Ident;
+    }
+}
 
 #[derive(Debug)]
-pub struct CrateRef(pub Ident);
+pub struct CrateRef {
+    pub id: Ident,
+}
 impl<'a> Parse<RustCursor<'a>> for CrateRef {
     fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(Self(
-            input
+        Ok(Self {
+            id: input
                 .ident_matching(|id| {
                     if id == "self" {
                         Ok(())
@@ -35,7 +54,13 @@ impl<'a> Parse<RustCursor<'a>> for CrateRef {
                     }
                 })?
                 .clone(),
-        ))
+        })
+    }
+}
+#[cfg(feature = "printing")]
+to_tokens! {
+    impl ToTokens for struct CrateRef {
+        id <-
     }
 }
 

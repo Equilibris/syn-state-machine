@@ -1,12 +1,39 @@
 use std::marker::PhantomData;
 
+#[cfg(feature = "printing")]
 use quote::{ToTokens, TokenStreamExt};
 
-use crate::{Parse, ParseBuffer, ParserCursor, Peek};
+use crate::{Parse, ParseBuffer, ParserCursor, Peek, Rep};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
     phantom: PhantomData<B>,
+}
+impl<A, B> From<Vec<A>> for Interlace<A, B> {
+    fn from(values: Vec<A>) -> Self {
+        Self {
+            values,
+            phantom: PhantomData,
+        }
+    }
+}
+impl<A, B> From<Interlace<A, B>> for Vec<A> {
+    fn from(val: Interlace<A, B>) -> Self {
+        val.values
+    }
+}
+impl<A, B> From<Rep<A>> for Interlace<A, B> {
+    fn from(values: Rep<A>) -> Self {
+        Self {
+            values: values.0,
+            phantom: PhantomData,
+        }
+    }
+}
+impl<A, B> From<Interlace<A, B>> for Rep<A> {
+    fn from(val: Interlace<A, B>) -> Self {
+        Rep(val.values)
+    }
 }
 
 impl<A, B> Default for Interlace<A, B> {
@@ -242,9 +269,9 @@ mod tests {
                       :  hello > ;);
     insta_match_test!(it_matches_comma_seperation, Interlace<Ident, FPunct<','>> :  hello, world, hi, there,);
     insta_match_test!(it_matches_comma_seperation_with_backstep, Interlace<(Ident, Option<Ident>), FPunct<','>> :  hello, world, hi, there);
-    insta_match_test!(it_matches_with_arbitrarilly_sized_interlacing, Interlace<(Ident, Option<Ident>), Vec<FPunct<','>>> : hello hi world,,, hi, there  hello, world, hi, there);
+    insta_match_test!(it_matches_with_arbitrarilly_sized_interlacing, Interlace<(Ident, Option<Ident>), Rep<FPunct<','>>> : hello hi world,,, hi, there  hello, world, hi, there);
 
-    insta_match_test!(it_matches_with_arbitrarilly, Interlace<(Ident, Vec<Ident>), Vec<FPunct<','>>> :  hello hi world,,, hi, there );
+    insta_match_test!(it_matches_with_arbitrarilly, Interlace<(Ident, Rep<Ident>), Rep<FPunct<','>>> :  hello hi world,,, hi, there );
 
     insta_match_test!(it_matches_trailing, InterlaceTrail<Ident, FPunct<','>>: hi, hello);
     insta_match_test!(it_matches_trailing_with, InterlaceTrail<Ident, FPunct<','>>: hi, hello,);

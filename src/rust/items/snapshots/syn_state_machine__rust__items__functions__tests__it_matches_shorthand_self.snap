@@ -4,7 +4,9 @@ expression: "insta_match_test!(+ parse SelfParam<Infallible, Infallible> : self)
 ---
 Ok(
     Shorthand(
-        [],
+        Rep(
+            [],
+        ),
         ShorthandSelf {
             reference: None,
         },

@@ -4,7 +4,9 @@ expression: "insta_match_test!(+ parse SelfParam<Infallible, TypePath<Ident>> : 
 ---
 Ok(
     Typed(
-        [],
+        Rep(
+            [],
+        ),
         TypedSelf {
             mutable: true,
             ty: HigherOrderPath {

@@ -4,7 +4,9 @@ expression: "insta_match_test!(+ parse EnumItem<Infallible, Ident, Infallible> :
 ---
 Ok(
     Unit(
-        [],
+        Rep(
+            [],
+        ),
         None,
         Ident(
             Block,

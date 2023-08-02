@@ -4,11 +4,11 @@ expression: "insta_match_test!(+ parse ExternCrate : extern crate hi as _ ;)"
 ---
 Ok(
     ExternCrate {
-        crate_ref: CrateRef(
-            Ident(
+        crate_ref: CrateRef {
+            id: Ident(
                 hi,
             ),
-        ),
+        },
         as_clause: Some(
             AsClause {
                 id: Ident(

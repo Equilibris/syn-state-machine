@@ -4,10 +4,10 @@ expression: "insta_match_test!(+ parse TypeParamBound<Infallible, SimplePath> : 
 ---
 Ok(
     Lt(
-        LifetimeToken(
-            Ident(
+        LifetimeToken {
+            ident: Ident(
                 a,
             ),
-        ),
+        },
     ),
 )

@@ -1,6 +1,40 @@
 use crate::internals::*;
 
-impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Vec<T> {
+#[derive(Debug, Default)]
+pub struct Rep<T>(pub Vec<T>);
+
+impl<T> From<Vec<T>> for Rep<T> {
+    fn from(value: Vec<T>) -> Self {
+        Self(value)
+    }
+}
+impl<T> From<Rep<T>> for Vec<T> {
+    fn from(value: Rep<T>) -> Self {
+        value.0
+    }
+}
+
+#[cfg(feature = "printing")]
+impl<T: quote::ToTokens> quote::ToTokens for Rep<T> {
+    fn into_token_stream(self) -> proc_macro2::TokenStream
+    where
+        Self: Sized,
+    {
+        let mut stream = proc_macro2::TokenStream::new();
+
+        for i in self.0 {
+            stream.extend(i.into_token_stream())
+        }
+        stream
+    }
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        for i in &self.0 {
+            i.to_tokens(tokens)
+        }
+    }
+}
+
+impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Rep<T> {
     fn parse(input: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
         let mut temp = input.clone();
         let mut vs = Vec::new();
@@ -10,16 +44,16 @@ impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Vec<T> {
                 Ok(a) => vs.push(a),
                 Err(_) => {
                     *input = temp;
-                    return Ok(vs);
+                    return Ok(Rep(vs));
                 }
             }
         }
 
         *input = temp;
-        Ok(vs)
+        Ok(Rep(vs))
     }
 }
-impl<C: Iterator + Clone, T: Peek<C>> Peek<C> for Vec<T> {
+impl<C: Iterator + Clone, T: Peek<C>> Peek<C> for Rep<T> {
     fn peek(cursor: &C) -> Option<usize> {
         let mut step = 0;
         let mut cursor = cursor.clone();
@@ -44,10 +78,10 @@ mod tests {
 
     type Two = (FPunct<':'>, FPunct<':'>);
 
-    insta_match_test!(it_matches_esoterics, Vec<(Ident, Option<(Two, Ident)>, Two)>     : r1::r2::r3::r4::r5::);
-    insta_match_test!(it_matches_catch_all,                 Vec<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
-    insta_match_test!(it_matches_comments,                  Vec<TokenTree>              : /* comment */);
-    insta_match_test!(it_matches_basic_iteration,           Vec<Ident>                  : hello world hi);
-    insta_match_test!(it_specifies_correct_backstep,        Vec<(Ident, Ident)>         : hello world hi);
-    insta_match_test!(it_can_work_on_individual_backtracks, Vec<(Ident, Option<Punct>)> :  hello < world hi );
+    insta_match_test!(it_matches_esoterics, Rep<(Ident, Option<(Two, Ident)>, Two)>     : r1::r2::r3::r4::r5::);
+    insta_match_test!(it_matches_catch_all,                 Rep<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
+    insta_match_test!(it_matches_comments,                  Rep<TokenTree>              : /* comment */);
+    insta_match_test!(it_matches_basic_iteration,           Rep<Ident>                  : hello world hi);
+    insta_match_test!(it_specifies_correct_backstep,        Rep<(Ident, Ident)>         : hello world hi);
+    insta_match_test!(it_can_work_on_individual_backtracks, Rep<(Ident, Option<Punct>)> :  hello < world hi );
 }

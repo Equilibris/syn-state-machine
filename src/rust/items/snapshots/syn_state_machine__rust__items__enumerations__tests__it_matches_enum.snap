@@ -12,7 +12,9 @@ Ok(
                 params: Interlace {
                     values: [
                         Ty(
-                            [],
+                            Rep(
+                                [],
+                            ),
                             TypeParam {
                                 id: Ident(
                                     F,
@@ -22,7 +24,9 @@ Ok(
                             },
                         ),
                         Ty(
-                            [],
+                            Rep(
+                                [],
+                            ),
                             TypeParam {
                                 id: Ident(
                                     T,
@@ -42,88 +46,100 @@ Ok(
                 },
             },
         ),
-        items: [
-            Interlace {
-                values: [
-                    Unit(
-                        [],
-                        None,
-                        Ident(
-                            Unit,
+        items: Rep(
+            [
+                Interlace {
+                    values: [
+                        Unit(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                Unit,
+                            ),
+                            None,
                         ),
-                        None,
-                    ),
-                    Tuple(
-                        [],
-                        None,
-                        Ident(
-                            From,
-                        ),
-                        Paren(
-                            Interlace {
-                                values: [
-                                    TupleField {
-                                        attrs: [],
-                                        vis: None,
-                                        ty: HigherOrderPath {
-                                            leading: false,
-                                            segments: Interlace {
-                                                values: [
-                                                    Bare(
-                                                        Id(
-                                                            Ident(
-                                                                F,
+                        Tuple(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                From,
+                            ),
+                            Paren(
+                                Interlace {
+                                    values: [
+                                        TupleField {
+                                            attrs: Rep(
+                                                [],
+                                            ),
+                                            vis: None,
+                                            ty: HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    F,
+                                                                ),
                                                             ),
                                                         ),
-                                                    ),
-                                                ],
+                                                    ],
+                                                },
                                             },
                                         },
-                                    },
-                                ],
-                            },
-                            Span,
+                                    ],
+                                },
+                                Span,
+                            ),
+                            None,
                         ),
-                        None,
-                    ),
-                    Struct(
-                        [],
-                        None,
-                        Ident(
-                            To,
-                        ),
-                        Brace(
-                            Interlace {
-                                values: [
-                                    StructField {
-                                        attrs: [],
-                                        vis: None,
-                                        id: Ident(
-                                            result,
-                                        ),
-                                        ty: HigherOrderPath {
-                                            leading: false,
-                                            segments: Interlace {
-                                                values: [
-                                                    Bare(
-                                                        Id(
-                                                            Ident(
-                                                                T,
+                        Struct(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                To,
+                            ),
+                            Brace(
+                                Interlace {
+                                    values: [
+                                        StructField {
+                                            attrs: Rep(
+                                                [],
+                                            ),
+                                            vis: None,
+                                            id: Ident(
+                                                result,
+                                            ),
+                                            ty: HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    T,
+                                                                ),
                                                             ),
                                                         ),
-                                                    ),
-                                                ],
+                                                    ],
+                                                },
                                             },
                                         },
-                                    },
-                                ],
-                            },
-                            Span,
+                                    ],
+                                },
+                                Span,
+                            ),
+                            None,
                         ),
-                        None,
-                    ),
-                ],
-            },
-        ],
+                    ],
+                },
+            ],
+        ),
     },
 )

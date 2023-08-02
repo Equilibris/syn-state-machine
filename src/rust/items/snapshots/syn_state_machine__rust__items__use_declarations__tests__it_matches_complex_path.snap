@@ -10,22 +10,20 @@ Ok(
                 values: [
                     Star(
                         Some(
-                            Some(
-                                HigherOrderPath {
-                                    leading: false,
-                                    segments: Interlace {
-                                        values: [
+                            HigherOrderPath {
+                                leading: false,
+                                segments: Interlace {
+                                    values: [
+                                        Identifier(
                                             Identifier(
-                                                Identifier(
-                                                    Ident(
-                                                        hello,
-                                                    ),
+                                                Ident(
+                                                    hello,
                                                 ),
                                             ),
-                                        ],
-                                    },
+                                        ),
+                                    ],
                                 },
-                            ),
+                            },
                         ),
                     ),
                     Simple(
@@ -60,22 +58,20 @@ Ok(
                     ),
                     Branch(
                         Some(
-                            Some(
-                                HigherOrderPath {
-                                    leading: false,
-                                    segments: Interlace {
-                                        values: [
+                            HigherOrderPath {
+                                leading: false,
+                                segments: Interlace {
+                                    values: [
+                                        Identifier(
                                             Identifier(
-                                                Identifier(
-                                                    Ident(
-                                                        nested,
-                                                    ),
+                                                Ident(
+                                                    nested,
                                                 ),
                                             ),
-                                        ],
-                                    },
+                                        ),
+                                    ],
                                 },
-                            ),
+                            },
                         ),
                         Interlace {
                             values: [

@@ -4,7 +4,9 @@ expression: "insta_match_test!(+ parse EnumItem<Infallible, Ident, Infallible> :
 ---
 Ok(
     Tuple(
-        [],
+        Rep(
+            [],
+        ),
         None,
         Ident(
             Block,
@@ -13,7 +15,9 @@ Ok(
             Interlace {
                 values: [
                     TupleField {
-                        attrs: [],
+                        attrs: Rep(
+                            [],
+                        ),
                         vis: None,
                         ty: Ident(
                             World,

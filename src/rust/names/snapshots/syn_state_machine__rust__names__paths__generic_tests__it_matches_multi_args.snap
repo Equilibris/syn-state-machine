@@ -7,11 +7,11 @@ Ok(
         args: Interlace {
             values: [
                 Lt(
-                    LifetimeToken(
-                        Ident(
+                    LifetimeToken {
+                        ident: Ident(
                             a,
                         ),
-                    ),
+                    },
                 ),
                 Ty(
                     HigherOrderPath {
