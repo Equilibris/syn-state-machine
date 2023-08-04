@@ -667,8 +667,8 @@ macro_rules! to_tokens {
     ) => {
         $(#[$($macros)*])*
         impl$(<$($gens: quote::ToTokens,)*>)? quote::ToTokens for $id$(<$($gens),*>)? {
-            fn into_token_stream(self) -> TokenStream {
-                let mut tts = TokenStream::new();
+            fn into_token_stream(self) -> proc_macro2::TokenStream {
+                let mut tts = proc_macro2::TokenStream::new();
                 let tokens = &mut tts;
 
                 to_tokens! {
@@ -690,7 +690,7 @@ macro_rules! to_tokens {
                 tts
             }
 
-            fn to_tokens(&self, tokens: &mut TokenStream) {
+            fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
                 to_tokens! {
                     enum $id
                     to_tokens self tokens
@@ -873,9 +873,8 @@ macro_rules! to_tokens {
         ) => {
         $(#[$($macros)*])*
         impl$(<$($gens: quote::ToTokens,)*>)? quote::ToTokens for $id$(<$($gens),*>)? {
-            fn into_token_stream(self) -> TokenStream {
-                // use quote::TokenStreamExt;
-                let mut tts = TokenStream::new();
+            fn into_token_stream(self) -> proc_macro2::TokenStream {
+                let mut tts = proc_macro2::TokenStream::new();
                 let tokens = &mut tts;
 
                 to_tokens! {
@@ -890,7 +889,7 @@ macro_rules! to_tokens {
                 tts
             }
 
-            fn to_tokens(&self, tokens: &mut TokenStream) {
+            fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
                 // use quote::TokenStreamExt;
                 to_tokens! {
                     struct

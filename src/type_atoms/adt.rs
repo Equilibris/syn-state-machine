@@ -1,6 +1,7 @@
 mod r#box;
 mod infallible;
 mod interlace;
+mod lrk;
 mod min_length;
 mod option;
 mod peek_as_parse;
@@ -10,6 +11,7 @@ mod vec;
 
 pub use infallible::*;
 pub use interlace::*;
+pub use lrk::*;
 pub use min_length::*;
 pub use option::*;
 pub use peek_as_parse::*;
