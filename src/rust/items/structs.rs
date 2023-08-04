@@ -128,3 +128,24 @@ to_tokens! {
         ty <- Ty
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test! {
+        parse : it_matches_struct_struct, Struct<Infallible, Ident> :
+        struct Hello {
+            pub hi: There,
+            pub(crate) hello: World
+        }
+    }
+    insta_match_test! {
+        parse : it_matches_tuple_struct, Struct<Infallible, Ident> :
+        struct Hello (Hello, pub World);
+    }
+    insta_match_test! {
+        parse : it_matches_unit, Struct<Infallible, Ident> :
+        struct Hello;
+    }
+}

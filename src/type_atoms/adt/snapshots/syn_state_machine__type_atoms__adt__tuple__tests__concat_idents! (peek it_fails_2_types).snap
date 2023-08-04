@@ -1,0 +1,5 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::test_peek::<(Ident, Ident)>(q.clone())"
+---
+None

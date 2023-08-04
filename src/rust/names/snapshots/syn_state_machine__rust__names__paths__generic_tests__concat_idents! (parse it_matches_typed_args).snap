@@ -1,0 +1,17 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<GenericArgs<Ident>>(q.clone())"
+---
+Ok(
+    GenericArgs {
+        args: Interlace {
+            values: [
+                Ty(
+                    Ident(
+                        T,
+                    ),
+                ),
+            ],
+        },
+    },
+)

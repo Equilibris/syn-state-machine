@@ -1,0 +1,34 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<TypePath<Paren<()>>>(q.clone())"
+---
+Ok(
+    HigherOrderPath {
+        leading: false,
+        segments: Interlace {
+            values: [
+                Fn(
+                    Id(
+                        Ident(
+                            Fn,
+                        ),
+                    ),
+                    TypePathFn {
+                        args: Paren(
+                            Interlace {
+                                values: [],
+                            },
+                            Span,
+                        ),
+                        returns: Some(
+                            Paren(
+                                (),
+                                Span,
+                            ),
+                        ),
+                    },
+                ),
+            ],
+        },
+    },
+)

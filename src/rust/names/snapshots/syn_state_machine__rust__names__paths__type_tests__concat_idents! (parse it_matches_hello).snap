@@ -1,0 +1,20 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<TypePath<Ident>>(q.clone())"
+---
+Ok(
+    HigherOrderPath {
+        leading: false,
+        segments: Interlace {
+            values: [
+                Bare(
+                    Id(
+                        Ident(
+                            hello,
+                        ),
+                    ),
+                ),
+            ],
+        },
+    },
+)

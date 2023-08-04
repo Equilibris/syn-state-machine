@@ -132,6 +132,6 @@ typed_lit!("Expected bytestring literal" ByteStringLit);
 mod tests {
     use crate::*;
 
-    insta_match_test!(it_matches_simple_string_lit, StringLit : "Hello World");
-    insta_match_test!(it_matches_simple_abi, StringLit : "C");
+    insta_match_test!(parse peek : it_matches_simple_string_lit, StringLit : "Hello World");
+    insta_match_test!(parse peek : it_matches_simple_abi, StringLit : "C");
 }

@@ -1,0 +1,42 @@
+---
+source: src/rust/items/structs.rs
+expression: "crate::parse::<Struct<Infallible, Ident>>(q.clone())"
+---
+Ok(
+    TupleStruct(
+        TupleStruct {
+            id: Ident(
+                Hello,
+            ),
+            generic_parameters: None,
+            fields: Paren(
+                Interlace {
+                    values: [
+                        TupleField {
+                            attrs: Rep(
+                                [],
+                            ),
+                            vis: None,
+                            ty: Ident(
+                                Hello,
+                            ),
+                        },
+                        TupleField {
+                            attrs: Rep(
+                                [],
+                            ),
+                            vis: Some(
+                                Pub,
+                            ),
+                            ty: Ident(
+                                World,
+                            ),
+                        },
+                    ],
+                },
+                Span,
+            ),
+            where_clause: None,
+        },
+    ),
+)

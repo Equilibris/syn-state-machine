@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "crate::test_peek::<Rep<TokenTree>>(q.clone())"
+---
+Some(
+    7,
+)

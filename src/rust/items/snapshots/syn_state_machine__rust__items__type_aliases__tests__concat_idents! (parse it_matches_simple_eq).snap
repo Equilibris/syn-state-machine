@@ -1,0 +1,66 @@
+---
+source: src/rust/items/type_aliases.rs
+expression: "crate::parse::<TypeAlias<Infallible, Type<Infallible>>>(q.clone())"
+---
+Ok(
+    TypeAlias {
+        id: Ident(
+            Point,
+        ),
+        generic_parameters: None,
+        bounds: None,
+        where_clause: None,
+        eq: Some(
+            (
+                NoBounds(
+                    TupleType(
+                        Paren(
+                            Interlace {
+                                values: [
+                                    NoBounds(
+                                        TypePath(
+                                            HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    u8,
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            },
+                                        ),
+                                    ),
+                                    NoBounds(
+                                        TypePath(
+                                            HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    u8,
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            },
+                                        ),
+                                    ),
+                                ],
+                            },
+                            Span,
+                        ),
+                    ),
+                ),
+                None,
+            ),
+        ),
+    },
+)

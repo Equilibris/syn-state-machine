@@ -74,5 +74,5 @@ pub type WithInnerAttrs<Attr, Ty> = P2<Rep<InnerAttribute<Attr>>, Ty>;
 mod tests {
     use super::*;
 
-    insta_match_test!(+it_matches_simple_function, OuterAttribute<(Ident, Paren<Ident>)>: #[hello(world)]);
+    insta_match_test!(parse : it_matches_simple_function, OuterAttribute<(Ident, Paren<Ident>)>: #[hello(world)]);
 }

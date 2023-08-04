@@ -80,10 +80,10 @@ mod tests {
 
     type Two = (FPunct<':'>, FPunct<':'>);
 
-    insta_match_test!(it_matches_esoterics, Rep<(Ident, Option<(Two, Ident)>, Two)>     : r1::r2::r3::r4::r5::);
-    insta_match_test!(it_matches_catch_all,                 Rep<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
-    insta_match_test!(it_matches_comments,                  Rep<TokenTree>              : /* comment */);
-    insta_match_test!(it_matches_basic_iteration,           Rep<Ident>                  : hello world hi);
-    insta_match_test!(it_specifies_correct_backstep,        Rep<(Ident, Ident)>         : hello world hi);
-    insta_match_test!(it_can_work_on_individual_backtracks, Rep<(Ident, Option<Punct>)> :  hello < world hi );
+    insta_match_test!(peek parse : it_matches_esoterics, Rep<(Ident, Option<(Two, Ident)>, Two)>     : r1::r2::r3::r4::r5::);
+    insta_match_test!(peek parse : it_matches_catch_all,                 Rep<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
+    insta_match_test!(peek parse : it_matches_comments,                  Rep<TokenTree>              : /* comment */);
+    insta_match_test!(peek parse : it_matches_basic_iteration,           Rep<Ident>                  : hello world hi);
+    insta_match_test!(peek parse : it_specifies_correct_backstep,        Rep<(Ident, Ident)>         : hello world hi);
+    insta_match_test!(peek parse : it_can_work_on_individual_backtracks, Rep<(Ident, Option<Punct>)> :  hello < world hi );
 }

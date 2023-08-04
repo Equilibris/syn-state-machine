@@ -1,0 +1,29 @@
+---
+source: src/rust/items/union.rs
+expression: "crate::parse::<Union<Infallible, Ident>>(q.clone())"
+---
+Ok(
+    Union {
+        id: Ident(
+            HelloWorld,
+        ),
+        generic_parameters: None,
+        where_clause: None,
+        fields: Interlace {
+            values: [
+                StructField {
+                    attrs: Rep(
+                        [],
+                    ),
+                    vis: None,
+                    id: Ident(
+                        hello,
+                    ),
+                    ty: Ident(
+                        World,
+                    ),
+                },
+            ],
+        },
+    },
+)

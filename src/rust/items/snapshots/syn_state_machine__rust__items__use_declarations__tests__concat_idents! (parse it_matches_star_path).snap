@@ -1,0 +1,26 @@
+---
+source: src/rust/items/use_declarations.rs
+expression: "crate::parse::<UseDeclaration>(q.clone())"
+---
+Ok(
+    UseDeclaration {
+        tree: Star(
+            Some(
+                HigherOrderPath {
+                    leading: false,
+                    segments: Interlace {
+                        values: [
+                            Identifier(
+                                Identifier(
+                                    Ident(
+                                        hello,
+                                    ),
+                                ),
+                            ),
+                        ],
+                    },
+                },
+            ),
+        ),
+    },
+)

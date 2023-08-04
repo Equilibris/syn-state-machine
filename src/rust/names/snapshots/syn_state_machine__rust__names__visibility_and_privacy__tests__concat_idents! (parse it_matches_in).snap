@@ -1,0 +1,29 @@
+---
+source: src/rust/names/visibility_and_privacy.rs
+expression: "crate::parse::<Visibility>(q.clone())"
+---
+Ok(
+    In(
+        HigherOrderPath {
+            leading: false,
+            segments: Interlace {
+                values: [
+                    Identifier(
+                        Identifier(
+                            Ident(
+                                super,
+                            ),
+                        ),
+                    ),
+                    Identifier(
+                        Identifier(
+                            Ident(
+                                super,
+                            ),
+                        ),
+                    ),
+                ],
+            },
+        },
+    ),
+)

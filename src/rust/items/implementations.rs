@@ -106,14 +106,14 @@ mod tests {
     use crate::insta_match_test;
 
     insta_match_test!(
-        +it_matches_simple_inherent, Implementation <Infallible, Type<Infallible>, Infallible, Ident>:
+        parse : it_matches_simple_inherent, Implementation <Infallible, Type<Infallible>, Infallible, Ident>:
 
         impl<T> Option<T> {
             pub fn is_some(&self) -> bool;
         }
     );
     insta_match_test!(
-        +it_matches_simple_trait, Implementation <Infallible, TypePath<Ident>, Infallible, Ident>:
+        parse : it_matches_simple_trait, Implementation <Infallible, TypePath<Ident>, Infallible, Ident>:
 
         unsafe impl<T: Copy> Copy for Option<T> {}
     );

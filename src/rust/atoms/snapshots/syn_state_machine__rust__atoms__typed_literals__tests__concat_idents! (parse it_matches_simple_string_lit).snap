@@ -1,0 +1,12 @@
+---
+source: src/rust/atoms/typed_literals.rs
+expression: "crate::parse::<StringLit>(q.clone())"
+---
+Ok(
+    StringLit {
+        raw: "\"Hello World\"",
+        value: None,
+        num_hashes: None,
+        start_suffix: 13,
+    },
+)

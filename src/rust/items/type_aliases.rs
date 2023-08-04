@@ -59,8 +59,8 @@ mod tests {
     use super::*;
     use std::convert::Infallible;
 
-    insta_match_test!(+it_matches_simple,    TypeAlias<Infallible, Type<Infallible>>: type Point;);
-    insta_match_test!(+it_matches_simple_eq, TypeAlias<Infallible, Type<Infallible>>: type Point = (u8, u8););
-    insta_match_test!(+it_matches_complex,   TypeAlias<Infallible, Type<Infallible>>: type Point<T> where T: std::ops::Add<T> = (T, T););
-    insta_match_test!(+it_matches_complex_eq,TypeAlias<Infallible, Type<Infallible>>: type Point<T> where T: std::ops::Add<T> = (T, T););
+    insta_match_test!(parse : it_matches_simple,    TypeAlias<Infallible, Type<Infallible>>: type Point;);
+    insta_match_test!(parse : it_matches_simple_eq, TypeAlias<Infallible, Type<Infallible>>: type Point = (u8, u8););
+    insta_match_test!(parse : it_matches_complex,   TypeAlias<Infallible, Type<Infallible>>: type Point<T> where T: std::ops::Add<T> = (T, T););
+    insta_match_test!(parse : it_matches_complex_eq,TypeAlias<Infallible, Type<Infallible>>: type Point<T> where T: std::ops::Add<T> = (T, T););
 }

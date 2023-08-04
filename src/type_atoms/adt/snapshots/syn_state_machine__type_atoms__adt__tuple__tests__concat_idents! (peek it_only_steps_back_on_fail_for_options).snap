@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::test_peek::<(Option<Ident>, Option<Punct>)>(q.clone())"
+---
+Some(
+    1,
+)

@@ -1,0 +1,22 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "crate::parse::<LifetimeBounds>(q.clone())"
+---
+Ok(
+    MinLength(
+        Interlace {
+            values: [
+                LifetimeToken {
+                    ident: Ident(
+                        a,
+                    ),
+                },
+                LifetimeToken {
+                    ident: Ident(
+                        b,
+                    ),
+                },
+            ],
+        },
+    ),
+)

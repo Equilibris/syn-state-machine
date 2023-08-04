@@ -1,0 +1,60 @@
+---
+source: src/type_atoms/adt/interlace.rs
+expression: "crate::parse::<Interlace<(Ident, Option<Ident>), Rep<FPunct<','>>>>(q.clone())"
+---
+Ok(
+    Interlace {
+        values: [
+            (
+                Ident(
+                    hello,
+                ),
+                Some(
+                    Ident(
+                        hi,
+                    ),
+                ),
+            ),
+            (
+                Ident(
+                    world,
+                ),
+                None,
+            ),
+            (
+                Ident(
+                    hi,
+                ),
+                None,
+            ),
+            (
+                Ident(
+                    there,
+                ),
+                Some(
+                    Ident(
+                        hello,
+                    ),
+                ),
+            ),
+            (
+                Ident(
+                    world,
+                ),
+                None,
+            ),
+            (
+                Ident(
+                    hi,
+                ),
+                None,
+            ),
+            (
+                Ident(
+                    there,
+                ),
+                None,
+            ),
+        ],
+    },
+)

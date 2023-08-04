@@ -1,0 +1,27 @@
+---
+source: src/rust/items/modules.rs
+expression: "crate::parse::<Module<Infallible, Ident>>(q.clone())"
+---
+Ok(
+    Inline(
+        false,
+        Ident(
+            hello,
+        ),
+        P2(
+            Rep(
+                [],
+            ),
+            Rep(
+                [
+                    Ident(
+                        hello,
+                    ),
+                    Ident(
+                        world,
+                    ),
+                ],
+            ),
+        ),
+    ),
+)

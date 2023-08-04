@@ -1,0 +1,19 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "crate::parse::<Rep<Ident>>(q.clone())"
+---
+Ok(
+    Rep(
+        [
+            Ident(
+                hello,
+            ),
+            Ident(
+                world,
+            ),
+            Ident(
+                hi,
+            ),
+        ],
+    ),
+)

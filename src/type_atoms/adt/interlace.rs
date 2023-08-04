@@ -266,17 +266,17 @@ mod tests {
 
     type Two = (FPunct<':'>, FPunct<':'>);
 
-    insta_match_test!(it_matches_esoterics, Interlace<(Ident, Option<(Two, Ident)>), Two> : r1::r2::r3::r4::r5);
-    insta_match_test!(it_matches_empty, Interlace<Ident, FPunct<','>> : );
-    insta_match_test!(it_matches_tokens_after_interlace, 
+    insta_match_test!(peek parse : it_matches_esoterics, Interlace<(Ident, Option<(Two, Ident)>), Two> : r1::r2::r3::r4::r5);
+    insta_match_test!(peek parse : it_matches_empty, Interlace<Ident, FPunct<','>> : );
+    insta_match_test!(peek parse : it_matches_tokens_after_interlace, 
                       (Interlace<Ident, (FJointPunct<':'>, FPunct<':'>)>, (FPunct<'>'>, FPunct<';'>),) 
                       :  hello > ;);
-    insta_match_test!(it_matches_comma_seperation, Interlace<Ident, FPunct<','>> :  hello, world, hi, there,);
-    insta_match_test!(it_matches_comma_seperation_with_backstep, Interlace<(Ident, Option<Ident>), FPunct<','>> :  hello, world, hi, there);
-    insta_match_test!(it_matches_with_arbitrarilly_sized_interlacing, Interlace<(Ident, Option<Ident>), Rep<FPunct<','>>> : hello hi world,,, hi, there  hello, world, hi, there);
+    insta_match_test!(peek parse : it_matches_comma_seperation, Interlace<Ident, FPunct<','>> :  hello, world, hi, there,);
+    insta_match_test!(peek parse : it_matches_comma_seperation_with_backstep, Interlace<(Ident, Option<Ident>), FPunct<','>> :  hello, world, hi, there);
+    insta_match_test!(peek parse : it_matches_with_arbitrarilly_sized_interlacing, Interlace<(Ident, Option<Ident>), Rep<FPunct<','>>> : hello hi world,,, hi, there  hello, world, hi, there);
 
-    insta_match_test!(it_matches_with_arbitrarilly, Interlace<(Ident, Rep<Ident>), Rep<FPunct<','>>> :  hello hi world,,, hi, there );
+    insta_match_test!(peek parse : it_matches_with_arbitrarilly, Interlace<(Ident, Rep<Ident>), Rep<FPunct<','>>> :  hello hi world,,, hi, there );
 
-    insta_match_test!(it_matches_trailing, InterlaceTrail<Ident, FPunct<','>>: hi, hello);
-    insta_match_test!(it_matches_trailing_with, InterlaceTrail<Ident, FPunct<','>>: hi, hello,);
+    insta_match_test!(peek parse : it_matches_trailing, InterlaceTrail<Ident, FPunct<','>>: hi, hello);
+    insta_match_test!(peek parse : it_matches_trailing_with, InterlaceTrail<Ident, FPunct<','>>: hi, hello,);
 }

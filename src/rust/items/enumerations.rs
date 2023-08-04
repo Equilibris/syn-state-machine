@@ -91,12 +91,12 @@ mod tests {
     use super::*;
     use crate::insta_match_test;
 
-    insta_match_test!(+it_matches_enum_item_unit,   EnumItem<Infallible, Ident, Infallible>: Block);
-    insta_match_test!(+it_matches_enum_item_struct, EnumItem<Infallible, Ident, Infallible>: Block { hello : World });
-    insta_match_test!(+it_matches_enum_item_tuple,  EnumItem<Infallible, Ident, Infallible>: Block(World));
+    insta_match_test!(parse : it_matches_enum_item_unit,   EnumItem<Infallible, Ident, Infallible>: Block);
+    insta_match_test!(parse : it_matches_enum_item_struct, EnumItem<Infallible, Ident, Infallible>: Block { hello : World });
+    insta_match_test!(parse : it_matches_enum_item_tuple,  EnumItem<Infallible, Ident, Infallible>: Block(World));
 
     insta_match_test!(
-        +it_matches_enum, Enumeration <Infallible, TypePath<Ident>, Infallible>:
+        parse : it_matches_enum, Enumeration <Infallible, TypePath<Ident>, Infallible>:
         enum HelloWorld <F,T> where {
             Unit,
             From(F),

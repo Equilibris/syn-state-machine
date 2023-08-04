@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/option.rs
+expression: "crate::test_peek::<Option<(Ident, Ident)>>(q.clone())"
+---
+Some(
+    0,
+)

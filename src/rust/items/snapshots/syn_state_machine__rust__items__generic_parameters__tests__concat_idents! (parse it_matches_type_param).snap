@@ -1,0 +1,13 @@
+---
+source: src/rust/items/generic_parameters.rs
+expression: "crate::parse::<TypeParam<Infallible, Infallible>>(q.clone())"
+---
+Ok(
+    TypeParam {
+        id: Ident(
+            Hello,
+        ),
+        bound: None,
+        ty: None,
+    },
+)

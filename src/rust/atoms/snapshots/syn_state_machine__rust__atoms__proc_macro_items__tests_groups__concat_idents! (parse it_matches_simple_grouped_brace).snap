@@ -1,0 +1,10 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<Brace<()>>(q.clone())"
+---
+Ok(
+    Brace(
+        (),
+        Span,
+    ),
+)

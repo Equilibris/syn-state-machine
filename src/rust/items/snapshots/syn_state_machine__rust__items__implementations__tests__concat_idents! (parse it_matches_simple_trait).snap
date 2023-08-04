@@ -1,0 +1,107 @@
+---
+source: src/rust/items/implementations.rs
+expression: "crate::parse::<Implementation<Infallible, TypePath<Ident>, Infallible,\n        Ident>>(q.clone())"
+---
+Ok(
+    Trait(
+        TraitImpl {
+            unsafe: true,
+            generic_parameters: Some(
+                GenericParams {
+                    params: Interlace {
+                        values: [
+                            Ty(
+                                Rep(
+                                    [],
+                                ),
+                                TypeParam {
+                                    id: Ident(
+                                        T,
+                                    ),
+                                    bound: Some(
+                                        MinLength(
+                                            Interlace {
+                                                values: [
+                                                    Tr(
+                                                        TraitBound {
+                                                            q: false,
+                                                            for_lts: None,
+                                                            path: HigherOrderPath {
+                                                                leading: false,
+                                                                segments: Interlace {
+                                                                    values: [
+                                                                        Bare(
+                                                                            Id(
+                                                                                Ident(
+                                                                                    Copy,
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                            },
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    ),
+                                    ty: None,
+                                },
+                            ),
+                        ],
+                    },
+                },
+            ),
+            not: false,
+            path: HigherOrderPath {
+                leading: false,
+                segments: Interlace {
+                    values: [
+                        Bare(
+                            Id(
+                                Ident(
+                                    Copy,
+                                ),
+                            ),
+                        ),
+                    ],
+                },
+            },
+            ty: HigherOrderPath {
+                leading: false,
+                segments: Interlace {
+                    values: [
+                        Generic(
+                            Id(
+                                Ident(
+                                    Option,
+                                ),
+                            ),
+                            GenericArgs {
+                                args: Interlace {
+                                    values: [
+                                        Ty(
+                                            Ident(
+                                                T,
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+            where_clause: None,
+            items: P2(
+                Rep(
+                    [],
+                ),
+                Rep(
+                    [],
+                ),
+            ),
+        },
+    ),
+)

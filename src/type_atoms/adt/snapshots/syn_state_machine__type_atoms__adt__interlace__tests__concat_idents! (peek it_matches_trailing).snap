@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/interlace.rs
+expression: "crate::test_peek::<InterlaceTrail<Ident, FPunct<','>>>(q.clone())"
+---
+Some(
+    3,
+)

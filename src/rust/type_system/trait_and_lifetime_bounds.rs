@@ -59,24 +59,24 @@ to_tokens! {
 mod tests {
     use super::*;
 
-    insta_match_test!(+it_matches_lifetime, Lifetime : 'a);
-    insta_match_test!(+it_matches_lifetimes_bounds, LifetimeBounds : 'a + 'b);
-    insta_match_test!(+it_matches_bound_path, TraitBound<Infallible, SimplePath>: std::fmt::Debug);
-    insta_match_test!(+it_matches_for_paths,  TraitBound<Infallible, SimplePath>: for<'a> std::fmt::Debug);
+    insta_match_test!(parse : it_matches_lifetime, Lifetime : 'a);
+    insta_match_test!(parse : it_matches_lifetimes_bounds, LifetimeBounds : 'a + 'b);
+    insta_match_test!(parse : it_matches_bound_path, TraitBound<Infallible, SimplePath>: std::fmt::Debug);
+    insta_match_test!(parse : it_matches_for_paths,  TraitBound<Infallible, SimplePath>: for<'a> std::fmt::Debug);
     insta_match_test!(
-        +it_matches_path_type_param_bound,
+        parse : it_matches_path_type_param_bound,
         TypeParamBound<Infallible, SimplePath>: std::fmt::Debug
     );
     insta_match_test!(
-        +it_matches_for_paths_type_param_bound,
+        parse : it_matches_for_paths_type_param_bound,
         TypeParamBound<Infallible, SimplePath>: for<'a> std::fmt::Debug
     );
     insta_match_test!(
-        +it_matches_lifetime_type_param_bound,
+        parse : it_matches_lifetime_type_param_bound,
         TypeParamBound<Infallible, SimplePath>: 'a
     );
     insta_match_test!(
-        +it_matches_for_lifetimes,
+        parse : it_matches_for_lifetimes,
         ForLifetimes<Infallible, Infallible>: for<'a, 'b>
     );
 }

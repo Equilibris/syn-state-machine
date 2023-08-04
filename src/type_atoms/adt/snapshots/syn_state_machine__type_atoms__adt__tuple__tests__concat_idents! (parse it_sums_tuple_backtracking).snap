@@ -1,0 +1,48 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::parse::<(Rep<(Punct, Punct, Ident, Ident)>, Punct)>(q.clone())"
+---
+Ok(
+    (
+        Rep(
+            [
+                (
+                    Punct {
+                        char: '>',
+                        spacing: Joint,
+                    },
+                    Punct {
+                        char: '>',
+                        spacing: Alone,
+                    },
+                    Ident(
+                        h1,
+                    ),
+                    Ident(
+                        h2,
+                    ),
+                ),
+                (
+                    Punct {
+                        char: '>',
+                        spacing: Joint,
+                    },
+                    Punct {
+                        char: '>',
+                        spacing: Alone,
+                    },
+                    Ident(
+                        h3,
+                    ),
+                    Ident(
+                        h4,
+                    ),
+                ),
+            ],
+        ),
+        Punct {
+            char: '!',
+            spacing: Alone,
+        },
+    ),
+)

@@ -245,8 +245,8 @@ pub type Abi = StringLit;
 mod tests {
     use super::*;
 
-    insta_match_test!(+it_matches_shorthand_self, SelfParam<Infallible, Infallible>: self);
-    insta_match_test!(+it_matches_typed_self, SelfParam<Infallible, TypePath<Ident>>: mut self: Box<Self>);
+    insta_match_test!(parse : it_matches_shorthand_self, SelfParam<Infallible, Infallible>: self);
+    insta_match_test!(parse : it_matches_typed_self, SelfParam<Infallible, TypePath<Ident>>: mut self: Box<Self>);
 
-    insta_match_test!(+it_matches_complex_function, Function<Infallible, Ident, Infallible, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
+    insta_match_test!(parse : it_matches_complex_function, Function<Infallible, Ident, Infallible, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
 }

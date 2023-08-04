@@ -37,6 +37,6 @@ impl<Cursor, T: Peek<Cursor>> Peek<Cursor> for Option<T> {
 mod tests {
     use crate::*;
 
-    insta_match_test!(it_matches_only, Option<Ident> : <);
-    insta_match_test!(it_returns_the_correct_length, Option<(Ident, Ident)> : hi <);
+    insta_match_test!(peek parse : it_matches_only, Option<Ident> : <);
+    insta_match_test!(peek parse : it_returns_the_correct_length, Option<(Ident, Ident)> : hi <);
 }

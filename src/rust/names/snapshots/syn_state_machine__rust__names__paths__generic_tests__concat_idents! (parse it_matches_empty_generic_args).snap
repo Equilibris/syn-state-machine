@@ -1,0 +1,11 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<GenericArgs<Infallible>>(q.clone())"
+---
+Ok(
+    GenericArgs {
+        args: Interlace {
+            values: [],
+        },
+    },
+)

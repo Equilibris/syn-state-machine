@@ -1,0 +1,14 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::parse::<(Option<Ident>, Option<Punct>)>(q.clone())"
+---
+Ok(
+    (
+        Some(
+            Ident(
+                hi,
+            ),
+        ),
+        None,
+    ),
+)

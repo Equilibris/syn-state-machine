@@ -1,0 +1,11 @@
+---
+source: src/rust/lexical_structure.rs
+expression: "crate::parse::<LifetimeToken>(q.clone())"
+---
+Ok(
+    LifetimeToken {
+        ident: Ident(
+            hi,
+        ),
+    },
+)

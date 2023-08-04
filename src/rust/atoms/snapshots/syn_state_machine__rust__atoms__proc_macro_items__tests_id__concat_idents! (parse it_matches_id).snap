@@ -1,0 +1,9 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<Ident>(q.clone())"
+---
+Ok(
+    Ident(
+        id,
+    ),
+)

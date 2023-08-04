@@ -34,3 +34,13 @@ to_tokens! {
         Pub()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test!(parse : it_matches_crate, Visibility : pub(crate));
+    insta_match_test!(parse : it_matches_lself, Visibility : pub(self));
+    insta_match_test!(parse : it_matches_super, Visibility : pub(super));
+    insta_match_test!(parse : it_matches_in,    Visibility : pub(in super::super));
+}

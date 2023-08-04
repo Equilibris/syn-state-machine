@@ -1,0 +1,29 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<TypePath<Infallible>>(q.clone())"
+---
+Ok(
+    HigherOrderPath {
+        leading: false,
+        segments: Interlace {
+            values: [
+                Fn(
+                    Id(
+                        Ident(
+                            Fn,
+                        ),
+                    ),
+                    TypePathFn {
+                        args: Paren(
+                            Interlace {
+                                values: [],
+                            },
+                            Span,
+                        ),
+                        returns: None,
+                    },
+                ),
+            ],
+        },
+    },
+)

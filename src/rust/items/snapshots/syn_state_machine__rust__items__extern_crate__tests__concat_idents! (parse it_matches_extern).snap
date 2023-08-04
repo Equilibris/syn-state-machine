@@ -1,0 +1,14 @@
+---
+source: src/rust/items/extern_crate.rs
+expression: "crate::parse::<ExternCrate>(q.clone())"
+---
+Ok(
+    ExternCrate {
+        crate_ref: CrateRef {
+            id: Ident(
+                hi,
+            ),
+        },
+        as_clause: None,
+    },
+)

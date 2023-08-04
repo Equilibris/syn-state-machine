@@ -1,0 +1,145 @@
+---
+source: src/rust/items/enumerations.rs
+expression: "crate::parse::<Enumeration<Infallible, TypePath<Ident>,\n        Infallible>>(q.clone())"
+---
+Ok(
+    Enumeration {
+        id: Ident(
+            HelloWorld,
+        ),
+        generic_params: Some(
+            GenericParams {
+                params: Interlace {
+                    values: [
+                        Ty(
+                            Rep(
+                                [],
+                            ),
+                            TypeParam {
+                                id: Ident(
+                                    F,
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                        Ty(
+                            Rep(
+                                [],
+                            ),
+                            TypeParam {
+                                id: Ident(
+                                    T,
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        where_clause: Some(
+            WhereClause {
+                content: Interlace {
+                    values: [],
+                },
+            },
+        ),
+        items: Rep(
+            [
+                Interlace {
+                    values: [
+                        Unit(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                Unit,
+                            ),
+                            None,
+                        ),
+                        Tuple(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                From,
+                            ),
+                            Paren(
+                                Interlace {
+                                    values: [
+                                        TupleField {
+                                            attrs: Rep(
+                                                [],
+                                            ),
+                                            vis: None,
+                                            ty: HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    F,
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                Span,
+                            ),
+                            None,
+                        ),
+                        Struct(
+                            Rep(
+                                [],
+                            ),
+                            None,
+                            Ident(
+                                To,
+                            ),
+                            Brace(
+                                Interlace {
+                                    values: [
+                                        StructField {
+                                            attrs: Rep(
+                                                [],
+                                            ),
+                                            vis: None,
+                                            id: Ident(
+                                                result,
+                                            ),
+                                            ty: HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Bare(
+                                                            Id(
+                                                                Ident(
+                                                                    T,
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                                Span,
+                            ),
+                            None,
+                        ),
+                    ],
+                },
+            ],
+        ),
+    },
+)

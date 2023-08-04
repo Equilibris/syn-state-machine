@@ -1,0 +1,32 @@
+---
+source: src/rust/items/enumerations.rs
+expression: "crate::parse::<EnumItem<Infallible, Ident, Infallible>>(q.clone())"
+---
+Ok(
+    Tuple(
+        Rep(
+            [],
+        ),
+        None,
+        Ident(
+            Block,
+        ),
+        Paren(
+            Interlace {
+                values: [
+                    TupleField {
+                        attrs: Rep(
+                            [],
+                        ),
+                        vis: None,
+                        ty: Ident(
+                            World,
+                        ),
+                    },
+                ],
+            },
+            Span,
+        ),
+        None,
+    ),
+)

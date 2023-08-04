@@ -1,0 +1,16 @@
+---
+source: src/type_atoms/adt/interlace.rs
+expression: "crate::parse::<InterlaceTrail<Ident, FPunct<','>>>(q.clone())"
+---
+Ok(
+    Interlace {
+        values: [
+            Ident(
+                hi,
+            ),
+            Ident(
+                hello,
+            ),
+        ],
+    },
+)

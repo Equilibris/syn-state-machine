@@ -1,0 +1,75 @@
+---
+source: src/rust/items/extern_blocks.rs
+expression: "crate::parse::<ExternalItem<Infallible, Type<Infallible>, Infallible,\n        Ident>>(q.clone())"
+---
+Ok(
+    Function(
+        Rep(
+            [],
+        ),
+        None,
+        Function {
+            qualifiers: FunctionQualifiers {
+                const: false,
+                async: false,
+                unsafe: false,
+                extern_abi: None,
+            },
+            id: Ident(
+                with_name,
+            ),
+            generic_parameters: None,
+            params: Paren(
+                FunctionParameters {
+                    self_param: None,
+                    params: Interlace {
+                        values: [
+                            FunctionParamPattern(
+                                Rep(
+                                    [],
+                                ),
+                                Ty(
+                                    Ident(
+                                        format,
+                                    ),
+                                    NoBounds(
+                                        RawPointerType(
+                                            Const(
+                                                NoBounds(
+                                                    TypePath(
+                                                        HigherOrderPath {
+                                                            leading: false,
+                                                            segments: Interlace {
+                                                                values: [
+                                                                    Bare(
+                                                                        Id(
+                                                                            Ident(
+                                                                                u8,
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ],
+                    },
+                },
+                Span,
+            ),
+            ret: None,
+            where_clause: None,
+            content: V0(
+                FPunct(
+                    Span,
+                ),
+            ),
+        },
+    ),
+)

@@ -63,35 +63,68 @@ pub fn test_peek<T: for<'a> crate::Peek<RustCursor<'a>>>(ts: TokenStream) -> Opt
 #[cfg(feature = "rust-atoms")]
 #[macro_export]
 macro_rules! insta_match_test {
-    (+parse $ty:ty : $($t:tt)*) => {
-        $crate::parse::<$ty>(::quote::quote!{$($t)*})
+    (:parse $name:ident $ty:ty : $var:ident) => {
+        ::insta::assert_debug_snapshot!(
+            $name, $crate::parse::<$ty>($var.clone())
+        );
     };
-    (*peek $ty:ty : $($t:tt)*) => {
-        $crate::test_peek::<$ty>(::quote::quote!{$($t)*})
+    (:peek $name:ident $ty:ty : $var:ident) => {
+        ::insta::assert_debug_snapshot!(
+            $name, $crate::test_peek::<$ty>($var.clone())
+        );
     };
-    (+$test_name:ident, $ty:ty : $($t:tt)*) => {
+    ($($v:ident)+ : $test_name:ident, $ty:ty : $($t:tt)*) => {
         #[test]
         fn $test_name() {
-            ::insta::assert_debug_snapshot!(
-                insta_match_test!(+parse $ty : $($t)*)
-            );
-        }
-    };
-    (*$test_name:ident, $ty:ty : $($t:tt)*) => {
-        #[test]
-        fn $test_name() {
-            ::insta::assert_debug_snapshot!(
-                insta_match_test!(**$ty : $($t)*)
-            );
-        }
-    };
-    ($test_name:ident, $ty:ty : $($t:tt)*) => {
-        #[test]
-        fn $test_name() {
-            ::insta::assert_debug_snapshot!((
-                insta_match_test!(+parse $ty : $($t)*),
-                insta_match_test!(*peek  $ty : $($t)*),
-            ));
+            let q = ::quote::quote!{ $($t)* };
+
+            $(
+                let $v = stringify!(concat_idents!($v $test_name));
+            )+
+
+            $(
+                insta_match_test!(:$v $v $ty : q);
+            )+
         }
     };
 }
+
+// #[cfg(test)]
+// #[cfg(feature = "rust-atoms")]
+// #[macro_export]
+// macro_rules! insta_match_test {
+//     (+parse $ty:ty : $($t:tt)*) => {
+//         ::insta::assert_debug_snapshot!(
+//             $crate::parse::<$ty>(::quote::quote!{$($t)*})
+
+//         );
+//     };
+//     (*peek $ty:ty : $($t:tt)*) => {
+//         $crate::test_peek::<$ty>(::quote::quote!{$($t)*})
+//     };
+//     (+$test_name:ident, $ty:ty : $($t:tt)*) => {
+//         #[test]
+//         fn $test_name() {
+//             ::insta::assert_debug_snapshot!(
+//                 insta_match_test!(+parse $ty : $($t)*)
+//             );
+//         }
+//     };
+//     (*$test_name:ident, $ty:ty : $($t:tt)*) => {
+//         #[test]
+//         fn $test_name() {
+//             ::insta::assert_debug_snapshot!(
+//                 insta_match_test!(**$ty : $($t)*)
+//             );
+//         }
+//     };
+//     ($test_name:ident, $ty:ty : $($t:tt)*) => {
+//         #[test]
+//         fn $test_name() {
+//             ::insta::assert_debug_snapshot!((
+//                 insta_match_test!(+parse $ty : $($t)*),
+//                 insta_match_test!(*peek  $ty : $($t)*),
+//             ));
+//         }
+//     };
+// }

@@ -1,0 +1,9 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::parse::<(Ident, Ident)>(q.clone())"
+---
+Err(
+    Error(
+        "Expected ident",
+    ),
+)

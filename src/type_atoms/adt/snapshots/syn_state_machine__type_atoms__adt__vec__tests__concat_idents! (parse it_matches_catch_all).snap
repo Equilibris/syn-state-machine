@@ -1,0 +1,33 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "crate::parse::<Rep<TokenTree>>(q.clone())"
+---
+Ok(
+    Rep(
+        [
+            Ident {
+                sym: r#hello,
+            },
+            Ident {
+                sym: hello,
+            },
+            Ident {
+                sym: struct,
+            },
+            Ident {
+                sym: _,
+            },
+            Literal {
+                lit: 'a',
+            },
+            Group {
+                delimiter: Brace,
+                stream: TokenStream [
+                    Literal {
+                        lit: "hi",
+                    },
+                ],
+            },
+        ],
+    ),
+)

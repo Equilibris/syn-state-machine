@@ -4,6 +4,7 @@ use quote::TokenStreamExt;
 
 materialize! {
     on <'a> [crate::RustCursor<'a>]
+    #[derive(Debug)]
     pub struct Union <Attr, Ty> {
         <- KwUnion;
         id <- Ident : Identifier;
@@ -33,6 +34,18 @@ to_tokens! {
                     fields.to_token_stream()
                 )
             )
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test! {
+        parse : it_matches_union, Union<Infallible, Ident> :
+        union HelloWorld {
+            hello: World
         }
     }
 }

@@ -33,3 +33,10 @@ to_tokens! {
         <- Semi
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test!(parse : it_matches_const_item, ConstantItem<Ident, Infallible> : const HELLO: usize;);
+}

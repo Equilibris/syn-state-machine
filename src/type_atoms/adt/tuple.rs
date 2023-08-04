@@ -186,11 +186,11 @@ tuple_impl!([
 mod tests {
     use crate::*;
 
-    insta_match_test!(it_fails_2_tuple, (Ident, FIdent<"world">) : hello *);
-    insta_match_test!(it_fails_2_types, (Ident, Ident) : hello *);
-    insta_match_test!(it_matches_2_tuple, (Ident, FIdent<"world">) : hello world);
-    insta_match_test!(it_steps_back_for_options, (Option<Ident>, Option<Punct>) : <);
-    insta_match_test!(it_only_steps_back_on_fail_for_options, (Option<Ident>, Option<Punct>) : hi);
-    insta_match_test!(it_steps_back_for_multi_tuples, (Option<Ident>, Option<Punct>, Option<Ident>, Option<Punct>) : hi <>);
-    insta_match_test!(it_sums_tuple_backtracking, (Rep<(Punct, Punct, Ident, Ident)>, Punct) : >>h1 h2>>h3 h4 !);
+    insta_match_test!(peek parse : it_fails_2_tuple, (Ident, FIdent<"world">) : hello *);
+    insta_match_test!(peek parse : it_fails_2_types, (Ident, Ident) : hello *);
+    insta_match_test!(peek parse : it_matches_2_tuple, (Ident, FIdent<"world">) : hello world);
+    insta_match_test!(peek parse : it_steps_back_for_options, (Option<Ident>, Option<Punct>) : <);
+    insta_match_test!(peek parse : it_only_steps_back_on_fail_for_options, (Option<Ident>, Option<Punct>) : hi);
+    insta_match_test!(peek parse : it_steps_back_for_multi_tuples, (Option<Ident>, Option<Punct>, Option<Ident>, Option<Punct>) : hi <>);
+    insta_match_test!(peek parse : it_sums_tuple_backtracking, (Rep<(Punct, Punct, Ident, Ident)>, Punct) : >>h1 h2>>h3 h4 !);
 }

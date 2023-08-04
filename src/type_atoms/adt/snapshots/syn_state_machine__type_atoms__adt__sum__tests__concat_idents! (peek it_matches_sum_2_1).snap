@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/sum.rs
+expression: "crate::test_peek::<Sum2<Ident, Punct>>(q.clone())"
+---
+Some(
+    1,
+)

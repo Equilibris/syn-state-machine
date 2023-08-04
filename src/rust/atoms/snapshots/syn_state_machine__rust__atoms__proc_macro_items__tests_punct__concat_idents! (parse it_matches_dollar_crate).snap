@@ -1,0 +1,14 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<(FPunct<'$'>, FIdent<\"crate\">)>(q.clone())"
+---
+Ok(
+    (
+        FPunct(
+            Span,
+        ),
+        FIdent(
+            Span,
+        ),
+    ),
+)

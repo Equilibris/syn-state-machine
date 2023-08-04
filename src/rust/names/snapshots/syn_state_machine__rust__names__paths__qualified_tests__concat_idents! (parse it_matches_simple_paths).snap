@@ -1,0 +1,50 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<QualifiedPathInType<Ident>>(q.clone())"
+---
+Ok(
+    QualifiedPathInType {
+        qualifier: QualifiedPathType {
+            ty: Ident(
+                hello,
+            ),
+            as_ty: Some(
+                HigherOrderPath {
+                    leading: false,
+                    segments: Interlace {
+                        values: [
+                            Bare(
+                                Id(
+                                    Ident(
+                                        Default,
+                                    ),
+                                ),
+                            ),
+                        ],
+                    },
+                },
+            ),
+        },
+        path: Rep(
+            [
+                P2(
+                    P2(
+                        FJointPunct(
+                            Span,
+                        ),
+                        FPunct(
+                            Span,
+                        ),
+                    ),
+                    Bare(
+                        Id(
+                            Ident(
+                                Default,
+                            ),
+                        ),
+                    ),
+                ),
+            ],
+        ),
+    },
+)

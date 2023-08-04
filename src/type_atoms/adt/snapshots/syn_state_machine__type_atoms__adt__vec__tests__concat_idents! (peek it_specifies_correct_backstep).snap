@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "crate::test_peek::<Rep<(Ident, Ident)>>(q.clone())"
+---
+Some(
+    2,
+)

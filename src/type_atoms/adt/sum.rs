@@ -173,16 +173,17 @@ mod tests {
 
     type P = Punct;
 
-    insta_match_test!(
-    it_matches_highest_priority,
-    Sum5<
-        (P,P,P,P,P),
-        (P,P,P,P,),
-        (P,P,P,),
-        (P,P,),
-        (P,),
-    > : ....);
+    insta_match_test!(peek parse :
+        it_matches_highest_priority,
+        Sum5<
+            (P,P,P,P,P),
+            (P,P,P,P,),
+            (P,P,P,),
+            (P,P,),
+            (P,),
+        > : ....
+    );
 
-    insta_match_test!(it_matches_sum_2_0, Sum2<Ident, Punct> : hello);
-    insta_match_test!(it_matches_sum_2_1, Sum2<Ident, Punct> : <);
+    insta_match_test!(peek parse : it_matches_sum_2_0, Sum2<Ident, Punct> : hello);
+    insta_match_test!(peek parse : it_matches_sum_2_1, Sum2<Ident, Punct> : <);
 }

@@ -35,3 +35,13 @@ to_tokens! {
         <- Semi
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test! {
+        parse : it_matches_complex, StaticItem<Ident, Ident> :
+        static mut HELLO: ty = there;
+    }
+}

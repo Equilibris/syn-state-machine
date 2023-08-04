@@ -1,0 +1,58 @@
+---
+source: src/rust/names/paths.rs
+expression: "crate::parse::<GenericArgs<TypePath<Infallible>>>(q.clone())"
+---
+Ok(
+    GenericArgs {
+        args: Interlace {
+            values: [
+                Lt(
+                    LifetimeToken {
+                        ident: Ident(
+                            a,
+                        ),
+                    },
+                ),
+                Ty(
+                    HigherOrderPath {
+                        leading: false,
+                        segments: Interlace {
+                            values: [
+                                Bare(
+                                    Id(
+                                        Ident(
+                                            T,
+                                        ),
+                                    ),
+                                ),
+                            ],
+                        },
+                    },
+                ),
+                Ty(
+                    HigherOrderPath {
+                        leading: false,
+                        segments: Interlace {
+                            values: [
+                                Bare(
+                                    Id(
+                                        Ident(
+                                            hello,
+                                        ),
+                                    ),
+                                ),
+                                Bare(
+                                    Id(
+                                        Ident(
+                                            world,
+                                        ),
+                                    ),
+                                ),
+                            ],
+                        },
+                    },
+                ),
+            ],
+        },
+    },
+)

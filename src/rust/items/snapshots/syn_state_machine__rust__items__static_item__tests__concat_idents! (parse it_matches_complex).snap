@@ -1,0 +1,20 @@
+---
+source: src/rust/items/static_item.rs
+expression: "crate::parse::<StaticItem<Ident, Ident>>(q.clone())"
+---
+Ok(
+    StaticItem {
+        mut: true,
+        id: Ident(
+            HELLO,
+        ),
+        ty: Ident(
+            ty,
+        ),
+        eq: Some(
+            Ident(
+                there,
+            ),
+        ),
+    },
+)

@@ -1,0 +1,7 @@
+---
+source: src/rust/names/visibility_and_privacy.rs
+expression: "crate::parse::<Visibility>(q.clone())"
+---
+Ok(
+    Crate,
+)

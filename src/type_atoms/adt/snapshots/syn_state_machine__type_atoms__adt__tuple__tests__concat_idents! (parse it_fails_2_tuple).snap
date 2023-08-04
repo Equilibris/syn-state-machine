@@ -1,0 +1,9 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::parse::<(Ident, FIdent<\"world\">)>(q.clone())"
+---
+Err(
+    Error(
+        "Expected 'world'",
+    ),
+)

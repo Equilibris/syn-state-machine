@@ -1,0 +1,14 @@
+---
+source: src/rust/items/functions.rs
+expression: "crate::parse::<SelfParam<Infallible, Infallible>>(q.clone())"
+---
+Ok(
+    Shorthand(
+        Rep(
+            [],
+        ),
+        ShorthandSelf {
+            reference: None,
+        },
+    ),
+)

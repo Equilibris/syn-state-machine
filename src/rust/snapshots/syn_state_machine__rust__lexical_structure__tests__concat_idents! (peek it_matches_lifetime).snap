@@ -1,0 +1,7 @@
+---
+source: src/rust/lexical_structure.rs
+expression: "crate::test_peek::<LifetimeToken>(q.clone())"
+---
+Some(
+    2,
+)

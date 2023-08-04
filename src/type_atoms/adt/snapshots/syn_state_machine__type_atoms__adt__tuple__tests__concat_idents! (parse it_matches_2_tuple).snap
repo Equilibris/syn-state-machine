@@ -1,0 +1,14 @@
+---
+source: src/type_atoms/adt/tuple.rs
+expression: "crate::parse::<(Ident, FIdent<\"world\">)>(q.clone())"
+---
+Ok(
+    (
+        Ident(
+            hello,
+        ),
+        FIdent(
+            Span,
+        ),
+    ),
+)

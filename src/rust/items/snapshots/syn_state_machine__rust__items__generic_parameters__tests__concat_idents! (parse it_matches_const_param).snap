@@ -1,0 +1,15 @@
+---
+source: src/rust/items/generic_parameters.rs
+expression: "crate::parse::<ConstParam<Ident>>(q.clone())"
+---
+Ok(
+    ConstParam {
+        id: Ident(
+            HELLO,
+        ),
+        ty: Ident(
+            i8,
+        ),
+        eq: None,
+    },
+)

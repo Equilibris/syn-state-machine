@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/sum.rs
+expression: "crate::test_peek::<Sum5<(P, P, P, P, P), (P, P, P, P), (P, P, P), (P, P),\n        (P,)>>(q.clone())"
+---
+Some(
+    4,
+)

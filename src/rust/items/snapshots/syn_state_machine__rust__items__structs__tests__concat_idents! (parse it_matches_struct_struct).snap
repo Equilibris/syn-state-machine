@@ -1,0 +1,52 @@
+---
+source: src/rust/items/structs.rs
+expression: "crate::parse::<Struct<Infallible, Ident>>(q.clone())"
+---
+Ok(
+    StructStruct(
+        StructStruct {
+            id: Ident(
+                Hello,
+            ),
+            generic_parameters: None,
+            where_clause: None,
+            fields: Some(
+                Brace(
+                    Interlace {
+                        values: [
+                            StructField {
+                                attrs: Rep(
+                                    [],
+                                ),
+                                vis: Some(
+                                    Pub,
+                                ),
+                                id: Ident(
+                                    hi,
+                                ),
+                                ty: Ident(
+                                    There,
+                                ),
+                            },
+                            StructField {
+                                attrs: Rep(
+                                    [],
+                                ),
+                                vis: Some(
+                                    Crate,
+                                ),
+                                id: Ident(
+                                    hello,
+                                ),
+                                ty: Ident(
+                                    World,
+                                ),
+                            },
+                        ],
+                    },
+                    Span,
+                ),
+            ),
+        },
+    ),
+)

@@ -1,0 +1,12 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<Brace<Ident>>(q.clone())"
+---
+Ok(
+    Brace(
+        Ident(
+            hello,
+        ),
+        Span,
+    ),
+)

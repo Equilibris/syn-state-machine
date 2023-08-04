@@ -1,0 +1,9 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<FIdent<\"id\">>(q.clone())"
+---
+Ok(
+    FIdent(
+        Span,
+    ),
+)

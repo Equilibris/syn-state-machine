@@ -21,7 +21,7 @@ pub trait Finalizer<Out, With> {
 pub struct BlackHoleFinalizer<T>(pub T);
 
 impl<Out, With> Finalizer<Out, With> for BlackHoleFinalizer<Out> {
-    fn finalize(self, value: With) -> std::ops::ControlFlow<Out, Out> {
+    fn finalize(self, _: With) -> std::ops::ControlFlow<Out, Out> {
         std::ops::ControlFlow::Break(self.0)
     }
 }

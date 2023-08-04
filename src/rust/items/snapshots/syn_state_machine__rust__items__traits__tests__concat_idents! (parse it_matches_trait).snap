@@ -1,0 +1,85 @@
+---
+source: src/rust/items/traits.rs
+expression: "crate::parse::<Trait<Infallible, Infallible, Type<Infallible>,\n        Infallible>>(q.clone())"
+---
+Ok(
+    Trait {
+        unsafe: true,
+        id: Ident(
+            HelloWorld,
+        ),
+        generic_parameters: Some(
+            GenericParams {
+                params: Interlace {
+                    values: [
+                        Ty(
+                            Rep(
+                                [],
+                            ),
+                            TypeParam {
+                                id: Ident(
+                                    T,
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        bounds: None,
+        where_clause: None,
+        items: P2(
+            Rep(
+                [],
+            ),
+            Rep(
+                [
+                    TypeAlias(
+                        Rep(
+                            [],
+                        ),
+                        None,
+                        TypeAlias {
+                            id: Ident(
+                                Hello,
+                            ),
+                            generic_parameters: None,
+                            bounds: Some(
+                                MinLength(
+                                    Interlace {
+                                        values: [
+                                            Tr(
+                                                TraitBound {
+                                                    q: false,
+                                                    for_lts: None,
+                                                    path: HigherOrderPath {
+                                                        leading: false,
+                                                        segments: Interlace {
+                                                            values: [
+                                                                Bare(
+                                                                    Id(
+                                                                        Ident(
+                                                                            World,
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                            ),
+                                        ],
+                                    },
+                                ),
+                            ),
+                            where_clause: None,
+                            eq: None,
+                        },
+                    ),
+                ],
+            ),
+        ),
+    },
+)

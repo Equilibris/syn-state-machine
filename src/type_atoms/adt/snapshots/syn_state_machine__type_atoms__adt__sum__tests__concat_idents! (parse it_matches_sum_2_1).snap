@@ -1,0 +1,12 @@
+---
+source: src/type_atoms/adt/sum.rs
+expression: "crate::parse::<Sum2<Ident, Punct>>(q.clone())"
+---
+Ok(
+    V1(
+        Punct {
+            char: '<',
+            spacing: Alone,
+        },
+    ),
+)

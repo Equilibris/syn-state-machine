@@ -1,0 +1,15 @@
+---
+source: src/rust/items/constant_items.rs
+expression: "crate::parse::<ConstantItem<Ident, Infallible>>(q.clone())"
+---
+Ok(
+    ConstantItem {
+        id: Ident(
+            HELLO,
+        ),
+        ty: Ident(
+            usize,
+        ),
+        eq: None,
+    },
+)

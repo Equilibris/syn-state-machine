@@ -1,0 +1,11 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "crate::parse::<Lifetime>(q.clone())"
+---
+Ok(
+    LifetimeToken {
+        ident: Ident(
+            a,
+        ),
+    },
+)

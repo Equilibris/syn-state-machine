@@ -1,0 +1,7 @@
+---
+source: src/rust/atoms/typed_literals.rs
+expression: "crate::test_peek::<StringLit>(q.clone())"
+---
+Some(
+    1,
+)

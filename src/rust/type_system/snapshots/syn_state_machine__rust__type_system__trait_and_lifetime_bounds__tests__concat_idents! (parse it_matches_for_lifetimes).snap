@@ -1,0 +1,40 @@
+---
+source: src/rust/type_system/trait_and_lifetime_bounds.rs
+expression: "crate::parse::<ForLifetimes<Infallible, Infallible>>(q.clone())"
+---
+Ok(
+    ForLifetimes {
+        args: GenericParams {
+            params: Interlace {
+                values: [
+                    Lt(
+                        Rep(
+                            [],
+                        ),
+                        LifetimeParam {
+                            lt: LifetimeOrLabel {
+                                ident: Ident(
+                                    a,
+                                ),
+                            },
+                            bound: None,
+                        },
+                    ),
+                    Lt(
+                        Rep(
+                            [],
+                        ),
+                        LifetimeParam {
+                            lt: LifetimeOrLabel {
+                                ident: Ident(
+                                    b,
+                                ),
+                            },
+                            bound: None,
+                        },
+                    ),
+                ],
+            },
+        },
+    },
+)

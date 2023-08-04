@@ -1,0 +1,9 @@
+---
+source: src/type_atoms/adt/vec.rs
+expression: "crate::parse::<Rep<TokenTree>>(q.clone())"
+---
+Ok(
+    Rep(
+        [],
+    ),
+)

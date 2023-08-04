@@ -1,0 +1,12 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::parse::<Paren<Ident>>(q.clone())"
+---
+Ok(
+    Paren(
+        Ident(
+            hello,
+        ),
+        Span,
+    ),
+)

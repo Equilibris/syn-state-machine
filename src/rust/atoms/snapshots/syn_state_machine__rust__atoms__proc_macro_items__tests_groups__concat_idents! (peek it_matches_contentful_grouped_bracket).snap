@@ -1,0 +1,7 @@
+---
+source: src/rust/atoms/proc_macro_items.rs
+expression: "crate::test_peek::<Bracket<Ident>>(q.clone())"
+---
+Some(
+    3,
+)

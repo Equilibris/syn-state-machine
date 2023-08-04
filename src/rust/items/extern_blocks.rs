@@ -67,12 +67,13 @@ mod tests {
     use super::*;
     use std::convert::Infallible;
 
-    insta_match_test!(+it_matches_item, ExternalItem<Infallible, Type<Infallible>, Infallible, Ident>:
+    insta_match_test!(parse : it_matches_item, ExternalItem<Infallible, Type<Infallible>, Infallible, Ident>:
         fn with_name(format: *const u8);
     );
 
-    insta_match_test!(+it_matches_simple_extern_block, ExternBlock<Infallible, Type<Infallible>, Infallible, Ident>:
-    extern "C" {
-        fn with_name(format: *const u8);
-    } );
+    insta_match_test!(parse : it_matches_simple_extern_block, ExternBlock<Infallible, Type<Infallible>, Infallible, Ident>:
+        extern "C" {
+            fn with_name(format: *const u8);
+        }
+    );
 }

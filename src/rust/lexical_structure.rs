@@ -293,5 +293,5 @@ pub type TupleIndex = IntegerLit;
 #[cfg(test)]
 mod tests {
     use crate::*;
-    insta_match_test!(it_matches_lifetime, LifetimeToken : 'hi);
+    insta_match_test!(peek parse : it_matches_lifetime, LifetimeToken : 'hi);
 }

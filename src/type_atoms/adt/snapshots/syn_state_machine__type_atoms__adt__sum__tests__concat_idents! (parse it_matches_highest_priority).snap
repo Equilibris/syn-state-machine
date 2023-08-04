@@ -1,0 +1,26 @@
+---
+source: src/type_atoms/adt/sum.rs
+expression: "crate::parse::<Sum5<(P, P, P, P, P), (P, P, P, P), (P, P, P), (P, P),\n        (P,)>>(q.clone())"
+---
+Ok(
+    V1(
+        (
+            Punct {
+                char: '.',
+                spacing: Joint,
+            },
+            Punct {
+                char: '.',
+                spacing: Joint,
+            },
+            Punct {
+                char: '.',
+                spacing: Alone,
+            },
+            Punct {
+                char: '.',
+                spacing: Alone,
+            },
+        ),
+    ),
+)

@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/option.rs
+expression: "crate::parse::<Option<Ident>>(q.clone())"
+---
+Ok(
+    None,
+)

@@ -1,0 +1,15 @@
+---
+source: src/rust/items/type_aliases.rs
+expression: "crate::parse::<TypeAlias<Infallible, Type<Infallible>>>(q.clone())"
+---
+Ok(
+    TypeAlias {
+        id: Ident(
+            Point,
+        ),
+        generic_parameters: None,
+        bounds: None,
+        where_clause: None,
+        eq: None,
+    },
+)
