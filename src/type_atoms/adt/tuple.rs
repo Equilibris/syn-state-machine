@@ -5,9 +5,11 @@ macro_rules! tuple_impl {
         #[derive(Debug, Clone, Default)]
         pub struct P0();
 
-        impl<C: ParserCursor> Parse<C> for P0 {
-            fn parse(_: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
-                Ok(P0())
+        impl<C: ParserCursor, W> Parse<C, W> for P0 {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(_: &mut ParseBuffer<C>) -> Result<Self::Finalizer, C::Error> {
+                Ok(BlackHoleFinalizer(P0()))
             }
         }
         impl<C> Peek<C> for P0 {
@@ -20,9 +22,11 @@ macro_rules! tuple_impl {
             const SKIP: usize = 0;
         }
 
-        impl<C: ParserCursor> Parse<C> for () {
-            fn parse(_: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
-                Ok(())
+        impl<C: ParserCursor, W> Parse<C, W> for () {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(_: &mut ParseBuffer<C>) -> Result<Self::Finalizer, C::Error> {
+                Ok(BlackHoleFinalizer(()))
             }
         }
         impl<C> Peek<C> for () {
@@ -82,10 +86,12 @@ macro_rules! tuple_impl {
             }
         }
 
-        impl<Cursor: Clone + ParserCursor, $last_gen: Parse<Cursor>, $($gen: Parse<Cursor>,)*> Parse<Cursor> for $last_name< $last_gen, $($gen,)*  >
+        impl<Cursor: Clone + ParserCursor, $last_gen: Parse<Cursor, ()>, $($gen: Parse<Cursor, ()>,)*> Parse<Cursor, ()> for $last_name< $last_gen, $($gen,)*  >
         {
-            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
-                Ok(Self::from(input.parse::<( $last_gen, $($gen,)*  )>()?))
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
+                Ok(BlackHoleFinalizer(Self::from(input.parse::<( $last_gen, $($gen,)*  )>()?)))
             }
         }
 
@@ -107,16 +113,18 @@ macro_rules! tuple_impl {
             }
         }
 
-        impl<Cursor: Clone + ParserCursor, $last_gen: Parse<Cursor>, $($gen: Parse<Cursor>,)*> Parse<Cursor> for ($last_gen, $($gen,)* )
+        impl<Cursor: Clone + ParserCursor, $last_gen: Parse<Cursor, ()>, $($gen: Parse<Cursor, ()>,)*> Parse<Cursor, ()> for ($last_gen, $($gen,)* )
         {
-            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
                 let mut temp = input.clone();
 
                 let vs = (temp.parse()?, $(temp.parse::<$gen>()?,)*);
 
                 *input = temp;
 
-                Ok(vs)
+                Ok(BlackHoleFinalizer(vs))
             }
         }
 
@@ -134,7 +142,6 @@ macro_rules! tuple_impl {
                     v += delta;
                 })*
 
-                dbg!(v);
                 Some(v)
             }
         }

@@ -14,9 +14,24 @@ pub trait Spanned {
     fn span(&self) -> Self::Loc;
 }
 
-pub trait Parse<C: ParserCursor>: Sized {
-    fn parse(input: &mut ParseBuffer<C>) -> Result<Self, C::Error>;
+pub trait Finalizer<Out, With> {
+    fn finalize(self, value: With) -> std::ops::ControlFlow<Out, Out>;
 }
+
+pub struct BlackHoleFinalizer<T>(pub T);
+
+impl<Out, With> Finalizer<Out, With> for BlackHoleFinalizer<Out> {
+    fn finalize(self, value: With) -> std::ops::ControlFlow<Out, Out> {
+        std::ops::ControlFlow::Break(self.0)
+    }
+}
+
+pub trait Parse<C: ParserCursor, With>: Sized {
+    type Finalizer: Finalizer<Self, With>;
+
+    fn parse(input: &mut ParseBuffer<C>) -> Result<Self::Finalizer, C::Error>;
+}
+
 pub trait Peek<C> {
     fn peek(input: &C) -> Option<usize>;
 }

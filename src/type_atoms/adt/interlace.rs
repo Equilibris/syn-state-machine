@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 #[cfg(feature = "printing")]
 use quote::{ToTokens, TokenStreamExt};
 
-use crate::{Parse, ParseBuffer, ParserCursor, Peek, Rep};
+use crate::{BlackHoleFinalizer, Parse, ParseBuffer, ParserCursor, Peek, Rep};
 
 pub struct Interlace<A, B> {
     pub values: Vec<A>,
@@ -62,10 +62,12 @@ impl<A, B> Interlace<A, B> {
     }
 }
 
-impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
-    for Interlace<A, B>
+impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor, ()>, B: Peek<Cursor>>
+    Parse<Cursor, ()> for Interlace<A, B>
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
         let mut temp = input.clone();
         let mut values = Vec::new();
 
@@ -74,7 +76,7 @@ impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>>
                 *input = temp;
                 values.push(value);
             }
-            _ => return Ok(Self::new(values)),
+            _ => return Ok(BlackHoleFinalizer(Self::new(values))),
         }
 
         while input.cursor.size_hint().0 > 0 {
@@ -86,14 +88,14 @@ impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>>
                         *input = tmp;
                         values.push(value);
                     }
-                    _ => return Ok(Self::new(values)),
+                    _ => return Ok(BlackHoleFinalizer(Self::new(values))),
                 }
             } else {
-                return Ok(Self::new(values));
+                return Ok(BlackHoleFinalizer(Self::new(values)));
             }
         }
 
-        Ok(Self::new(values))
+        Ok(BlackHoleFinalizer(Self::new(values)))
     }
 }
 
@@ -161,10 +163,12 @@ impl<A, B> InterlaceTrail<A, B> {
     }
 }
 
-impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>> Parse<Cursor>
-    for InterlaceTrail<A, B>
+impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor, ()>, B: Peek<Cursor>>
+    Parse<Cursor, ()> for InterlaceTrail<A, B>
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
         let mut temp = input.clone();
 
         let mut values = Vec::new();
@@ -174,7 +178,7 @@ impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>>
                 *input = temp;
                 values.push(value);
             }
-            _ => return Ok(Self::new(values)),
+            _ => return Ok(BlackHoleFinalizer(Self::new(values))),
         }
 
         while input.cursor.size_hint().0 > 0 {
@@ -183,14 +187,14 @@ impl<Cursor: ParserCursor + Clone + Iterator, A: Parse<Cursor>, B: Peek<Cursor>>
                     Ok(value) => {
                         values.push(value);
                     }
-                    _ => return Ok(Self::new(values)),
+                    _ => return Ok(BlackHoleFinalizer(Self::new(values))),
                 }
             } else {
-                return Ok(Self::new(values));
+                return Ok(BlackHoleFinalizer(Self::new(values)));
             }
         }
 
-        Ok(Self::new(values))
+        Ok(BlackHoleFinalizer(Self::new(values)))
     }
 }
 

@@ -1,46 +1,27 @@
 use crate::internals::*;
 
-// pub struct POption<T>(pub Option<T>);
-// impl<T> From<Option<T>> for POption<T> {
-//     fn from(value: Option<T>) -> Self {
-//         Self(value)
-//     }
-// }
-// impl<T> From<POption<T>> for Option<T> {
-//     fn from(value: POption<T>) -> Self {
-//         value.0
-//     }
-// }
+pub struct OptionFinalizer<T>(Option<T>);
+impl<Out, With, T: Finalizer<Out, With>> Finalizer<Option<Out>, With> for OptionFinalizer<T> {
+    fn finalize(self, value: With) -> std::ops::ControlFlow<Option<Out>, Option<Out>> {
+        match self.0 {
+            Some(v) => v.finalize(value).map_break(Some).map_continue(Some),
+            None => std::ops::ControlFlow::Break(None),
+        }
+    }
+}
 
-// #[cfg(feature = "printing")]
-// impl<T: quote::ToTokens> quote::ToTokens for POption<T> {
-//     fn into_token_stream(self) -> proc_macro2::TokenStream
-//     where
-//         Self: Sized,
-//     {
-//         if let Some(v) = self.0 {
-//             v.into_token_stream()
-//         } else {
-//             proc_macro2::TokenStream::new()
-//         }
-//     }
-//     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-//         if let Some(ref v) = self.0 {
-//             v.to_tokens(tokens)
-//         }
-//     }
-// }
+impl<Cursor: Clone + ParserCursor, With, T: Parse<Cursor, With>> Parse<Cursor, With> for Option<T> {
+    type Finalizer = OptionFinalizer<T::Finalizer>;
 
-impl<Cursor: Clone + ParserCursor, T: Parse<Cursor>> Parse<Cursor> for Option<T> {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
         let mut temp = input.clone();
 
-        Ok(match temp.parse() {
-            Ok(a) => {
+        Ok(match T::parse(&mut temp) {
+            Ok(ok) => {
                 *input = temp;
-                Some(a)
+                OptionFinalizer(Some(ok))
             }
-            Err(_) => None,
+            Err(_) => OptionFinalizer(None),
         })
     }
 }

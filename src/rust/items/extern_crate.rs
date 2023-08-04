@@ -42,9 +42,11 @@ to_tokens! {
 pub struct CrateRef {
     pub id: Ident,
 }
-impl<'a> Parse<RustCursor<'a>> for CrateRef {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(Self {
+impl<'a> Parse<RustCursor<'a>, ()> for CrateRef {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        Ok(BlackHoleFinalizer(Self {
             id: input
                 .ident_matching(|id| {
                     if id == "self" {
@@ -54,7 +56,7 @@ impl<'a> Parse<RustCursor<'a>> for CrateRef {
                     }
                 })?
                 .clone(),
-        })
+        }))
     }
 }
 #[cfg(feature = "printing")]

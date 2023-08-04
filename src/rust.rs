@@ -37,13 +37,15 @@ pub use type_system::*;
 use crate::{Parse, ParseBuffer};
 
 #[cfg(feature = "rust-atoms")]
-pub fn parse_borrowed<'a, T: Parse<RustCursor<'a>>>(buf: &'a TokenBuffer) -> Result<T, Error> {
+pub fn parse_borrowed<'a, T: Parse<RustCursor<'a>, ()>>(buf: &'a TokenBuffer) -> Result<T, Error> {
     let mut stream = ParseBuffer::from(buf.begin());
 
     stream.parse()
 }
 #[cfg(feature = "rust-atoms")]
-pub fn parse<T: for<'a> Parse<RustCursor<'a>>>(ts: TokenStream) -> std::result::Result<T, Error> {
+pub fn parse<T: for<'a> Parse<RustCursor<'a>, ()>>(
+    ts: TokenStream,
+) -> std::result::Result<T, Error> {
     let buf = TokenBuffer::from(ts);
 
     parse_borrowed(&buf)

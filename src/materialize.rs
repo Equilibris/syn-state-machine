@@ -33,17 +33,19 @@ macro_rules! materialize {
         impl<
             $($($domain_lts,)*
             $($domain_gens,)*)?
-            $($($gen: $crate::Parse<$domain>,)*)?
-        > $crate::Parse<$domain> for $id $(<$($gen,)*>)? {
+            $($($gen: $crate::Parse<$domain, ()>,)*)?
+        > $crate::Parse<$domain, ()> for $id $(<$($gen,)*>)? {
+            type Finalizer = $crate::BlackHoleFinalizer<Self>;
+
             fn parse(
                 $input: &mut $crate::ParseBuffer<$domain>
             ) -> Result<
-                $id$(<$($gen,)*>)?, <$domain as $crate::ParserCursor>::Error
+                Self::Finalizer, <$domain as $crate::ParserCursor>::Error
             > {
                 $($common_parse_code)*
 
                 use $crate::$sum_name::*;
-                Ok(match $input.parse::<$crate::$sum_name<$($out_type)*>> ()? { $($out_match)* })
+                Ok($crate::BlackHoleFinalizer(match $input.parse::<$crate::$sum_name<$($out_type)*>> ()? { $($out_match)* }))
             }
         }
     };
@@ -686,16 +688,18 @@ macro_rules! materialize {
         impl<
             $($($domain_lts,)*
             $($domain_gens,)*)?
-            $($($gen: $crate::Parse<$domain>,)*)?
-        > $crate::Parse<$domain> for $id $(<$($gen,)*>)? {
+            $($($gen: $crate::Parse<$domain, ()>,)*)?
+        > $crate::Parse<$domain, ()> for $id $(<$($gen,)*>)? {
+            type Finalizer = $crate::BlackHoleFinalizer<Self>;
+
             fn parse(
                 $input: &mut $crate::ParseBuffer<$domain>
             ) -> Result<
-                $id$(<$($gen,)*>)?, <$domain as $crate::ParserCursor>::Error
+                Self::Finalizer, <$domain as $crate::ParserCursor>::Error
             > {
                 $($parse_code)*
 
-                Ok(Self { $($parse_out)* })
+                Ok($crate::BlackHoleFinalizer(Self { $($parse_out)* }))
             }
         }
     };

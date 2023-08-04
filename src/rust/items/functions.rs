@@ -184,11 +184,17 @@ pub struct FunctionParameters<Attr, Ty, Pat> {
     pub params: InterlaceTrail<FunctionParam<Attr, Ty, Pat>, Comma>,
 }
 
-impl<'a, Attr: Parse<RustCursor<'a>>, Ty: Parse<RustCursor<'a>>, Pat: Parse<RustCursor<'a>>>
-    Parse<RustCursor<'a>> for FunctionParameters<Attr, Ty, Pat>
+impl<
+        'a,
+        Attr: Parse<RustCursor<'a>, ()>,
+        Ty: Parse<RustCursor<'a>, ()>,
+        Pat: Parse<RustCursor<'a>, ()>,
+    > Parse<RustCursor<'a>, ()> for FunctionParameters<Attr, Ty, Pat>
 {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        Ok(BlackHoleFinalizer(
             match input.parse::<Sum2<(Option<(_, Comma)>, _), (_, Option<Comma>)>>()? {
                 Sum2::V0((self_param, params)) => Self {
                     self_param: self_param.map(|v| v.0),
@@ -199,7 +205,7 @@ impl<'a, Attr: Parse<RustCursor<'a>>, Ty: Parse<RustCursor<'a>>, Pat: Parse<Rust
                     params: Default::default(),
                 },
             },
-        )
+        ))
     }
 }
 #[cfg(feature = "printing")]

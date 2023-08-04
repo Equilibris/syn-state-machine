@@ -78,11 +78,13 @@ pub fn get_error_from_ident(id: &Ident) -> Result<(), Error> {
 
 #[derive(Debug)]
 pub struct IdentifierOrUnder(pub Ident);
-impl<'a> Parse<RustCursor<'a>> for IdentifierOrUnder {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(Self(
+impl<'a> Parse<RustCursor<'a>, ()> for IdentifierOrUnder {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        Ok(BlackHoleFinalizer(Self(
             input.ident_matching(get_error_from_ident_or_under)?.clone(),
-        ))
+        )))
     }
 }
 
@@ -126,9 +128,13 @@ impl From<IdentifierOrUnder> for Ident {
 
 #[derive(Debug)]
 pub struct Identifier(pub Ident);
-impl<'a> Parse<RustCursor<'a>> for Identifier {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(Self(input.ident_matching(get_error_from_ident)?.clone()))
+impl<'a> Parse<RustCursor<'a>, ()> for Identifier {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        Ok(BlackHoleFinalizer(Self(
+            input.ident_matching(get_error_from_ident)?.clone(),
+        )))
     }
 }
 

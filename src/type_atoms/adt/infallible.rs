@@ -2,11 +2,19 @@ pub use std::convert::Infallible;
 
 use crate::*;
 
-impl<Cursor: Spanned + ParserCursor> Parse<Cursor> for Infallible
+impl<Out, With> Finalizer<Out, With> for std::convert::Infallible {
+    fn finalize(self, _: With) -> std::ops::ControlFlow<Out, Out> {
+        unreachable!()
+    }
+}
+
+impl<Cursor: Spanned + ParserCursor, With> Parse<Cursor, With> for Infallible
 where
     Cursor::Error: for<'a> From<LocError<'a, Cursor::Loc>>,
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
         Err(Self::error(input.as_ref()))
     }
 }

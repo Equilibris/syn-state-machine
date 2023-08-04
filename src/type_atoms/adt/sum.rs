@@ -26,6 +26,25 @@ macro_rules! sum_impl {
             $($gens($gens),)*
         }
 
+        paste::paste! {
+            impl<
+                W,
+                [<F $gen>], $gen: Finalizer<[<F $gen>], W>,
+                $(
+                    [<F $gens>], $gens: Finalizer<[<F $gens>], W>,
+                )*
+            > Finalizer<$ty<[<F $gen>], $([<F $gens>],)*>, W> for $ty<$gen, $($gens,)*> {
+                fn finalize(self, value: W) -> std::ops::ControlFlow<$ty<[<F $gen>], $([<F $gens>],)*>, $ty<[<F $gen>], $([<F $gens>],)*>> {
+                    match self {
+                        Self::$gen(v) => v.finalize(value).map_break($ty::$gen).map_continue($ty::$gen),
+                        $(
+                            Self::$gens(v) => v.finalize(value).map_break($ty::$gens).map_continue($ty::$gens),
+                        )*
+                    }
+                }
+            }
+        }
+
         #[cfg(feature = "printing")]
         impl<
             $gen: quote::ToTokens, $($gens: quote::ToTokens,)*
@@ -77,17 +96,19 @@ macro_rules! sum_impl {
             )*
         }
 
-        impl<Cursor: Clone + ParserCursor, $gen: Parse<Cursor>, $($gens: Parse<Cursor>,)*> Parse<Cursor> for $ty<$gen, $($gens,)*>
+        impl<Cursor: Clone + ParserCursor, With, $gen: Parse<Cursor, With>, $($gens: Parse<Cursor, With>,)*> Parse<Cursor, With> for $ty<$gen, $($gens,)*>
         where
             Cursor::Error: CombineError<Cursor::Error>
         {
-            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+            type Finalizer = $ty<$gen::Finalizer, $($gens::Finalizer,)*>;
+
+            fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
                 let mut temp = input.clone();
 
-                let mut e = match temp.parse() {
+                let mut e = match $gen::parse(&mut temp) {
                     Ok(a) => {
                         *input = temp;
-                        return Ok(Self::$gen(a))
+                        return Ok($ty::$gen(a))
                     },
                     Err(e0) => e0,
                 };
@@ -95,10 +116,10 @@ macro_rules! sum_impl {
                 $({
                     let mut temp = input.clone();
 
-                    match temp.parse() {
+                    match $gens::parse(&mut temp) {
                         Ok(a) => {
                             *input = temp;
-                            return Ok(Self::$gens(a))
+                            return Ok($ty::$gens(a))
                         },
                         Err(e0) => e.combine(e0),
                     };

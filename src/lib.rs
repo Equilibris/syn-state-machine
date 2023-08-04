@@ -1,4 +1,4 @@
-#![feature(lint_reasons, iter_advance_by, fn_traits)]
+#![feature(lint_reasons, iter_advance_by, fn_traits, control_flow_enum)]
 #![expect(incomplete_features)]
 #![feature(adt_const_params)]
 

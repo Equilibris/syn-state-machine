@@ -1,4 +1,7 @@
-use crate::{Interlace, InterlaceTrail, LocError, Parse, ParseBuffer, ParserCursor, Rep, Spanned};
+use crate::{
+    BlackHoleFinalizer, Interlace, InterlaceTrail, LocError, Parse, ParseBuffer, ParserCursor, Rep,
+    Spanned,
+};
 
 #[allow(clippy::len_without_is_empty)]
 pub trait ParsableLength {
@@ -33,17 +36,19 @@ impl<T: ParsableLength> ParsableLength for Box<T> {
 
 #[derive(Debug, Clone)]
 pub struct MinLength<T, const LEN: usize = 1>(pub T);
-impl<Cursor: ParserCursor + Spanned, const LEN: usize, T: Parse<Cursor> + ParsableLength>
-    Parse<Cursor> for MinLength<T, LEN>
+impl<Cursor: ParserCursor + Spanned, const LEN: usize, T: Parse<Cursor, ()> + ParsableLength>
+    Parse<Cursor, ()> for MinLength<T, LEN>
 where
     Cursor::Error: for<'a> From<LocError<'a, Cursor::Loc>>,
 {
-    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
         let c: T = input.parse()?;
         if c.len() < LEN {
             Err(LocError("Expected value", input.span()).into())
         } else {
-            Ok(Self(c))
+            Ok(BlackHoleFinalizer(Self(c)))
         }
     }
 }

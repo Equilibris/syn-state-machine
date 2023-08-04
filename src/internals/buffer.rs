@@ -30,8 +30,11 @@ impl<C: Iterator + ParserCursor> ParseBuffer<C> {
     }
 }
 impl<C: ParserCursor> ParseBuffer<C> {
-    pub fn parse<T: Parse<C>>(&mut self) -> Result<T, C::Error> {
-        T::parse(self)
+    pub fn parse<T: Parse<C, ()>>(&mut self) -> Result<T, C::Error> {
+        Ok(match T::parse(self)?.finalize(()) {
+            std::ops::ControlFlow::Continue(v) => v,
+            std::ops::ControlFlow::Break(v) => v,
+        })
     }
     pub fn call<T, E>(&mut self, function: impl Fn(&mut Self) -> Result<T, E>) -> Result<T, E> {
         function(self)

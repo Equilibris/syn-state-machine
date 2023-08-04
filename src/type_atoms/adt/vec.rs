@@ -34,8 +34,10 @@ impl<T: quote::ToTokens> quote::ToTokens for Rep<T> {
     }
 }
 
-impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Rep<T> {
-    fn parse(input: &mut ParseBuffer<C>) -> Result<Self, C::Error> {
+impl<C: Iterator + Clone + ParserCursor, T: Parse<C, ()>> Parse<C, ()> for Rep<T> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<C>) -> Result<Self::Finalizer, C::Error> {
         let mut temp = input.clone();
         let mut vs = Vec::new();
 
@@ -44,13 +46,13 @@ impl<C: Iterator + Clone + ParserCursor, T: Parse<C>> Parse<C> for Rep<T> {
                 Ok(a) => vs.push(a),
                 Err(_) => {
                     *input = temp;
-                    return Ok(Rep(vs));
+                    return Ok(BlackHoleFinalizer(Rep(vs)));
                 }
             }
         }
 
         *input = temp;
-        Ok(Rep(vs))
+        Ok(BlackHoleFinalizer(Rep(vs)))
     }
 }
 impl<C: Iterator + Clone, T: Peek<C>> Peek<C> for Rep<T> {

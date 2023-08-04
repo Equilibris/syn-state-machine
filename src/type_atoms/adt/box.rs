@@ -1,8 +1,21 @@
 use crate::*;
 
-impl<Cursor: ParserCursor, T: Parse<Cursor>> Parse<Cursor> for Box<T> {
-    fn parse(input: &mut crate::ParseBuffer<Cursor>) -> Result<Self, Cursor::Error> {
-        input.parse().map(Box::new)
+pub struct BoxFinalizer<T>(T);
+
+impl<Out, With, T: Finalizer<Out, With>> Finalizer<Box<Out>, With> for BoxFinalizer<T> {
+    fn finalize(self, value: With) -> std::ops::ControlFlow<Box<Out>, Box<Out>> {
+        self.0
+            .finalize(value)
+            .map_break(Box::new)
+            .map_continue(Box::new)
+    }
+}
+
+impl<Cursor: ParserCursor, With, T: Parse<Cursor, With>> Parse<Cursor, With> for Box<T> {
+    type Finalizer = BoxFinalizer<T::Finalizer>;
+
+    fn parse(input: &mut crate::ParseBuffer<Cursor>) -> Result<Self::Finalizer, Cursor::Error> {
+        Ok(BoxFinalizer(T::parse(input)?))
     }
 }
 impl<Cursor, T: Peek<Cursor>> Peek<Cursor> for Box<T> {

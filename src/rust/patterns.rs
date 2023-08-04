@@ -306,24 +306,26 @@ to_tokens! {
     }
 }
 
-impl<'a, Attr: Parse<RustCursor<'a>>, Pat: Parse<RustCursor<'a>>> Parse<RustCursor<'a>>
+impl<'a, Attr: Parse<RustCursor<'a>, ()>, Pat: Parse<RustCursor<'a>, ()>> Parse<RustCursor<'a>, ()>
     for StructPatternElements<Attr, Pat>
 {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         Ok(
             match input.parse::<Sum2<(_, Sum3<Comma, (Comma, _), ()>), _>>()? {
-                Sum2::V0((fields, Sum3::V0(_) | Sum3::V2(_))) => Self {
+                Sum2::V0((fields, Sum3::V0(_) | Sum3::V2(_))) => BlackHoleFinalizer(Self {
                     fields,
                     et_cetera: None,
-                },
-                Sum2::V0((fields, Sum3::V1((_, et_cetera)))) => Self {
+                }),
+                Sum2::V0((fields, Sum3::V1((_, et_cetera)))) => BlackHoleFinalizer(Self {
                     fields,
                     et_cetera: Some(et_cetera),
-                },
-                Sum2::V1(et_cetera) => Self {
+                }),
+                Sum2::V1(et_cetera) => BlackHoleFinalizer(Self {
                     fields: Default::default(),
                     et_cetera: Some(et_cetera),
-                },
+                }),
             },
         )
     }

@@ -2,15 +2,19 @@ use crate::*;
 #[cfg(feature = "printing")]
 use quote::TokenStreamExt;
 
-impl<'a> Parse<RustCursor<'a>> for bool {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
-        Ok(input.ident_matching(|id: &Ident| {
-            if id == "true" || id == "false" {
-                Ok(())
-            } else {
-                Err(Error::new(id.span(), "Expected bool literal"))
-            }
-        })? == "true")
+impl<'a> Parse<RustCursor<'a>, ()> for bool {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        Ok(BlackHoleFinalizer(
+            input.ident_matching(|id: &Ident| {
+                if id == "true" || id == "false" {
+                    Ok(())
+                } else {
+                    Err(Error::new(id.span(), "Expected bool literal"))
+                }
+            })? == "true",
+        ))
     }
 }
 impl<'a> Peek<RustCursor<'a>> for bool {
@@ -28,8 +32,10 @@ impl<'a> Peek<RustCursor<'a>> for bool {
 
 macro_rules! typed_lit {
     ($err:literal $ty:ty) => {
-        impl<'a> Parse<RustCursor<'a>> for $ty {
-            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+        impl<'a> Parse<RustCursor<'a>, ()> for $ty {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
                 let cursor = input.cursor;
                 match cursor.literal() {
                     Some((lit, cursor)) => {
@@ -37,7 +43,7 @@ macro_rules! typed_lit {
 
                         *input = cursor.into();
 
-                        Ok(v)
+                        Ok(BlackHoleFinalizer(v))
                     }
                     None => Err(Error::new(cursor.span(), $err)),
                 }

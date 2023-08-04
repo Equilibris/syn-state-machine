@@ -6,26 +6,30 @@ pub use proc_macro2::{Ident, Literal, Punct, TokenStream, TokenTree};
 #[cfg(feature = "printing")]
 use quote::TokenStreamExt;
 
-impl<'a> Parse<RustCursor<'a>> for TokenStream {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+impl<'a> Parse<RustCursor<'a>, ()> for TokenStream {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         let cursor = input.cursor;
         let stream = cursor.token_stream();
         *input = cursor.skip_to_end().into();
 
-        Ok(stream)
+        Ok(BlackHoleFinalizer(stream))
     }
 }
 
 macro_rules! pm2_impl {
     ($st:ident $m:ident) => {
-        impl<'a> Parse<RustCursor<'a>> for $st {
-            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+        impl<'a> Parse<RustCursor<'a>, ()> for $st {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
                 let cur = input.cursor;
 
                 match cur.$m() {
                     Some((id, cur)) => {
                         *input = cur.into();
-                        Ok(id.clone())
+                        Ok(BlackHoleFinalizer(id.clone()))
                     }
                     None => Err(Error::new(
                         input.span(),
@@ -61,14 +65,16 @@ pm2_impl!(TokenTree token_tree);
 
 #[derive(Clone, Debug)]
 pub struct FIdent<const VAL: &'static str>(pub Span);
-impl<'a, const VAL: &'static str> Parse<RustCursor<'a>> for FIdent<VAL> {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+impl<'a, const VAL: &'static str> Parse<RustCursor<'a>, ()> for FIdent<VAL> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         let cur = input.cursor;
 
         match cur.ident() {
             Some((v, c)) if v == VAL => {
                 *input = c.into();
-                Ok(Self(v.span()))
+                Ok(BlackHoleFinalizer(Self(v.span())))
             }
             _ => Err(Error::new(cur.span(), format!("Expected '{}'", VAL))),
         }
@@ -106,14 +112,16 @@ impl<const VAL: &'static str> Default for FIdent<VAL> {
 
 #[derive(Clone, Debug)]
 pub struct FPunct<const VAL: char>(pub Span);
-impl<'a, const VAL: char> Parse<RustCursor<'a>> for FPunct<VAL> {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+impl<'a, const VAL: char> Parse<RustCursor<'a>, ()> for FPunct<VAL> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         let cur = input.cursor;
 
         match cur.punct() {
             Some((v, c)) if v.as_char() == VAL => {
                 *input = c.into();
-                Ok(Self(v.span()))
+                Ok(BlackHoleFinalizer(Self(v.span())))
             }
             _ => Err(Error::new(cur.span(), format!("Expected '{}'", VAL))),
         }
@@ -150,14 +158,16 @@ impl<const VAL: char> Default for FPunct<VAL> {
 
 #[derive(Clone, Debug)]
 pub struct FJointPunct<const VAL: char>(pub Span);
-impl<'a, const VAL: char> Parse<RustCursor<'a>> for FJointPunct<VAL> {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+impl<'a, const VAL: char> Parse<RustCursor<'a>, ()> for FJointPunct<VAL> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         let cur = input.cursor;
 
         match cur.punct() {
             Some((v, c)) if v.as_char() == VAL && v.spacing() == Spacing::Joint => {
                 *input = c.into();
-                Ok(Self(v.span()))
+                Ok(BlackHoleFinalizer(Self(v.span())))
             }
             _ => Err(Error::new(cur.span(), format!("Expected '{}'", VAL))),
         }
@@ -194,14 +204,16 @@ impl<const VAL: char> Default for FJointPunct<VAL> {
 
 #[derive(Clone, Debug)]
 pub struct FAlonePunct<const VAL: char>(pub Span);
-impl<'a, const VAL: char> Parse<RustCursor<'a>> for FAlonePunct<VAL> {
-    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+impl<'a, const VAL: char> Parse<RustCursor<'a>, ()> for FAlonePunct<VAL> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
         let cur = input.cursor;
 
         match cur.punct() {
             Some((v, c)) if v.as_char() == VAL && v.spacing() == Spacing::Alone => {
                 *input = c.into();
-                Ok(Self(v.span()))
+                Ok(BlackHoleFinalizer(Self(v.span())))
             }
             _ => Err(Error::new(cur.span(), format!("Expected '{}'", VAL))),
         }
@@ -249,8 +261,10 @@ macro_rules! grouped {
                 )
             }
         }
-        impl<'a, T: Parse<RustCursor<'a>>> Parse<RustCursor<'a>> for $ty<T> {
-            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self, Error> {
+        impl<'a, T: Parse<RustCursor<'a>, ()>> Parse<RustCursor<'a>, ()> for $ty<T> {
+            type Finalizer = BlackHoleFinalizer<Self>;
+
+            fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
                 let cur = input.cursor;
 
                 match cur.group(proc_macro2::Delimiter::$del) {
@@ -262,7 +276,7 @@ macro_rules! grouped {
 
                         if cur.eof() {
                             *input = after.into();
-                            Ok(Self(v, span))
+                            Ok(BlackHoleFinalizer(Self(v, span)))
                         } else {
                             Err(Error::new(
                                 cur.span().join(cur.skip_to_end().prev().span()).unwrap(),
