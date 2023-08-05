@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/enumerations.rs
-expression: "crate::parse::<EnumItem<Infallible, Ident, Infallible>>(q.clone())"
+expression: "crate::parse::<EnumItem<P<Infallible>, Ident, P<Infallible>>>(q.clone())"
 ---
 Ok(
     Unit(

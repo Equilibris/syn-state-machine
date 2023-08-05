@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/modules.rs
-expression: "crate::parse::<Module<Infallible, Infallible>>(q.clone())"
+expression: "crate::parse::<Module<P<Infallible>, P<Infallible>>>(q.clone())"
 ---
 Ok(
     Sourced(

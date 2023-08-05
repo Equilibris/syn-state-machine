@@ -1,6 +1,6 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::test_peek::<Bracket<()>>(q.clone())"
+expression: "crate::test_peek::<Bracket<P<()>>>(q.clone())"
 ---
 Some(
     2,

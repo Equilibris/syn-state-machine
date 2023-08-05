@@ -43,7 +43,7 @@ mod tests {
     use crate::*;
 
     insta_match_test! {
-        parse : it_matches_union, Union<Infallible, Ident> :
+        parse print : it_matches_union, Union<P<Infallible>, Ident> :
         union HelloWorld {
             hello: World
         }

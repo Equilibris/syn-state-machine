@@ -28,7 +28,7 @@ materialize! {
         Super(v <- KwSuper),
         SSelf(v <- KwLowerSelf),
         Crate(v <- KwCrate),
-        MacroCrate(v <- P2<Dollar, KwCrate>)
+        MacroCrate(v <- P<(Dollar, KwCrate)>)
     }
 }
 #[cfg(feature = "printing")]
@@ -38,7 +38,7 @@ to_tokens! {
         Super(v <- KwSuper),
         SSelf(v <- KwLowerSelf),
         Crate(v <- KwCrate),
-        MacroCrate(v <- P2<Dollar, KwCrate>)
+        MacroCrate(v <- P<(Dollar, KwCrate)>)
     }
 }
 
@@ -82,7 +82,7 @@ materialize! {
         LowerSelf(v <- KwLowerSelf),
         UpperSelf(v <- KwUpperSelf),
         Crate(v <- KwCrate),
-        MacroCrate(v <- P2< Dollar, KwCrate >)
+        MacroCrate(v <- P<(Dollar, KwCrate)>)
     }
 }
 #[cfg(feature = "printing")]
@@ -93,7 +93,7 @@ to_tokens! {
         LowerSelf(v <- KwLowerSelf),
         UpperSelf(v <- KwUpperSelf),
         Crate(v <- KwCrate),
-        MacroCrate(v <- P2< Dollar, KwCrate >)
+        MacroCrate(v <- P<(Dollar, KwCrate)>)
     }
 }
 
@@ -163,14 +163,14 @@ materialize! {
     #[derive(Debug)]
     pub struct QualifiedPathInExpression<Ty>{
         qualifier <- QualifiedPathType<Ty>;
-        path <- Rep<P2<PathSep, PathExprSegment<Ty>>>;
+        path <- Rep<P<(PathSep, PathExprSegment<Ty>)>>;
     }
 }
 #[cfg(feature = "printing")]
 to_tokens! {
     impl ToTokens for struct QualifiedPathInExpression<Ty> {
         qualifier <- QualifiedPathType<Ty>;
-        path <- Rep<P2<PathSep, PathExprSegment<Ty>>>;
+        path <- Rep<P<(PathSep, PathExprSegment<Ty>)>>;
     }
 }
 
@@ -209,14 +209,14 @@ materialize! {
     #[derive(Debug)]
     pub struct QualifiedPathInType<Ty>{
         qualifier <- QualifiedPathType<Ty>;
-        path <- Rep<P2<PathSep, TypePathSegment<Ty>>>;
+        path <- Rep<P<(PathSep, TypePathSegment<Ty>)>>;
     }
 }
 #[cfg(feature = "printing")]
 to_tokens! {
     impl ToTokens for struct QualifiedPathInType<Ty> {
         qualifier <- QualifiedPathType<Ty>;
-        path <- Rep<P2<PathSep, TypePathSegment<Ty>>>;
+        path <- Rep<P<(PathSep, TypePathSegment<Ty>)>>;
     }
 }
 
@@ -297,13 +297,13 @@ mod tests {
 mod type_tests {
     use crate::*;
 
-    insta_match_test!(parse : it_matches_hello, TypePath<Ident>: hello);
-    insta_match_test!(parse : it_matches_tri_path, TypePath<Ident>: hello::world::hi);
-    insta_match_test!(parse : it_matches_bi_path, TypePath<Ident>: hello::world);
-    insta_match_test!(parse : it_matches_long_generic, TypePath<Ident>: hello::<Hi>);
-    insta_match_test!(parse : it_matches_short_generic, TypePath<Ident>: hello<Hi>);
-    insta_match_test!(parse : it_matches_fun, TypePath<Infallible>: Fn());
-    insta_match_test!(parse : it_matches_fun_ret, TypePath<Paren<()>>: Fn() -> ());
+    insta_match_test!(parse print : it_matches_hello, TypePath<Ident>: hello);
+    insta_match_test!(parse print : it_matches_tri_path, TypePath<Ident>: hello::world::hi);
+    insta_match_test!(parse print : it_matches_bi_path, TypePath<Ident>: hello::world);
+    insta_match_test!(parse print : it_matches_long_generic, TypePath<Ident>: hello::<Hi>);
+    insta_match_test!(parse print : it_matches_short_generic, TypePath<Ident>: hello<Hi>);
+    insta_match_test!(parse print : it_matches_fun, TypePath<P<Infallible>>: Fn());
+    insta_match_test!(parse print : it_matches_fun_ret, TypePath<Paren<P<()>>>: Fn() -> ());
 
     #[test]
     fn it_matches_multigeneric_type_path() {
@@ -317,7 +317,7 @@ mod type_tests {
 mod qualified_tests {
     use super::*;
 
-    insta_match_test!(parse : it_matches_simple_paths, QualifiedPathInType<Ident> : <hello as Default>::Default);
+    insta_match_test!(parse print : it_matches_simple_paths, QualifiedPathInType<Ident> : <hello as Default>::Default);
 }
 
 #[cfg(test)]
@@ -325,9 +325,9 @@ mod generic_tests {
     use super::*;
     use std::convert::Infallible;
 
-    insta_match_test!(parse : it_matches_empty_generic_args, GenericArgs<Infallible>: <>);
-    insta_match_test!(parse : it_matches_lifetime_args, GenericArgs<Infallible>: <'a>);
-    insta_match_test!(parse : it_matches_typed_args, GenericArgs<Ident>: <T>);
-    insta_match_test!(parse : it_matches_pathed_args, GenericArgs<TypePath<Infallible>>: <hello::world>);
-    insta_match_test!(parse : it_matches_multi_args, GenericArgs<TypePath<Infallible>>: <'a, T, hello::world>);
+    insta_match_test!(parse print : it_matches_empty_generic_args, GenericArgs<P<Infallible>>: <>);
+    insta_match_test!(parse print : it_matches_lifetime_args, GenericArgs<P<Infallible>>: <'a>);
+    insta_match_test!(parse print : it_matches_typed_args, GenericArgs<Ident>: <T>);
+    insta_match_test!(parse print : it_matches_pathed_args, GenericArgs<TypePath<P<Infallible>>>: <hello::world>);
+    insta_match_test!(parse print : it_matches_multi_args, GenericArgs<TypePath<P<Infallible>>>: <'a, T, hello::world>);
 }

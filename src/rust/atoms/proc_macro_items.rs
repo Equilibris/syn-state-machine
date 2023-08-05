@@ -310,6 +310,17 @@ macro_rules! grouped {
         }
         #[cfg(feature = "printing")]
         impl<T: quote::ToTokens> quote::ToTokens for $ty<T> {
+            fn into_token_stream(self) -> TokenStream {
+                let mut ts = TokenStream::new();
+
+                ts.append(proc_macro2::Group::new(
+                    proc_macro2::Delimiter::$del,
+                    self.0.into_token_stream(),
+                ));
+
+                ts
+            }
+
             fn to_tokens(&self, tokens: &mut TokenStream) {
                 tokens.append(proc_macro2::Group::new(
                     proc_macro2::Delimiter::$del,
@@ -328,38 +339,38 @@ grouped!(Bracket Bracket     "[ ... ]");
 mod tests_groups {
     use crate::*;
 
-    insta_match_test!(peek parse : it_fails_on_empty_paren, Paren<()> : );
-    insta_match_test!(peek parse : it_matches_simple_grouped_paren, Paren<()> : ());
-    insta_match_test!(peek parse : it_matches_contentful_grouped_paren, Paren<Ident> : (hello));
+    insta_match_test!(peek parse : it_fails_on_empty_paren, Paren<P<()>> : );
+    insta_match_test!(peek parse print : it_matches_simple_grouped_paren, Paren<P<()>> : ());
+    insta_match_test!(peek parse print : it_matches_contentful_grouped_paren, Paren<Ident> : (hello));
 
-    insta_match_test!(peek parse : it_fails_on_empty_brace, Brace<()> : );
-    insta_match_test!(peek parse : it_matches_simple_grouped_brace, Brace<()> : {});
-    insta_match_test!(peek parse : it_matches_contentful_grouped_brace, Brace<Ident> : {hello});
+    insta_match_test!(peek parse : it_fails_on_empty_brace, Brace<P<()>> : );
+    insta_match_test!(peek parse print : it_matches_simple_grouped_brace, Brace<P<()>> : {});
+    insta_match_test!(peek parse print : it_matches_contentful_grouped_brace, Brace<Ident> : {hello});
 
-    insta_match_test!(peek parse : it_fails_on_empty_bracket, Bracket<()> : );
-    insta_match_test!(peek parse : it_matches_simple_grouped_bracket, Bracket<()> : [  ]);
-    insta_match_test!(peek parse : it_matches_contentful_grouped_bracket, Bracket<Ident> : [ hello ]);
+    insta_match_test!(peek parse : it_fails_on_empty_bracket, Bracket<P<()>> : );
+    insta_match_test!(peek parse print : it_matches_simple_grouped_bracket, Bracket<P<()>> : [  ]);
+    insta_match_test!(peek parse print : it_matches_contentful_grouped_bracket, Bracket<Ident> : [ hello ]);
 }
 
 #[cfg(test)]
 mod tests_id {
     use crate::*;
 
-    insta_match_test!(peek parse : it_matches_id, Ident: id);
-    insta_match_test!(peek parse : it_matches_fixed, FIdent<"id"> : id);
     insta_match_test!(peek parse : it_fails_on_incorrect, FIdent<"id"> : ident);
+    insta_match_test!(peek parse print : it_matches_id, Ident: id);
+    insta_match_test!(peek parse print : it_matches_fixed, FIdent<"id"> : id);
 }
 
 #[cfg(test)]
 mod tests_punct {
     use crate::*;
 
-    insta_match_test!(peek parse : it_matches_only, Punct : < );
-    insta_match_test!(peek parse : it_matches_fixed, FPunct<'<'> : < );
-    insta_match_test!(peek parse : it_matches_dollar, FPunct<'$'> : $ );
+    insta_match_test!(peek parse print : it_matches_only, Punct : < );
+    insta_match_test!(peek parse print : it_matches_fixed, FPunct<'<'> : < );
+    insta_match_test!(peek parse print : it_matches_dollar, FPunct<'$'> : $ );
 
     // insta_match_test!(peek parse : it_matches_joint, (FJointPunct<'\''>, Ident) : 'hello );
-    insta_match_test!(peek parse : it_matches_both, (FJointPunct<'<'>, FAlonePunct<'='>) : <= );
+    insta_match_test!(peek parse print : it_matches_both, P<(FJointPunct<'<'>, FAlonePunct<'='>)> : <= );
 
-    insta_match_test!(peek parse : it_matches_dollar_crate, (FPunct<'$'>,FIdent<"crate">) : $crate);
+    insta_match_test!(peek parse print : it_matches_dollar_crate, P<(FPunct<'$'>, FIdent<"crate">)> : $crate);
 }

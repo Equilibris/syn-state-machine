@@ -1,6 +1,6 @@
 ---
 source: src/rust/names/paths.rs
-expression: "crate::parse::<TypePath<Infallible>>(q.clone())"
+expression: "crate::parse::<TypePath<P<Infallible>>>(q.clone())"
 ---
 Ok(
     HigherOrderPath {

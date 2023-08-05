@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/extern_blocks.rs
-expression: "crate::parse::<ExternalItem<Infallible, Type<Infallible>, Infallible,\n        Ident>>(q.clone())"
+expression: "crate::parse::<ExternalItem<P<Infallible>, Type<P<Infallible>>, P<Infallible>,\n        Ident>>(q.clone())"
 ---
 Ok(
     Function(

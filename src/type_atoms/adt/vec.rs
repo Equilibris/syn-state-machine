@@ -78,12 +78,12 @@ impl<C: Iterator + Clone, T: Peek<C>> Peek<C> for Rep<T> {
 mod tests {
     use crate::*;
 
-    type Two = (FPunct<':'>, FPunct<':'>);
+    type Two = P<(FPunct<':'>, FPunct<':'>)>;
 
-    insta_match_test!(peek parse : it_matches_esoterics, Rep<(Ident, Option<(Two, Ident)>, Two)>     : r1::r2::r3::r4::r5::);
-    insta_match_test!(peek parse : it_matches_catch_all,                 Rep<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
-    insta_match_test!(peek parse : it_matches_comments,                  Rep<TokenTree>              : /* comment */);
-    insta_match_test!(peek parse : it_matches_basic_iteration,           Rep<Ident>                  : hello world hi);
-    insta_match_test!(peek parse : it_specifies_correct_backstep,        Rep<(Ident, Ident)>         : hello world hi);
-    insta_match_test!(peek parse : it_can_work_on_individual_backtracks, Rep<(Ident, Option<Punct>)> :  hello < world hi );
+    insta_match_test!(peek parse print : it_matches_esoterics, Rep<P<(Ident, P<Option<P<(Two, Ident)>>>, Two)>> : r1::r2::r3::r4::r5::);
+    insta_match_test!(peek parse print : it_matches_catch_all,                 Rep<TokenTree>              : r#hello hello struct _ 'a' { "hi" });
+    insta_match_test!(peek parse print : it_matches_comments,                  Rep<TokenTree>              : /* comment */);
+    insta_match_test!(peek parse print : it_matches_basic_iteration,           Rep<Ident>                  : hello world hi);
+    insta_match_test!(peek parse print : it_specifies_correct_backstep,        Rep<P<(Ident, Ident)>>         : hello world hi);
+    insta_match_test!(peek parse print : it_can_work_on_individual_backtracks, Rep<P<(Ident, P<Option<Punct>>)>> :  hello < world hi );
 }

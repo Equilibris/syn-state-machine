@@ -63,6 +63,26 @@ pub fn test_peek<T: for<'a> crate::Peek<RustCursor<'a>>>(ts: TokenStream) -> Opt
 #[cfg(feature = "rust-atoms")]
 #[macro_export]
 macro_rules! insta_match_test {
+    (:print $_:ident $ty:ty : $var:ident) => {
+        #[cfg(feature = "printing")]
+        {
+            let _ = $_;
+
+            let old = $crate::parse::<$ty>($var.clone()).unwrap();
+
+            let ts = <$ty as ::quote::ToTokens>::to_token_stream(&old);
+            let new = $crate::parse::<$ty>(ts);
+
+            let old = Result::<_, std::convert::Infallible>::Ok(old);
+
+            ::similar_asserts::assert_eq!(format!("{:#?}", old), format!("{:#?}",new));
+
+            let ts = <$ty as ::quote::ToTokens>::into_token_stream(new.unwrap());
+            let new = $crate::parse::<$ty>(ts);
+
+            ::similar_asserts::assert_eq!(format!("{:#?}", old), format!("{:#?}",new));
+        }
+    };
     (:parse $name:ident $ty:ty : $var:ident) => {
         ::insta::assert_debug_snapshot!(
             $name, $crate::parse::<$ty>($var.clone())

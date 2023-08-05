@@ -31,3 +31,10 @@ impl<Cursor: ParserCursor, T: PeekError<Cursor>> PeekError<Cursor> for Box<T> {
         T::error(input)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+
+    insta_match_test! { parse peek print : it_matches_boxed_ident, Box<Ident> : hello }
+}

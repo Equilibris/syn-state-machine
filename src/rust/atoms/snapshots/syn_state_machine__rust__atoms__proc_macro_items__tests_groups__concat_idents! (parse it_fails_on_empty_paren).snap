@@ -1,6 +1,6 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::parse::<Paren<()>>(q.clone())"
+expression: "crate::parse::<Paren<P<()>>>(q.clone())"
 ---
 Err(
     Error(

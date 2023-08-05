@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/structs.rs
-expression: "crate::parse::<Struct<Infallible, Ident>>(q.clone())"
+expression: "crate::parse::<Struct<P<Infallible>, Ident>>(q.clone())"
 ---
 Ok(
     StructStruct(

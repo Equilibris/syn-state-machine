@@ -1,6 +1,6 @@
 ---
 source: src/rust/type_system/trait_and_lifetime_bounds.rs
-expression: "crate::parse::<ForLifetimes<Infallible, Infallible>>(q.clone())"
+expression: "crate::parse::<ForLifetimes<P<Infallible>, P<Infallible>>>(q.clone())"
 ---
 Ok(
     ForLifetimes {

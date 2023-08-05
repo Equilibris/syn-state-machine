@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/generic_parameters.rs
-expression: "crate::parse::<TypeParam<Infallible, Infallible>>(q.clone())"
+expression: "crate::parse::<TypeParam<P<Infallible>, P<Infallible>>>(q.clone())"
 ---
 Ok(
     TypeParam {

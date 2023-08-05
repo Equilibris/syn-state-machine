@@ -1,16 +1,18 @@
 ---
 source: src/type_atoms/adt/vec.rs
-expression: "crate::parse::<Rep<(Ident, Ident)>>(q.clone())"
+expression: "crate::parse::<Rep<P<(Ident, Ident)>>>(q.clone())"
 ---
 Ok(
     Rep(
         [
-            (
-                Ident(
-                    hello,
-                ),
-                Ident(
-                    world,
+            P(
+                (
+                    Ident(
+                        hello,
+                    ),
+                    Ident(
+                        world,
+                    ),
                 ),
             ),
         ],

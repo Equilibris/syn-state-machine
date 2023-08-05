@@ -1,18 +1,20 @@
 ---
 source: src/rust/attributes.rs
-expression: "crate::parse::<OuterAttribute<(Ident, Paren<Ident>)>>(q.clone())"
+expression: "crate::parse::<OuterAttribute<P<(Ident, Paren<Ident>)>>>(q.clone())"
 ---
 Ok(
     OuterAttribute {
-        content: (
-            Ident(
-                hello,
-            ),
-            Paren(
+        content: P(
+            (
                 Ident(
-                    world,
+                    hello,
                 ),
-                Span,
+                Paren(
+                    Ident(
+                        world,
+                    ),
+                    Span,
+                ),
             ),
         ),
     },

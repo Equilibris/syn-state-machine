@@ -1,14 +1,16 @@
 ---
 source: src/type_atoms/adt/tuple.rs
-expression: "crate::parse::<(Ident, FIdent<\"world\">)>(q.clone())"
+expression: "crate::parse::<P<(Ident, FIdent<\"world\">)>>(q.clone())"
 ---
 Ok(
-    (
-        Ident(
-            hello,
-        ),
-        FIdent(
-            Span,
+    P(
+        (
+            Ident(
+                hello,
+            ),
+            FIdent(
+                Span,
+            ),
         ),
     ),
 )

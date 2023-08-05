@@ -86,8 +86,8 @@ to_tokens! {
     }
 }
 
-pub type StructFields<Attr, Ty> = Interlace<StructField<Attr, Ty>, Comma>;
-pub type TupleFields<Attr, Ty> = Interlace<TupleField<Attr, Ty>, Comma>;
+pub type StructFields<Attr, Ty> = InterlaceTrail<StructField<Attr, Ty>, Comma>;
+pub type TupleFields<Attr, Ty> = InterlaceTrail<TupleField<Attr, Ty>, Comma>;
 
 materialize! {
     on <'a> [crate::RustCursor<'a>]
@@ -133,19 +133,20 @@ to_tokens! {
 mod tests {
     use crate::*;
 
+    // TODO:
     insta_match_test! {
-        parse : it_matches_struct_struct, Struct<Infallible, Ident> :
+        parse : it_matches_struct_struct, Struct<P<Infallible>, Ident> :
         struct Hello {
             pub hi: There,
             pub(crate) hello: World
         }
     }
     insta_match_test! {
-        parse : it_matches_tuple_struct, Struct<Infallible, Ident> :
+        parse print : it_matches_tuple_struct, Struct<P<Infallible>, Ident> :
         struct Hello (Hello, pub World);
     }
     insta_match_test! {
-        parse : it_matches_unit, Struct<Infallible, Ident> :
+        parse print : it_matches_unit, Struct<P<Infallible>, Ident> :
         struct Hello;
     }
 }

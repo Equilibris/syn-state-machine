@@ -70,6 +70,6 @@ to_tokens! {
 mod tests {
     use super::*;
 
-    insta_match_test!(parse : it_matches_extern,    ExternCrate : extern crate hi;);
-    insta_match_test!(parse : it_matches_extern_as, ExternCrate : extern crate hi as _;);
+    insta_match_test!(parse print : it_matches_extern,    ExternCrate : extern crate hi;);
+    insta_match_test!(parse print : it_matches_extern_as, ExternCrate : extern crate hi as _;);
 }

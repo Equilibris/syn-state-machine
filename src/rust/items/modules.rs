@@ -14,7 +14,7 @@ materialize! {
     ] {
         Sourced(<- Semi;),
         Inline(
-            content <- P2<Rep<InnerAttribute<InnerAttr>>, Rep<Item>> : Brace<_> { content.0 };
+            content <- P<(Rep<InnerAttribute<InnerAttr>>, Rep<Item>)> : Brace<_> { content.0 };
         )
     }
 }
@@ -50,6 +50,6 @@ to_tokens! {
 mod tests {
     use crate::*;
 
-    insta_match_test! { parse : it_matches_sourced, Module<Infallible, Infallible> : mod hello; }
-    insta_match_test! { parse : it_matches_inline,  Module<Infallible, Ident> : mod hello { hello world } }
+    insta_match_test! { parse print : it_matches_sourced, Module<P<Infallible>, P<Infallible>> : mod hello; }
+    insta_match_test! { parse print : it_matches_inline,  Module<P<Infallible>, Ident> : mod hello { hello world } }
 }

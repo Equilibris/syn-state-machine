@@ -1,48 +1,54 @@
 ---
 source: src/type_atoms/adt/tuple.rs
-expression: "crate::parse::<(Rep<(Punct, Punct, Ident, Ident)>, Punct)>(q.clone())"
+expression: "crate::parse::<P<(Rep<P<(Punct, Punct, Ident, Ident)>>, Punct)>>(q.clone())"
 ---
 Ok(
-    (
-        Rep(
-            [
-                (
-                    Punct {
-                        char: '>',
-                        spacing: Joint,
-                    },
-                    Punct {
-                        char: '>',
-                        spacing: Alone,
-                    },
-                    Ident(
-                        h1,
+    P(
+        (
+            Rep(
+                [
+                    P(
+                        (
+                            Punct {
+                                char: '>',
+                                spacing: Joint,
+                            },
+                            Punct {
+                                char: '>',
+                                spacing: Alone,
+                            },
+                            Ident(
+                                h1,
+                            ),
+                            Ident(
+                                h2,
+                            ),
+                        ),
                     ),
-                    Ident(
-                        h2,
+                    P(
+                        (
+                            Punct {
+                                char: '>',
+                                spacing: Joint,
+                            },
+                            Punct {
+                                char: '>',
+                                spacing: Alone,
+                            },
+                            Ident(
+                                h3,
+                            ),
+                            Ident(
+                                h4,
+                            ),
+                        ),
                     ),
-                ),
-                (
-                    Punct {
-                        char: '>',
-                        spacing: Joint,
-                    },
-                    Punct {
-                        char: '>',
-                        spacing: Alone,
-                    },
-                    Ident(
-                        h3,
-                    ),
-                    Ident(
-                        h4,
-                    ),
-                ),
-            ],
+                ],
+            ),
+            Punct {
+                char: '!',
+                spacing: Alone,
+            },
         ),
-        Punct {
-            char: '!',
-            spacing: Alone,
-        },
     ),
 )

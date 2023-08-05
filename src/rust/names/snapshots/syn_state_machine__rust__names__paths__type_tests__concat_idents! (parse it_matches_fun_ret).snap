@@ -1,6 +1,6 @@
 ---
 source: src/rust/names/paths.rs
-expression: "crate::parse::<TypePath<Paren<()>>>(q.clone())"
+expression: "crate::parse::<TypePath<Paren<P<()>>>>(q.clone())"
 ---
 Ok(
     HigherOrderPath {
@@ -22,7 +22,9 @@ Ok(
                         ),
                         returns: Some(
                             Paren(
-                                (),
+                                P(
+                                    (),
+                                ),
                                 Span,
                             ),
                         ),

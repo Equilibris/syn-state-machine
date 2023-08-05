@@ -27,19 +27,23 @@ Ok(
         },
         path: Rep(
             [
-                P2(
-                    P2(
-                        FJointPunct(
-                            Span,
+                P(
+                    (
+                        P(
+                            (
+                                FJointPunct(
+                                    Span,
+                                ),
+                                FPunct(
+                                    Span,
+                                ),
+                            ),
                         ),
-                        FPunct(
-                            Span,
-                        ),
-                    ),
-                    Bare(
-                        Id(
-                            Ident(
-                                Default,
+                        Bare(
+                            Id(
+                                Ident(
+                                    Default,
+                                ),
                             ),
                         ),
                     ),

@@ -1,55 +1,75 @@
 ---
 source: src/type_atoms/adt/interlace.rs
-expression: "crate::parse::<Interlace<(Ident, Option<(Two, Ident)>), Two>>(q.clone())"
+expression: "crate::parse::<Interlace<P<(Ident, P<Option<P<(Two, Ident)>>>)>,\n        Two>>(q.clone())"
 ---
 Ok(
     Interlace {
         values: [
-            (
-                Ident(
-                    r1,
-                ),
-                Some(
-                    (
-                        (
-                            FPunct(
-                                Span,
+            P(
+                (
+                    Ident(
+                        r1,
+                    ),
+                    P(
+                        Some(
+                            P(
+                                (
+                                    P(
+                                        (
+                                            FPunct(
+                                                Span,
+                                            ),
+                                            FPunct(
+                                                Span,
+                                            ),
+                                        ),
+                                    ),
+                                    Ident(
+                                        r2,
+                                    ),
+                                ),
                             ),
-                            FPunct(
-                                Span,
-                            ),
-                        ),
-                        Ident(
-                            r2,
                         ),
                     ),
                 ),
             ),
-            (
-                Ident(
-                    r3,
-                ),
-                Some(
-                    (
-                        (
-                            FPunct(
-                                Span,
+            P(
+                (
+                    Ident(
+                        r3,
+                    ),
+                    P(
+                        Some(
+                            P(
+                                (
+                                    P(
+                                        (
+                                            FPunct(
+                                                Span,
+                                            ),
+                                            FPunct(
+                                                Span,
+                                            ),
+                                        ),
+                                    ),
+                                    Ident(
+                                        r4,
+                                    ),
+                                ),
                             ),
-                            FPunct(
-                                Span,
-                            ),
-                        ),
-                        Ident(
-                            r4,
                         ),
                     ),
                 ),
             ),
-            (
-                Ident(
-                    r5,
+            P(
+                (
+                    Ident(
+                        r5,
+                    ),
+                    P(
+                        None,
+                    ),
                 ),
-                None,
             ),
         ],
     },

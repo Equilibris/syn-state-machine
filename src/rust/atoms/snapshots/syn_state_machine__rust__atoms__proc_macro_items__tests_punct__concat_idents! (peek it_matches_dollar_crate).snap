@@ -1,6 +1,6 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::test_peek::<(FPunct<'$'>, FIdent<\"crate\">)>(q.clone())"
+expression: "crate::test_peek::<P<(FPunct<'$'>, FIdent<\"crate\">)>>(q.clone())"
 ---
 Some(
     2,

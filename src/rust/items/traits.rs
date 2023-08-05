@@ -56,14 +56,15 @@ to_tokens! {
 mod tests {
     use super::*;
 
+    // TODO:
     insta_match_test!(
-        parse : it_matches_trait, Trait <Infallible, Infallible, Type<Infallible>, Infallible> :
+        parse : it_matches_trait, Trait<P<Infallible>, P<Infallible>, Type<P<Infallible>>, P<Infallible>> :
         unsafe trait HelloWorld<T> {
             type Hello: World;
         }
     );
     // insta_match_test!(
-    //     parse : it_matches_complex_trait, Trait <Infallible, Infallible, Type<Infallible>, Infallible> :
+    //     parse : it_matches_complex_trait, Trait <P<Infallible>, P<Infallible>, Type<P<Infallible>>, P<Infallible>> :
     //     unsafe trait HelloWorld<T> : From<T> where T: Sized {
     //         type Hello: World;
     //     }

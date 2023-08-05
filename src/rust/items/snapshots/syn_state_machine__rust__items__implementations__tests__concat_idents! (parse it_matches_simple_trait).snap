@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/implementations.rs
-expression: "crate::parse::<Implementation<Infallible, TypePath<Ident>, Infallible,\n        Ident>>(q.clone())"
+expression: "crate::parse::<Implementation<P<Infallible>, TypePath<Ident>, P<Infallible>,\n        Ident>>(q.clone())"
 ---
 Ok(
     Trait(
@@ -94,12 +94,14 @@ Ok(
                 },
             },
             where_clause: None,
-            items: P2(
-                Rep(
-                    [],
-                ),
-                Rep(
-                    [],
+            items: P(
+                (
+                    Rep(
+                        [],
+                    ),
+                    Rep(
+                        [],
+                    ),
                 ),
             ),
         },

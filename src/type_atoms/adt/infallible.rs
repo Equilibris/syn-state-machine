@@ -34,3 +34,10 @@ where
 impl FixedPeek for Infallible {
     const SKIP: usize = 0;
 }
+
+#[cfg(feature = "printing")]
+impl ::quote::ToTokens for P<Infallible> {
+    fn to_tokens(&self, _: &mut TokenStream) {
+        unreachable!()
+    }
+}

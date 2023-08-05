@@ -1,0 +1,7 @@
+---
+source: src/type_atoms/adt/box.rs
+expression: "crate::test_peek::<Box<Ident>>(q.clone())"
+---
+Some(
+    1,
+)

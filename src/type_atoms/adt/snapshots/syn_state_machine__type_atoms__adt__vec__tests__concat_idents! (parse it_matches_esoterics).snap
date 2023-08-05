@@ -1,16 +1,37 @@
 ---
 source: src/type_atoms/adt/vec.rs
-expression: "crate::parse::<Rep<(Ident, Option<(Two, Ident)>, Two)>>(q.clone())"
+expression: "crate::parse::<Rep<P<(Ident, P<Option<P<(Two, Ident)>>>, Two)>>>(q.clone())"
 ---
 Ok(
     Rep(
         [
-            (
-                Ident(
-                    r1,
-                ),
-                Some(
-                    (
+            P(
+                (
+                    Ident(
+                        r1,
+                    ),
+                    P(
+                        Some(
+                            P(
+                                (
+                                    P(
+                                        (
+                                            FPunct(
+                                                Span,
+                                            ),
+                                            FPunct(
+                                                Span,
+                                            ),
+                                        ),
+                                    ),
+                                    Ident(
+                                        r2,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    P(
                         (
                             FPunct(
                                 Span,
@@ -19,26 +40,36 @@ Ok(
                                 Span,
                             ),
                         ),
-                        Ident(
-                            r2,
-                        ),
-                    ),
-                ),
-                (
-                    FPunct(
-                        Span,
-                    ),
-                    FPunct(
-                        Span,
                     ),
                 ),
             ),
-            (
-                Ident(
-                    r3,
-                ),
-                Some(
-                    (
+            P(
+                (
+                    Ident(
+                        r3,
+                    ),
+                    P(
+                        Some(
+                            P(
+                                (
+                                    P(
+                                        (
+                                            FPunct(
+                                                Span,
+                                            ),
+                                            FPunct(
+                                                Span,
+                                            ),
+                                        ),
+                                    ),
+                                    Ident(
+                                        r4,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    P(
                         (
                             FPunct(
                                 Span,
@@ -47,31 +78,26 @@ Ok(
                                 Span,
                             ),
                         ),
-                        Ident(
-                            r4,
-                        ),
-                    ),
-                ),
-                (
-                    FPunct(
-                        Span,
-                    ),
-                    FPunct(
-                        Span,
                     ),
                 ),
             ),
-            (
-                Ident(
-                    r5,
-                ),
-                None,
+            P(
                 (
-                    FPunct(
-                        Span,
+                    Ident(
+                        r5,
                     ),
-                    FPunct(
-                        Span,
+                    P(
+                        None,
+                    ),
+                    P(
+                        (
+                            FPunct(
+                                Span,
+                            ),
+                            FPunct(
+                                Span,
+                            ),
+                        ),
                     ),
                 ),
             ),

@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/adt/interlace.rs
-expression: "crate::test_peek::<(Interlace<Ident, (FJointPunct<':'>, FPunct<':'>)>,\n        (FPunct<'>'>, FPunct<';'>))>(q.clone())"
+expression: "crate::test_peek::<P<(Interlace<Ident, P<(FJointPunct<':'>, FPunct<':'>)>>,\n        P<(FPunct<'>'>, FPunct<';'>)>)>>(q.clone())"
 ---
 Some(
     3,

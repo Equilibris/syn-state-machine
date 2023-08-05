@@ -33,10 +33,30 @@ impl<Cursor, T: Peek<Cursor>> Peek<Cursor> for Option<T> {
     }
 }
 
+#[cfg(feature = "printing")]
+impl<T: quote::ToTokens> ::quote::ToTokens for crate::P<Option<T>> {
+    fn into_token_stream(self) -> proc_macro2::TokenStream
+    where
+        Self: Sized,
+    {
+        if let Some(a) = self.0 {
+            a.into_token_stream()
+        } else {
+            proc_macro2::TokenStream::new()
+        }
+    }
+
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        if let Some(ref a) = self.0 {
+            a.to_tokens(tokens)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::*;
 
-    insta_match_test!(peek parse : it_matches_only, Option<Ident> : <);
-    insta_match_test!(peek parse : it_returns_the_correct_length, Option<(Ident, Ident)> : hi <);
+    insta_match_test!(peek parse print : it_matches_only, P<Option<Ident>> : <);
+    insta_match_test!(peek parse print : it_returns_the_correct_length, P<Option<P<(Ident, Ident)>>> : hi <);
 }

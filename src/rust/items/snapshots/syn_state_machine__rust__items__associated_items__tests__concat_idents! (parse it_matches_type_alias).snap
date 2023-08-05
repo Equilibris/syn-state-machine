@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/associated_items.rs
-expression: "crate::parse::<AssociateItem<Infallible, Type<Infallible>, Infallible,\n        Infallible>>(q.clone())"
+expression: "crate::parse::<AssociateItem<P<Infallible>, Type<P<Infallible>>,\n        P<Infallible>, P<Infallible>>>(q.clone())"
 ---
 Ok(
     TypeAlias(

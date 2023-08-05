@@ -1,0 +1,9 @@
+---
+source: src/type_atoms/adt/box.rs
+expression: "crate::parse::<Box<Ident>>(q.clone())"
+---
+Ok(
+    Ident(
+        hello,
+    ),
+)

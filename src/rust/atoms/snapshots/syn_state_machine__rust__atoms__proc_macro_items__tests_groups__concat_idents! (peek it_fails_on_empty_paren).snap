@@ -1,5 +1,5 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::test_peek::<Paren<()>>(q.clone())"
+expression: "crate::test_peek::<Paren<P<()>>>(q.clone())"
 ---
 None

@@ -207,12 +207,12 @@ to_tokens! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    insta_match_test!(parse : it_matches_simple_where, WhereClause<Infallible, Ident> : where F: Into<T>);
-    insta_match_test!(parse : it_matches_simple_where_with_path, WhereClause<Infallible, Ident> : where F: std::ops::Add);
+    insta_match_test!(parse print : it_matches_simple_where,           WhereClause<P<Infallible>, Ident> : where F: Into<T>);
+    insta_match_test!(parse print : it_matches_simple_where_with_path, WhereClause<P<Infallible>, Ident> : where F: std::ops::Add);
 
-    insta_match_test!(parse : it_matches_const_param,         ConstParam<Ident>: const HELLO: i8);
-    insta_match_test!(parse : it_matches_const_param_bounded, ConstParam<Ident>: const HELLO: i8 = 10);
+    insta_match_test!(parse print : it_matches_const_param,         ConstParam<Ident>: const HELLO: i8);
+    insta_match_test!(parse print : it_matches_const_param_bounded, ConstParam<Ident>: const HELLO: i8 = 10);
 
-    insta_match_test!(parse : it_matches_type_param,         TypeParam<Infallible, Infallible>: Hello);
-    insta_match_test!(parse : it_matches_type_param_bounded, TypeParam<Infallible, Infallible>: Hello: std::fmt::Debug);
+    insta_match_test!(parse print : it_matches_type_param,         TypeParam<P<Infallible>, P<Infallible>>: Hello);
+    insta_match_test!(parse print : it_matches_type_param_bounded, TypeParam<P<Infallible>, P<Infallible>>: Hello: std::fmt::Debug);
 }

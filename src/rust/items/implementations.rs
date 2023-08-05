@@ -40,14 +40,14 @@ to_tokens! {
         items <- tokens into {
             tokens.append(
                 proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Parenthesis,
+                    proc_macro2::Delimiter::Brace,
                     items.into_token_stream()
                 )
             )
         } to {
             tokens.append(
                 proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Parenthesis,
+                    proc_macro2::Delimiter::Brace,
                     items.to_token_stream()
                 )
             )
@@ -84,14 +84,14 @@ to_tokens! {
         items <- tokens into {
             tokens.append(
                 proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Parenthesis,
+                    proc_macro2::Delimiter::Brace,
                     items.into_token_stream()
                 )
             )
         } to {
             tokens.append(
                 proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Parenthesis,
+                    proc_macro2::Delimiter::Brace,
                     items.to_token_stream()
                 )
             )
@@ -106,14 +106,14 @@ mod tests {
     use crate::insta_match_test;
 
     insta_match_test!(
-        parse : it_matches_simple_inherent, Implementation <Infallible, Type<Infallible>, Infallible, Ident>:
+        parse print : it_matches_simple_inherent, Implementation <P<Infallible>, Type<P<Infallible>>, P<Infallible>, Ident>:
 
         impl<T> Option<T> {
             pub fn is_some(&self) -> bool;
         }
     );
     insta_match_test!(
-        parse : it_matches_simple_trait, Implementation <Infallible, TypePath<Ident>, Infallible, Ident>:
+        parse print : it_matches_simple_trait, Implementation <P<Infallible>, TypePath<Ident>, P<Infallible>, Ident>:
 
         unsafe impl<T: Copy> Copy for Option<T> {}
     );

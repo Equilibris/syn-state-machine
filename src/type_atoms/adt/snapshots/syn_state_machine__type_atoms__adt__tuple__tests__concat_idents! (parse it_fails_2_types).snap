@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/adt/tuple.rs
-expression: "crate::parse::<(Ident, Ident)>(q.clone())"
+expression: "crate::parse::<P<(Ident, Ident)>>(q.clone())"
 ---
 Err(
     Error(

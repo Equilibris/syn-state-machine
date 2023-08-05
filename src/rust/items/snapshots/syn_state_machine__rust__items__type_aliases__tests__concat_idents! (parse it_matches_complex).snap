@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/type_aliases.rs
-expression: "crate::parse::<TypeAlias<Infallible, Type<Infallible>>>(q.clone())"
+expression: "crate::parse::<TypeAlias<P<Infallible>, Type<P<Infallible>>>>(q.clone())"
 ---
 Ok(
     TypeAlias {

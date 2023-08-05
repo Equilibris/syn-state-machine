@@ -23,4 +23,5 @@ quote       = { version = "1",   optional = true }
 [dev-dependencies]
 insta = "1"
 quote = "1"
+similar-asserts = "1"
 

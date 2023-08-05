@@ -184,6 +184,6 @@ mod tests {
         > : ....
     );
 
-    insta_match_test!(peek parse : it_matches_sum_2_0, Sum2<Ident, Punct> : hello);
-    insta_match_test!(peek parse : it_matches_sum_2_1, Sum2<Ident, Punct> : <);
+    insta_match_test!(peek parse print : it_matches_sum_2_0, Sum2<Ident, Punct> : hello);
+    insta_match_test!(peek parse print : it_matches_sum_2_1, Sum2<Ident, Punct> : <);
 }

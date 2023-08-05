@@ -1,10 +1,12 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::parse::<Bracket<()>>(q.clone())"
+expression: "crate::parse::<Bracket<P<()>>>(q.clone())"
 ---
 Ok(
     Bracket(
-        (),
+        P(
+            (),
+        ),
         Span,
     ),
 )

@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/adt/tuple.rs
-expression: "crate::test_peek::<(Option<Ident>, Option<Punct>)>(q.clone())"
+expression: "crate::test_peek::<P<(P<Option<Ident>>, P<Option<Punct>>)>>(q.clone())"
 ---
 Some(
     1,

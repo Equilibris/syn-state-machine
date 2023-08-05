@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/functions.rs
-expression: "crate::parse::<SelfParam<Infallible, Infallible>>(q.clone())"
+expression: "crate::parse::<SelfParam<P<Infallible>, P<Infallible>>>(q.clone())"
 ---
 Ok(
     Shorthand(

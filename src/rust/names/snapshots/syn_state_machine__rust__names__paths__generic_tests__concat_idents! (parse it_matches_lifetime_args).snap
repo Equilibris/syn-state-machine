@@ -1,6 +1,6 @@
 ---
 source: src/rust/names/paths.rs
-expression: "crate::parse::<GenericArgs<Infallible>>(q.clone())"
+expression: "crate::parse::<GenericArgs<P<Infallible>>>(q.clone())"
 ---
 Ok(
     GenericArgs {

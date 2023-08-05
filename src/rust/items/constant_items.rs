@@ -38,5 +38,5 @@ to_tokens! {
 mod tests {
     use crate::*;
 
-    insta_match_test!(parse : it_matches_const_item, ConstantItem<Ident, Infallible> : const HELLO: usize;);
+    insta_match_test!(parse print : it_matches_const_item, ConstantItem<Ident, P<Infallible>> : const HELLO: usize;);
 }

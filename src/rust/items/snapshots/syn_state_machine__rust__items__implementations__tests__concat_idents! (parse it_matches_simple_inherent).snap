@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/implementations.rs
-expression: "crate::parse::<Implementation<Infallible, Type<Infallible>, Infallible,\n        Ident>>(q.clone())"
+expression: "crate::parse::<Implementation<P<Infallible>, Type<P<Infallible>>,\n        P<Infallible>, Ident>>(q.clone())"
 ---
 Ok(
     Inherent(
@@ -70,100 +70,102 @@ Ok(
                 ),
             ),
             where_clause: None,
-            items: P2(
-                Rep(
-                    [],
-                ),
-                Rep(
-                    [
-                        Function(
-                            Rep(
-                                [],
-                            ),
-                            Some(
-                                Pub,
-                            ),
-                            Function {
-                                qualifiers: FunctionQualifiers {
-                                    const: false,
-                                    async: false,
-                                    unsafe: false,
-                                    extern_abi: None,
-                                },
-                                id: Ident(
-                                    is_some,
+            items: P(
+                (
+                    Rep(
+                        [],
+                    ),
+                    Rep(
+                        [
+                            Function(
+                                Rep(
+                                    [],
                                 ),
-                                generic_parameters: None,
-                                params: Paren(
-                                    FunctionParameters {
-                                        self_param: None,
-                                        params: Interlace {
-                                            values: [
-                                                Ty(
-                                                    Rep(
-                                                        [],
-                                                    ),
-                                                    NoBounds(
-                                                        ReferenceType(
-                                                            ReferenceType {
-                                                                lt: None,
-                                                                mut: false,
-                                                                ty: NoBounds(
-                                                                    TypePath(
-                                                                        HigherOrderPath {
-                                                                            leading: false,
-                                                                            segments: Interlace {
-                                                                                values: [
-                                                                                    Bare(
-                                                                                        Id(
-                                                                                            Ident(
-                                                                                                self,
+                                Some(
+                                    Pub,
+                                ),
+                                Function {
+                                    qualifiers: FunctionQualifiers {
+                                        const: false,
+                                        async: false,
+                                        unsafe: false,
+                                        extern_abi: None,
+                                    },
+                                    id: Ident(
+                                        is_some,
+                                    ),
+                                    generic_parameters: None,
+                                    params: Paren(
+                                        FunctionParameters {
+                                            self_param: None,
+                                            params: Interlace {
+                                                values: [
+                                                    Ty(
+                                                        Rep(
+                                                            [],
+                                                        ),
+                                                        NoBounds(
+                                                            ReferenceType(
+                                                                ReferenceType {
+                                                                    lt: None,
+                                                                    mut: false,
+                                                                    ty: NoBounds(
+                                                                        TypePath(
+                                                                            HigherOrderPath {
+                                                                                leading: false,
+                                                                                segments: Interlace {
+                                                                                    values: [
+                                                                                        Bare(
+                                                                                            Id(
+                                                                                                Ident(
+                                                                                                    self,
+                                                                                                ),
                                                                                             ),
                                                                                         ),
-                                                                                    ),
-                                                                                ],
+                                                                                    ],
+                                                                                },
                                                                             },
-                                                                        },
+                                                                        ),
                                                                     ),
-                                                                ),
-                                                            },
-                                                        ),
-                                                    ),
-                                                ),
-                                            ],
-                                        },
-                                    },
-                                    Span,
-                                ),
-                                ret: Some(
-                                    NoBounds(
-                                        TypePath(
-                                            HigherOrderPath {
-                                                leading: false,
-                                                segments: Interlace {
-                                                    values: [
-                                                        Bare(
-                                                            Id(
-                                                                Ident(
-                                                                    bool,
-                                                                ),
+                                                                },
                                                             ),
                                                         ),
-                                                    ],
-                                                },
+                                                    ),
+                                                ],
                                             },
-                                        ),
-                                    ),
-                                ),
-                                where_clause: None,
-                                content: V0(
-                                    FPunct(
+                                        },
                                         Span,
                                     ),
-                                ),
-                            },
-                        ),
-                    ],
+                                    ret: Some(
+                                        NoBounds(
+                                            TypePath(
+                                                HigherOrderPath {
+                                                    leading: false,
+                                                    segments: Interlace {
+                                                        values: [
+                                                            Bare(
+                                                                Id(
+                                                                    Ident(
+                                                                        bool,
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ],
+                                                    },
+                                                },
+                                            ),
+                                        ),
+                                    ),
+                                    where_clause: None,
+                                    content: V0(
+                                        FPunct(
+                                            Span,
+                                        ),
+                                    ),
+                                },
+                            ),
+                        ],
+                    ),
                 ),
             ),
         },

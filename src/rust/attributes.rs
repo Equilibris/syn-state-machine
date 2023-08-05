@@ -67,12 +67,12 @@ to_tokens! {
     }
 }
 
-pub type WithOuterAttrs<Attr, Ty> = P2<Rep<OuterAttribute<Attr>>, Ty>;
-pub type WithInnerAttrs<Attr, Ty> = P2<Rep<InnerAttribute<Attr>>, Ty>;
+pub type WithOuterAttrs<Attr, Ty> = P<(Rep<OuterAttribute<Attr>>, Ty)>;
+pub type WithInnerAttrs<Attr, Ty> = P<(Rep<InnerAttribute<Attr>>, Ty)>;
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    insta_match_test!(parse : it_matches_simple_function, OuterAttribute<(Ident, Paren<Ident>)>: #[hello(world)]);
+    insta_match_test!(parse print : it_matches_simple_function, OuterAttribute<P<(Ident, Paren<Ident>)>>: #[hello(world)]);
 }

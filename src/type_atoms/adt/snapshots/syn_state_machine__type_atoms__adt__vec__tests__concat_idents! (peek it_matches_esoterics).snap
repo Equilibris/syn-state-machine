@@ -1,6 +1,6 @@
 ---
 source: src/type_atoms/adt/vec.rs
-expression: "crate::test_peek::<Rep<(Ident, Option<(Two, Ident)>, Two)>>(q.clone())"
+expression: "crate::test_peek::<Rep<P<(Ident, P<Option<P<(Two, Ident)>>>,\n        Two)>>>(q.clone())"
 ---
 Some(
     15,

@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/associated_items.rs
-expression: "crate::parse::<AssociateItem<Infallible, Ident, Infallible, Ident>>(q.clone())"
+expression: "crate::parse::<AssociateItem<P<Infallible>, Ident, P<Infallible>,\n        Ident>>(q.clone())"
 ---
 Ok(
     Function(

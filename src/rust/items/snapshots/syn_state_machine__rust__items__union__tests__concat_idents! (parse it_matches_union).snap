@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/union.rs
-expression: "crate::parse::<Union<Infallible, Ident>>(q.clone())"
+expression: "crate::parse::<Union<P<Infallible>, Ident>>(q.clone())"
 ---
 Ok(
     Union {

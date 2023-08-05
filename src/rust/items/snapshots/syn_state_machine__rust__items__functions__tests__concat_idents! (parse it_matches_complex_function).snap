@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/functions.rs
-expression: "crate::parse::<Function<Infallible, Ident, Infallible, Ident>>(q.clone())"
+expression: "crate::parse::<Function<P<Infallible>, Ident, P<Infallible>,\n        Ident>>(q.clone())"
 ---
 Ok(
     Function {

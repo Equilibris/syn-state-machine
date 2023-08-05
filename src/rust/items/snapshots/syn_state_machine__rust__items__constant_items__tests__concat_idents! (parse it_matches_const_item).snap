@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/constant_items.rs
-expression: "crate::parse::<ConstantItem<Ident, Infallible>>(q.clone())"
+expression: "crate::parse::<ConstantItem<Ident, P<Infallible>>>(q.clone())"
 ---
 Ok(
     ConstantItem {

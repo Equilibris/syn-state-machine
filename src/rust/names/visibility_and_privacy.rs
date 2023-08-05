@@ -17,7 +17,7 @@ materialize! {
 #[cfg(feature = "printing")]
 to_tokens! {
     #[cfg(feature = "printing")]
-    impl ToTokens for enum Visibility {
+    impl ToTokens for enum Visibility [ <- KwPub ] {
         Crate(<- Paren<KwCrate>),
         LSelf(<- Paren<KwLowerSelf>),
         Super(<- Paren<KwSuper>),
@@ -39,8 +39,8 @@ to_tokens! {
 mod tests {
     use crate::*;
 
-    insta_match_test!(parse : it_matches_crate, Visibility : pub(crate));
-    insta_match_test!(parse : it_matches_lself, Visibility : pub(self));
-    insta_match_test!(parse : it_matches_super, Visibility : pub(super));
-    insta_match_test!(parse : it_matches_in,    Visibility : pub(in super::super));
+    insta_match_test!(parse print : it_matches_crate, Visibility : pub(crate));
+    insta_match_test!(parse print : it_matches_lself, Visibility : pub(self));
+    insta_match_test!(parse print : it_matches_super, Visibility : pub(super));
+    insta_match_test!(parse print : it_matches_in,    Visibility : pub(in super::super));
 }

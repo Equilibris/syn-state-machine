@@ -1,14 +1,16 @@
 ---
 source: src/rust/atoms/proc_macro_items.rs
-expression: "crate::parse::<(FJointPunct<'<'>, FAlonePunct<'='>)>(q.clone())"
+expression: "crate::parse::<P<(FJointPunct<'<'>, FAlonePunct<'='>)>>(q.clone())"
 ---
 Ok(
-    (
-        FJointPunct(
-            Span,
-        ),
-        FAlonePunct(
-            Span,
+    P(
+        (
+            FJointPunct(
+                Span,
+            ),
+            FAlonePunct(
+                Span,
+            ),
         ),
     ),
 )

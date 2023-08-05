@@ -1,6 +1,6 @@
 ---
 source: src/rust/type_system/trait_and_lifetime_bounds.rs
-expression: "crate::parse::<TypeParamBound<Infallible, SimplePath>>(q.clone())"
+expression: "crate::parse::<TypeParamBound<P<Infallible>, SimplePath>>(q.clone())"
 ---
 Ok(
     Lt(

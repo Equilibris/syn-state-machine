@@ -1,6 +1,6 @@
 ---
 source: src/rust/items/generic_parameters.rs
-expression: "crate::parse::<WhereClause<Infallible, Ident>>(q.clone())"
+expression: "crate::parse::<WhereClause<P<Infallible>, Ident>>(q.clone())"
 ---
 Ok(
     WhereClause {

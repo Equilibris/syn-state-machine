@@ -24,6 +24,6 @@ to_tokens! {
 mod tests {
     use crate::*;
 
-    insta_match_test!(parse : it_matches_type_alias, AssociateItem<Infallible, Type<Infallible>, Infallible, Infallible>: type Point<T> where T: std::ops::Add<T> = (T, T););
-    insta_match_test!(parse : it_matches_function,   AssociateItem<Infallible, Ident, Infallible, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
+    insta_match_test!(parse print : it_matches_type_alias, AssociateItem<P<Infallible>, Type<P<Infallible>>, P<Infallible>, P<Infallible>>: type Point<T> where T: std::ops::Add<T> = (T, T););
+    insta_match_test!(parse print : it_matches_function,   AssociateItem<P<Infallible>, Ident, P<Infallible>, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
 }
