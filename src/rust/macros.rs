@@ -1,3 +1,6 @@
+mod macros_by_example;
+pub use macros_by_example::*;
+
 use crate::*;
 #[cfg(feature = "printing")]
 use quote::TokenStreamExt;
@@ -20,39 +23,7 @@ to_tokens! {
     }
 }
 
-materialize! {
-    on <'a> [crate::RustCursor<'a>]
-    #[derive(Debug)]
-    pub struct DelimTokenTree {
-        stream <- TokenStream : Sum3<Paren<_>,Brace<_>,Bracket<_>> {
-            match stream {
-                Sum3::V0(a) => a.0,
-                Sum3::V1(a) => a.0,
-                Sum3::V2(a) => a.0
-            }
-        }
-    }
-}
-#[cfg(feature = "printing")]
-to_tokens! {
-    impl ToTokens for struct DelimTokenTree {
-        stream <- tokens into {
-            tokens.append(
-                proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Brace,
-                    stream
-                )
-            );
-        } to {
-            tokens.append(
-                proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Brace,
-                    stream.clone()
-                )
-            );
-        }
-    }
-}
+pub type DelimTokenTree = AnyGroup<TokenStream>;
 
 type MacroInvocationContent = Sum3<
     (Paren<TokenStream>, PeekAsParse<Semi>),
@@ -80,9 +51,19 @@ to_tokens! {
         path <- SimplePath;
         <- Not;
         stream <- tokens into {
-            tokens.append(proc_macro2::Group::new(proc_macro2::Delimiter::Brace, stream));
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Brace,
+                    stream
+                )
+            );
         } to {
-            tokens.append(proc_macro2::Group::new(proc_macro2::Delimiter::Brace, stream.clone()));
+            tokens.append(
+                proc_macro2::Group::new(
+                    proc_macro2::Delimiter::Brace,
+                    stream.clone()
+                )
+            );
         }
     }
 }

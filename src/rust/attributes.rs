@@ -24,13 +24,10 @@ to_tokens! {
                 )
             )
         } to {
-            let mut inner = proc_macro2::TokenStream::new();
-            content.to_tokens(&mut inner);
-
             tokens.append(
                 proc_macro2::Group::new(
                     proc_macro2::Delimiter::Bracket,
-                    inner
+                    content.to_token_stream()
                 )
             )
         }

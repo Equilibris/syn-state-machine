@@ -248,6 +248,87 @@ impl<const VAL: char> Default for FAlonePunct<VAL> {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct AnyGroup<T> {
+    pub inner: T,
+    pub spans: DelimSpan,
+    pub delim: proc_macro2::Delimiter,
+}
+impl<'a, T: Parse<RustCursor<'a>, ()>> Parse<RustCursor<'a>, ()> for AnyGroup<T> {
+    type Finalizer = BlackHoleFinalizer<Self>;
+
+    fn parse(input: &mut ParseBuffer<RustCursor<'a>>) -> Result<Self::Finalizer, Error> {
+        let cursor = input.cursor;
+
+        match cursor.any_group() {
+            Some((inner, delim, spans, after)) => {
+                let mut pb = ParseBuffer::from(inner);
+                let inner = pb.parse()?;
+
+                let cur = pb.cursor;
+
+                if cur.eof() {
+                    *input = after.into();
+                    Ok(BlackHoleFinalizer(Self {
+                        inner,
+                        spans,
+                        delim,
+                    }))
+                } else {
+                    Err(Error::new(
+                        cur.span().join(cur.skip_to_end().prev().span()).unwrap(),
+                        "Expected nothing",
+                    ))
+                }
+            }
+            None => Err(Error::new(
+                cursor.span(),
+                "Expected one of [...], (...) or {...}",
+            )),
+        }
+    }
+}
+impl<'a, T: Peek<RustCursor<'a>>> Peek<RustCursor<'a>> for AnyGroup<T> {
+    fn peek(input: &RustCursor<'a>) -> Option<usize> {
+        input
+            .any_group()
+            .and_then(|(inner, _, _, aft)| T::peek(&inner).map(|v| (inner.skip(v).eof(), aft)))
+            .filter(|(a, _)| *a)
+            .map(|(_, b)| b.current - input.current)
+    }
+}
+impl<T: FixedPeek> FixedPeek for AnyGroup<T> {
+    const SKIP: usize = T::SKIP + 2;
+}
+impl<'a, T: PeekError<RustCursor<'a>>> PeekError<RustCursor<'a>> for AnyGroup<T> {
+    fn error(cursor: &RustCursor<'a>) -> Error {
+        match cursor.any_group() {
+            Some((inner, _, _, _)) => T::error(&inner),
+            None => Error::new(cursor.span(), "Expected one of [...], (...) or {...}"),
+        }
+    }
+}
+#[cfg(feature = "printing")]
+impl<T: quote::ToTokens> quote::ToTokens for AnyGroup<T> {
+    fn into_token_stream(self) -> TokenStream {
+        let mut ts = TokenStream::new();
+
+        ts.append(proc_macro2::Group::new(
+            self.delim,
+            self.inner.into_token_stream(),
+        ));
+
+        ts
+    }
+
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.append(proc_macro2::Group::new(
+            self.delim,
+            self.inner.to_token_stream(),
+        ))
+    }
+}
+
 macro_rules! grouped {
     ($ty:ident $del:ident $emsg:literal) => {
         #[derive(Debug, Clone)]

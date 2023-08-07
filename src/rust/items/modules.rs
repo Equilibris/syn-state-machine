@@ -7,20 +7,20 @@ use crate::{rust::attributes::InnerAttribute, *};
 materialize! {
     on <'a> [crate::RustCursor<'a>]
     #[derive(Debug)]
-    pub enum Module<InnerAttr, Item> [
+    pub enum Module<Attr, Item> [
         r#unsafe peek <- KwUnsafe;
         <- KwMod;
         id <- Ident : Identifier { id.0 };
     ] {
         Sourced(<- Semi;),
         Inline(
-            content <- P<(Rep<InnerAttribute<InnerAttr>>, Rep<Item>)> : Brace<_> { content.0 };
+            content <- P<(Rep<InnerAttribute<Attr>>, Rep<Item>)> : Brace<_> { content.0 };
         )
     }
 }
 #[cfg(feature = "printing")]
 to_tokens! {
-    impl ToTokens for enum Module<InnerAttr, Item> [
+    impl ToTokens for enum Module<Attr, Item> [
         r#unsafe peek <- KwUnsafe;
         <- KwMod;
         id <- Ident
