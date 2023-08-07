@@ -1,0 +1,50 @@
+---
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
+---
+Ok(
+    NoBounds(
+        TypePath(
+            HigherOrderPath {
+                leading: false,
+                segments: Interlace {
+                    values: [
+                        Generic(
+                            Id(
+                                Ident(
+                                    Option,
+                                ),
+                            ),
+                            GenericArgs {
+                                args: Interlace {
+                                    values: [
+                                        Ty(
+                                            NoBounds(
+                                                TypePath(
+                                                    HigherOrderPath {
+                                                        leading: false,
+                                                        segments: Interlace {
+                                                            values: [
+                                                                Bare(
+                                                                    Id(
+                                                                        Ident(
+                                                                            i32,
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            ],
+                                                        },
+                                                    },
+                                                ),
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+    ),
+)

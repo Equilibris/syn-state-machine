@@ -71,7 +71,7 @@ mod tests {
         fn with_name(format: *const u8);
     );
 
-    insta_match_test!(parse print : it_matches_simple_extern_block, ExternBlock<P<Infallible>, Type<P<Infallible>>, P<Infallible>, Ident>:
+    insta_match_test!(parse : it_matches_simple_extern_block, ExternBlock<P<Infallible>, Type<P<Infallible>>, P<Infallible>, Ident>:
         extern "C" {
             fn with_name(format: *const u8);
         }

@@ -1,23 +1,25 @@
 ---
-source: src/rust/items/type_aliases.rs
-expression: "crate::parse::<TypeAlias<P<Infallible>, Type<P<Infallible>>>>(q.clone())"
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
 ---
 Ok(
-    TypeAlias {
-        id: Ident(
-            Point,
-        ),
-        generic_parameters: None,
-        bounds: None,
-        where_clause: None,
-        eq: Some(
-            (
-                NoBounds(
-                    TupleType(
-                        TupleType {
-                            elements: Interlace {
-                                values: [
-                                    NoBounds(
+    NoBounds(
+        TupleType(
+            TupleType {
+                elements: Interlace {
+                    values: [
+                        NoBounds(
+                            ReferenceType(
+                                ReferenceType {
+                                    lt: Some(
+                                        LifetimeToken {
+                                            ident: Ident(
+                                                a,
+                                            ),
+                                        },
+                                    ),
+                                    mut: false,
+                                    ty: NoBounds(
                                         TypePath(
                                             HigherOrderPath {
                                                 leading: false,
@@ -26,7 +28,7 @@ Ok(
                                                         Bare(
                                                             Id(
                                                                 Ident(
-                                                                    u8,
+                                                                    str,
                                                                 ),
                                                             ),
                                                         ),
@@ -35,7 +37,21 @@ Ok(
                                             },
                                         ),
                                     ),
-                                    NoBounds(
+                                },
+                            ),
+                        ),
+                        NoBounds(
+                            ReferenceType(
+                                ReferenceType {
+                                    lt: Some(
+                                        LifetimeToken {
+                                            ident: Ident(
+                                                a,
+                                            ),
+                                        },
+                                    ),
+                                    mut: false,
+                                    ty: NoBounds(
                                         TypePath(
                                             HigherOrderPath {
                                                 leading: false,
@@ -44,7 +60,7 @@ Ok(
                                                         Bare(
                                                             Id(
                                                                 Ident(
-                                                                    u8,
+                                                                    str,
                                                                 ),
                                                             ),
                                                         ),
@@ -53,13 +69,12 @@ Ok(
                                             },
                                         ),
                                     ),
-                                ],
-                            },
-                        },
-                    ),
-                ),
-                None,
-            ),
+                                },
+                            ),
+                        ),
+                    ],
+                },
+            },
         ),
-    },
+    ),
 )

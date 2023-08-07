@@ -1,0 +1,15 @@
+---
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
+---
+Ok(
+    NoBounds(
+        TupleType(
+            TupleType {
+                elements: Interlace {
+                    values: [],
+                },
+            },
+        ),
+    ),
+)

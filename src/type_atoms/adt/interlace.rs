@@ -155,7 +155,7 @@ impl<A: std::fmt::Debug, B> std::fmt::Debug for InterlaceTrail<A, B> {
 }
 
 impl<A, B> InterlaceTrail<A, B> {
-    fn new(values: Vec<A>) -> Self {
+    pub fn new(values: Vec<A>) -> Self {
         Self {
             values,
             phantom: Default::default(),

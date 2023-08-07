@@ -1,0 +1,65 @@
+---
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
+---
+Ok(
+    NoBounds(
+        BareFunctionType(
+            BareFunctionType {
+                for_lifetimes: None,
+                qualifiers: FunctionTypeQualifiers {
+                    unsafe: false,
+                    extern: None,
+                },
+                params: Variadic(
+                    Interlace {
+                        values: [
+                            MaybeNamedParam {
+                                attrs: Rep(
+                                    [],
+                                ),
+                                id: None,
+                                ty: TypePath(
+                                    HigherOrderPath {
+                                        leading: false,
+                                        segments: Interlace {
+                                            values: [
+                                                Bare(
+                                                    Id(
+                                                        Ident(
+                                                            i32,
+                                                        ),
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    },
+                                ),
+                            },
+                        ],
+                    },
+                ),
+                ret: Some(
+                    FunctionReturnType {
+                        ty: TypePath(
+                            HigherOrderPath {
+                                leading: false,
+                                segments: Interlace {
+                                    values: [
+                                        Bare(
+                                            Id(
+                                                Ident(
+                                                    i32,
+                                                ),
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                    },
+                ),
+            },
+        ),
+    ),
+)

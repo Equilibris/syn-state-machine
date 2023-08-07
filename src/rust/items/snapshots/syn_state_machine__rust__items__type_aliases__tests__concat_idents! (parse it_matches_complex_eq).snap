@@ -131,8 +131,8 @@ Ok(
             (
                 NoBounds(
                     TupleType(
-                        Paren(
-                            Interlace {
+                        TupleType {
+                            elements: Interlace {
                                 values: [
                                     NoBounds(
                                         TypePath(
@@ -172,8 +172,7 @@ Ok(
                                     ),
                                 ],
                             },
-                            Span,
-                        ),
+                        },
                     ),
                 ),
                 None,

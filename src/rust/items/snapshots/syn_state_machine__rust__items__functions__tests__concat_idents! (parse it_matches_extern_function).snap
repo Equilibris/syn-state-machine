@@ -1,0 +1,43 @@
+---
+source: src/rust/items/functions.rs
+expression: "crate::parse::<Function<P<Infallible>, P<Infallible>, P<Infallible>,\n        P<Infallible>>>(q.clone())"
+---
+Ok(
+    Function {
+        qualifiers: FunctionQualifiers {
+            const: false,
+            async: false,
+            unsafe: false,
+            extern_abi: Some(
+                Some(
+                    StringLit {
+                        raw: "\"C\"",
+                        value: None,
+                        num_hashes: None,
+                        start_suffix: 3,
+                    },
+                ),
+            ),
+        },
+        id: Ident(
+            extern_func,
+        ),
+        generic_parameters: None,
+        params: Paren(
+            FunctionParameters {
+                self_param: None,
+                params: Interlace {
+                    values: [],
+                },
+            },
+            Span,
+        ),
+        ret: None,
+        where_clause: None,
+        content: V0(
+            FPunct(
+                Span,
+            ),
+        ),
+    },
+)

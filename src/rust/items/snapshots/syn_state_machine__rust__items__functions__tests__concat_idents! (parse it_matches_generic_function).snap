@@ -1,0 +1,92 @@
+---
+source: src/rust/items/functions.rs
+expression: "crate::parse::<Function<P<Infallible>, Ident, P<Infallible>,\n        Ident>>(q.clone())"
+---
+Ok(
+    Function {
+        qualifiers: FunctionQualifiers {
+            const: false,
+            async: false,
+            unsafe: false,
+            extern_abi: None,
+        },
+        id: Ident(
+            generic,
+        ),
+        generic_parameters: Some(
+            GenericParams {
+                params: Interlace {
+                    values: [
+                        Ty(
+                            Rep(
+                                [],
+                            ),
+                            TypeParam {
+                                id: Ident(
+                                    T,
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                        Ty(
+                            Rep(
+                                [],
+                            ),
+                            TypeParam {
+                                id: Ident(
+                                    U,
+                                ),
+                                bound: None,
+                                ty: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        params: Paren(
+            FunctionParameters {
+                self_param: Some(
+                    Shorthand(
+                        Rep(
+                            [],
+                        ),
+                        ShorthandSelf {
+                            reference: None,
+                        },
+                    ),
+                ),
+                params: Interlace {
+                    values: [
+                        FunctionParamPattern(
+                            Rep(
+                                [],
+                            ),
+                            Ty(
+                                Ident(
+                                    v,
+                                ),
+                                Ident(
+                                    i64,
+                                ),
+                            ),
+                        ),
+                    ],
+                },
+            },
+            Span,
+        ),
+        ret: Some(
+            Ident(
+                U,
+            ),
+        ),
+        where_clause: None,
+        content: V0(
+            FPunct(
+                Span,
+            ),
+        ),
+    },
+)

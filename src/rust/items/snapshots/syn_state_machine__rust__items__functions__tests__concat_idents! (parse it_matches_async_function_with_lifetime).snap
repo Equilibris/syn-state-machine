@@ -1,0 +1,120 @@
+---
+source: src/rust/items/functions.rs
+expression: "crate::parse::<Function<P<Infallible>, Ident, P<Infallible>,\n        Ident>>(q.clone())"
+---
+Ok(
+    Function {
+        qualifiers: FunctionQualifiers {
+            const: false,
+            async: true,
+            unsafe: false,
+            extern_abi: None,
+        },
+        id: Ident(
+            complex,
+        ),
+        generic_parameters: Some(
+            GenericParams {
+                params: Interlace {
+                    values: [
+                        Lt(
+                            Rep(
+                                [],
+                            ),
+                            LifetimeParam {
+                                lt: LifetimeOrLabel {
+                                    ident: Ident(
+                                        a,
+                                    ),
+                                },
+                                bound: None,
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        params: Paren(
+            FunctionParameters {
+                self_param: Some(
+                    Shorthand(
+                        Rep(
+                            [],
+                        ),
+                        ShorthandSelf {
+                            reference: None,
+                        },
+                    ),
+                ),
+                params: Interlace {
+                    values: [
+                        FunctionParamPattern(
+                            Rep(
+                                [],
+                            ),
+                            Ty(
+                                Ident(
+                                    v,
+                                ),
+                                Ident(
+                                    i64,
+                                ),
+                            ),
+                        ),
+                    ],
+                },
+            },
+            Span,
+        ),
+        ret: None,
+        where_clause: Some(
+            WhereClause {
+                content: Interlace {
+                    values: [
+                        Ty(
+                            TypeBoundWhereClauseItem {
+                                for_lts: None,
+                                ty: Ident(
+                                    Ty,
+                                ),
+                                bound: Some(
+                                    MinLength(
+                                        Interlace {
+                                            values: [
+                                                Tr(
+                                                    TraitBound {
+                                                        q: false,
+                                                        for_lts: None,
+                                                        path: HigherOrderPath {
+                                                            leading: false,
+                                                            segments: Interlace {
+                                                                values: [
+                                                                    Bare(
+                                                                        Id(
+                                                                            Ident(
+                                                                                Debug,
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ],
+                                                            },
+                                                        },
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                ),
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        content: V0(
+            FPunct(
+                Span,
+            ),
+        ),
+    },
+)

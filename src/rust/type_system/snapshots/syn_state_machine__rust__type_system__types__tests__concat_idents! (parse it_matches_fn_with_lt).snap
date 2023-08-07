@@ -1,0 +1,115 @@
+---
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
+---
+Ok(
+    NoBounds(
+        BareFunctionType(
+            BareFunctionType {
+                for_lifetimes: Some(
+                    ForLifetimes {
+                        args: GenericParams {
+                            params: Interlace {
+                                values: [
+                                    Lt(
+                                        Rep(
+                                            [],
+                                        ),
+                                        LifetimeParam {
+                                            lt: LifetimeOrLabel {
+                                                ident: Ident(
+                                                    a,
+                                                ),
+                                            },
+                                            bound: None,
+                                        },
+                                    ),
+                                ],
+                            },
+                        },
+                    },
+                ),
+                qualifiers: FunctionTypeQualifiers {
+                    unsafe: false,
+                    extern: None,
+                },
+                params: Variadic(
+                    Interlace {
+                        values: [
+                            MaybeNamedParam {
+                                attrs: Rep(
+                                    [],
+                                ),
+                                id: None,
+                                ty: ReferenceType(
+                                    ReferenceType {
+                                        lt: Some(
+                                            LifetimeToken {
+                                                ident: Ident(
+                                                    a,
+                                                ),
+                                            },
+                                        ),
+                                        mut: false,
+                                        ty: NoBounds(
+                                            TypePath(
+                                                HigherOrderPath {
+                                                    leading: false,
+                                                    segments: Interlace {
+                                                        values: [
+                                                            Bare(
+                                                                Id(
+                                                                    Ident(
+                                                                        str,
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ],
+                                                    },
+                                                },
+                                            ),
+                                        ),
+                                    },
+                                ),
+                            },
+                        ],
+                    },
+                ),
+                ret: Some(
+                    FunctionReturnType {
+                        ty: ReferenceType(
+                            ReferenceType {
+                                lt: Some(
+                                    LifetimeToken {
+                                        ident: Ident(
+                                            a,
+                                        ),
+                                    },
+                                ),
+                                mut: false,
+                                ty: NoBounds(
+                                    TypePath(
+                                        HigherOrderPath {
+                                            leading: false,
+                                            segments: Interlace {
+                                                values: [
+                                                    Bare(
+                                                        Id(
+                                                            Ident(
+                                                                str,
+                                                            ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            },
+                                        },
+                                    ),
+                                ),
+                            },
+                        ),
+                    },
+                ),
+            },
+        ),
+    ),
+)

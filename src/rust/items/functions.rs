@@ -245,8 +245,46 @@ pub type Abi = StringLit;
 mod tests {
     use super::*;
 
-    insta_match_test!(parse print : it_matches_shorthand_self, SelfParam<P<Infallible>, P<Infallible>>: self);
-    insta_match_test!(parse print : it_matches_typed_self,     SelfParam<P<Infallible>, TypePath<Ident>>: mut self: Box<Self>);
+    insta_match_test!(
+        parse print : it_matches_typed_self_ref, SelfParam<P<Infallible>, Type<P<Infallible>>> :
+        self: &mut Self
+    );
+    insta_match_test!(
+        parse print : it_matches_shorthand_self, SelfParam<P<Infallible>, P<Infallible>> :
+        self
+    );
+    insta_match_test!(
+        parse print : it_matches_typed_self, SelfParam<P<Infallible>, TypePath<Ident>> :
+        mut self: Box<Self>
+    );
+    insta_match_test!(
+        parse print : it_matches_complex_function, Function<P<Infallible>, Ident, P<Infallible>, Ident> :
+        const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;
+    );
 
-    insta_match_test!(parse print : it_matches_complex_function, Function<P<Infallible>, Ident, P<Infallible>, Ident>: const async unsafe extern "C" fn hello<T>(self, v: i64) -> T;);
+    insta_match_test!(
+        parse print : it_matches_simple_function, Function<P<Infallible>, P<Infallible>, P<Infallible>, P<Infallible>> :
+        fn simple();
+    );
+    insta_match_test!(
+        parse print : it_matches_async_function_with_lifetime, Function<P<Infallible>, Ident, P<Infallible>, Ident> :
+        async fn complex<'a>(self, v: i64) where Ty: Debug;
+    );
+    insta_match_test!(
+        parse print : it_matches_generic_function, Function<P<Infallible>, Ident, P<Infallible>, Ident> :
+        fn generic<T, U>(self, v: i64) -> U;
+    );
+    // TODO
+    // insta_match_test!(
+    //     parse print : it_matches_mut_self_and_return_type, Function<P<Infallible>, Type<P<Infallible>>, P<Infallible>, Ident> :
+    //     fn complex(self: &mut Self) -> Result<i32, Error>;
+    // );
+    // insta_match_test!(
+    //     parse print : it_matches_shorthand_self_fn, Function<P<Infallible>, Ident, P<Infallible>, P<Infallible>> :
+    //     fn shorthand(&self) -> i32;
+    // );
+    insta_match_test!(
+        parse print : it_matches_extern_function, Function<P<Infallible>, P<Infallible>, P<Infallible>, P<Infallible>> :
+        extern "C" fn extern_func();
+    );
 }

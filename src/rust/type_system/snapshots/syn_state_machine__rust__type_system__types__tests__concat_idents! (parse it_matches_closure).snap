@@ -1,0 +1,91 @@
+---
+source: src/rust/type_system/types.rs
+expression: "crate::parse::<Type<P<Infallible>>>(q.clone())"
+---
+Ok(
+    NoBounds(
+        ReferenceType(
+            ReferenceType {
+                lt: None,
+                mut: false,
+                ty: TraitObject(
+                    TraitObjectType {
+                        bounds: MinLength(
+                            Interlace {
+                                values: [
+                                    Tr(
+                                        TraitBound {
+                                            q: false,
+                                            for_lts: None,
+                                            path: HigherOrderPath {
+                                                leading: false,
+                                                segments: Interlace {
+                                                    values: [
+                                                        Fn(
+                                                            Id(
+                                                                Ident(
+                                                                    Fn,
+                                                                ),
+                                                            ),
+                                                            TypePathFn {
+                                                                args: Paren(
+                                                                    Interlace {
+                                                                        values: [
+                                                                            NoBounds(
+                                                                                TypePath(
+                                                                                    HigherOrderPath {
+                                                                                        leading: false,
+                                                                                        segments: Interlace {
+                                                                                            values: [
+                                                                                                Bare(
+                                                                                                    Id(
+                                                                                                        Ident(
+                                                                                                            i32,
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                ),
+                                                                            ),
+                                                                        ],
+                                                                    },
+                                                                    Span,
+                                                                ),
+                                                                returns: Some(
+                                                                    NoBounds(
+                                                                        TypePath(
+                                                                            HigherOrderPath {
+                                                                                leading: false,
+                                                                                segments: Interlace {
+                                                                                    values: [
+                                                                                        Bare(
+                                                                                            Id(
+                                                                                                Ident(
+                                                                                                    i32,
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                    ],
+                                                                                },
+                                                                            },
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            },
+                                                        ),
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                    ),
+                                ],
+                            },
+                        ),
+                    },
+                ),
+            },
+        ),
+    ),
+)

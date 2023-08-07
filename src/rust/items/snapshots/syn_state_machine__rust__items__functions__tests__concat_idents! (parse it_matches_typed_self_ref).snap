@@ -1,0 +1,40 @@
+---
+source: src/rust/items/functions.rs
+expression: "crate::parse::<SelfParam<P<Infallible>, Type<P<Infallible>>>>(q.clone())"
+---
+Ok(
+    Typed(
+        Rep(
+            [],
+        ),
+        TypedSelf {
+            mutable: false,
+            ty: NoBounds(
+                ReferenceType(
+                    ReferenceType {
+                        lt: None,
+                        mut: true,
+                        ty: NoBounds(
+                            TypePath(
+                                HigherOrderPath {
+                                    leading: false,
+                                    segments: Interlace {
+                                        values: [
+                                            Bare(
+                                                Id(
+                                                    Ident(
+                                                        Self,
+                                                    ),
+                                                ),
+                                            ),
+                                        ],
+                                    },
+                                },
+                            ),
+                        ),
+                    },
+                ),
+            ),
+        },
+    ),
+)
