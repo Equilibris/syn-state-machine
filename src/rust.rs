@@ -16,6 +16,8 @@ mod names;
 #[cfg(feature = "rust")]
 mod patterns;
 #[cfg(feature = "rust")]
+mod stmt_and_expr;
+#[cfg(feature = "rust")]
 mod type_system;
 
 #[cfg(feature = "rust")]
@@ -30,6 +32,8 @@ pub use macros::*;
 pub use names::*;
 #[cfg(feature = "rust")]
 pub use patterns::*;
+#[cfg(feature = "rust")]
+pub use stmt_and_expr::*;
 #[cfg(feature = "rust")]
 pub use type_system::*;
 

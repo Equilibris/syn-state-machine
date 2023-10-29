@@ -12,7 +12,7 @@ typed-lits = ["dep:litrs"]
 printing = ["dep:quote"]
 rust-atoms = ["adt", "materialize", "typed-lits", "dep:proc-macro2"]
 rust = ["rust-atoms"]
-default = ["rust", "printing"]
+default = []
 
 [dependencies]
 proc-macro2 = { version = "1",   optional = true }
